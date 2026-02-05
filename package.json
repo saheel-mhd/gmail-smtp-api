@@ -1,0 +1,18 @@
+{
+  "name": "gmail-smtp-api",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:web",
+    "build": "npm run build -w @gmail-smtp/shared && npm run build -w @gmail-smtp/api && npm run build -w @gmail-smtp/worker && npm run build -w @gmail-smtp/web",
+    "dev:api": "npm run dev -w @gmail-smtp/api",
+    "dev:worker": "npm run dev -w @gmail-smtp/worker",
+    "dev:web": "npm run dev -w @gmail-smtp/web",
+    "lint": "npm run lint -w @gmail-smtp/api && npm run lint -w @gmail-smtp/worker && npm run lint -w @gmail-smtp/web",
+    "test:endpoints": "npm run test:endpoints -w @gmail-smtp/api"
+  }
+}

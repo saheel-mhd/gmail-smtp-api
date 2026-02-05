@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TenantStatus {
+  active
+  disabled
+}
+
+enum UserRole {
+  owner
+  admin
+  readonly
+}
+
+enum SenderStatus {
+  active
+  disabled
+  needs_attention
+}
+
+enum ApiKeyStatus {
+  active
+  revoked
+}
+
+enum MessageStatus {
+  queued
+  sending
+  sent
+  failed
+}
+
+enum ActorType {
+  user
+  api_key
+  system
+}
+
+model Tenant {
+  id                String        @id @default(cuid())
+  name              String
+  plan              String        @default("free")
+  status            TenantStatus  @default(active)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  users             User[]
+  smtpAccounts      SmtpAccount[]
+  apiKeys           ApiKey[]
+  messages          Message[]
+  auditLogs         AuditLog[]
+  dailySentCount    Int           @default(0)
+  dailyCountResetAt DateTime?
+}
+
+model User {
+  id           String    @id @default(cuid())
+  tenantId     String
+  email        String
+  passwordHash String
+  role         UserRole  @default(admin)
+  mfaEnabled   Boolean   @default(false)
+  mfaSecretEnc String?
+  mfaSecretIv  String?
+  mfaSecretTag String?
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  tenant       Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, email])
+}
+
+model SmtpAccount {
+  id                   String             @id @default(cuid())
+  tenantId             String
+  label                String
+  gmailAddress         String
+  encryptedAppPassword String
+  iv                   String
+  authTag              String
+  keyVersion           String
+  status               SenderStatus       @default(active)
+  perMinuteLimit       Int                @default(60)
+  perDayLimit          Int                @default(2000)
+  sentTodayCount       Int                @default(0)
+  sentTodayResetAt     DateTime?
+  lastSuccessAt        DateTime?
+  lastErrorAt          DateTime?
+  errorStreak          Int                @default(0)
+  healthScore          Int                @default(100)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  tenant               Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  permissions          ApiKeyPermission[]
+  messages             Message[]
+
+  @@unique([tenantId, gmailAddress])
+  @@index([tenantId])
+}
+
+model ApiKey {
+  id                 String             @id @default(cuid())
+  tenantId           String
+  name               String
+  keyHash            String
+  prefix             String
+  status             ApiKeyStatus       @default(active)
+  createdAt          DateTime           @default(now())
+  revokedAt          DateTime?
+  rateLimitPerMinute Int                @default(120)
+  allowedIps         Json?
+  tenant             Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  permissions        ApiKeyPermission[]
+  messages           Message[]
+
+  @@index([tenantId, status])
+}
+
+model ApiKeyPermission {
+  apiKeyId      String
+  smtpAccountId String
+  apiKey        ApiKey      @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  smtpAccount   SmtpAccount @relation(fields: [smtpAccountId], references: [id], onDelete: Cascade)
+
+  @@id([apiKeyId, smtpAccountId])
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  tenantId       String
+  apiKeyId       String
+  smtpAccountId  String
+  idempotencyKey String
+  to             Json
+  cc             Json
+  bcc            Json
+  subject        String
+  text           String?
+  html           String?
+  fromName       String?
+  replyTo        String?
+  headers        Json?
+  status         MessageStatus @default(queued)
+  attempts       Int           @default(0)
+  lastError      String?
+  createdAt      DateTime      @default(now())
+  queuedAt       DateTime      @default(now())
+  sentAt         DateTime?
+  tenant         Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  apiKey         ApiKey        @relation(fields: [apiKeyId], references: [id], onDelete: Restrict)
+  smtpAccount    SmtpAccount   @relation(fields: [smtpAccountId], references: [id], onDelete: Restrict)
+
+  @@unique([apiKeyId, idempotencyKey])
+  @@index([tenantId, createdAt])
+  @@index([status, createdAt])
+}
+
+model AuditLog {
+  id        String    @id @default(cuid())
+  tenantId  String
+  actorType ActorType
+  actorId   String
+  action    String
+  metadata  Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+}

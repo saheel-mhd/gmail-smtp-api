@@ -1,0 +1,30 @@
+{
+  "name": "@gmail-smtp/worker",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "node -e \"console.log('lint not configured yet')\""
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "bullmq": "^5.34.7",
+    "dotenv": "^16.4.7",
+    "ioredis": "^5.4.2",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.16.3",
+    "pino": "^9.6.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "prisma": "^7.3.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
