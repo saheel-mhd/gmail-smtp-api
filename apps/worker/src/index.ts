@@ -1,4 +1,7 @@
 import { Job, UnrecoverableError, Worker } from "bullmq";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import nodemailer from "nodemailer";
 import pino from "pino";
 import { env } from "./env";
@@ -13,6 +16,41 @@ const retryDelaysMs = [30_000, 120_000, 600_000, 1_800_000, 7_200_000];
 type SendJobData = {
   messageId: string;
 };
+
+const workerMeta = (() => {
+  const hostname = os.hostname();
+  let version = "unknown";
+  try {
+    const pkgPath = path.resolve(process.cwd(), "package.json");
+    const raw = fs.readFileSync(pkgPath, "utf-8");
+    const pkg = JSON.parse(raw) as { version?: string };
+    if (pkg.version) version = pkg.version;
+  } catch {
+    // best-effort only
+  }
+  return { hostname, version };
+})();
+
+async function writeSystemEvent(action: "system.worker.started" | "system.worker.stopped") {
+  const tenants = await prisma.tenant.findMany({
+    select: { id: true }
+  });
+  if (!tenants.length) return;
+
+  await prisma.auditLog.createMany({
+    data: tenants.map((tenant) => ({
+      tenantId: tenant.id,
+      actorType: "system",
+      actorId: "worker",
+      action,
+      metadata: {
+        detail: action === "system.worker.started" ? "Worker started" : "Worker stopped",
+        hostname: workerMeta.hostname,
+        version: workerMeta.version
+      }
+    }))
+  });
+}
 
 function classifyError(error: unknown): "transient" | "permanent" | "auth" {
   const message = (error as Error)?.message?.toLowerCase() ?? "";
@@ -176,13 +214,37 @@ async function start(): Promise<void> {
     );
   });
 
-  const shutdown = async () => {
-    await worker.close();
-    await Promise.all([prisma.$disconnect(), redis.quit()]);
+  let shuttingDown = false;
+  const shutdown = async (signal: string) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    log.info({ signal }, "worker shutdown initiated");
+    try {
+      await worker.close();
+    } catch (error) {
+      log.warn({ err: error }, "failed to close worker");
+    }
+    try {
+      await writeSystemEvent("system.worker.stopped");
+    } catch (error) {
+      log.warn({ err: error }, "failed to write worker stopped system log");
+    }
+    try {
+      await Promise.all([prisma.$disconnect(), redis.quit()]);
+    } catch (error) {
+      log.warn({ err: error }, "failed to close connections");
+    } finally {
+      process.exit(0);
+    }
   };
-  process.on("SIGINT", shutdown);
-  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", () => void shutdown("SIGINT"));
+  process.on("SIGTERM", () => void shutdown("SIGTERM"));
 
+  try {
+    await writeSystemEvent("system.worker.started");
+  } catch (error) {
+    log.warn({ err: error }, "failed to write worker started system log");
+  }
   log.info({ concurrency: env.WORKER_CONCURRENCY }, "worker started");
 }
 

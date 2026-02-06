@@ -29,6 +29,11 @@ enum ApiKeyStatus {
   revoked
 }
 
+enum TemplateStatus {
+  active
+  disabled
+}
+
 enum MessageStatus {
   queued
   sending
@@ -52,6 +57,7 @@ model Tenant {
   users              User[]
   smtpAccounts       SmtpAccount[]
   apiKeys            ApiKey[]
+  templates          Template[]
   messages           Message[]
   auditLogs          AuditLog[]
   dailySentCount     Int           @default(0)
@@ -159,6 +165,22 @@ model Message {
   @@unique([apiKeyId, idempotencyKey])
   @@index([tenantId, createdAt])
   @@index([status, createdAt])
+}
+
+model Template {
+  id        String         @id @default(cuid())
+  tenantId  String
+  name      String
+  subject   String
+  html      String
+  text      String?
+  status    TemplateStatus @default(active)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@unique([tenantId, name])
 }
 
 model AuditLog {

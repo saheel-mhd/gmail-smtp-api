@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useToast } from "../../../components/ui/toast";
 import { browserApi } from "../../../lib/browser-api";
 
 type Sender = {
@@ -22,8 +23,7 @@ export default function TestApiPage() {
   const [apiKeys, setApiKeys] = useState<ApiKeyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [result, setResult] = useState("");
+  const { toast } = useToast();
 
   const [apiToTest, setApiToTest] = useState("POST /v1/send");
   const [apiKeyId, setApiKeyId] = useState("");
@@ -33,7 +33,6 @@ export default function TestApiPage() {
 
   async function loadData() {
     setLoading(true);
-    setError("");
     try {
       const [senderRes, keyRes] = await Promise.all([
         browserApi<{ data: Sender[] }>("/admin/v1/senders"),
@@ -46,7 +45,11 @@ export default function TestApiPage() {
       if (!apiKeyId && activeKeys[0]) setApiKeyId(activeKeys[0].id);
       if (!senderId && activeSenders[0]) setSenderId(activeSenders[0].id);
     } catch (err) {
-      setError((err as Error).message || "Failed to load test data");
+      toast({
+        variant: "error",
+        title: "Test data load unsuccessful",
+        description: (err as Error).message || "Failed to load test data"
+      });
     } finally {
       setLoading(false);
     }
@@ -55,6 +58,17 @@ export default function TestApiPage() {
   useEffect(() => {
     void loadData();
   }, []);
+
+  const filteredApiKeys = useMemo(() => {
+    if (!senderId) return apiKeys;
+    return apiKeys.filter((key) => key.smtpAccountIds.includes(senderId));
+  }, [apiKeys, senderId]);
+
+  useEffect(() => {
+    if (!senderId) return;
+    if (apiKeyId && filteredApiKeys.some((key) => key.id === apiKeyId)) return;
+    setApiKeyId(filteredApiKeys[0]?.id ?? "");
+  }, [senderId, filteredApiKeys, apiKeyId]);
 
   const canSubmit = useMemo(() => {
     return (
@@ -69,8 +83,6 @@ export default function TestApiPage() {
     event.preventDefault();
     if (!canSubmit) return;
     setSubmitting(true);
-    setError("");
-    setResult("");
     try {
       const res = await browserApi<{
         testedApi: string;
@@ -87,11 +99,17 @@ export default function TestApiPage() {
           subject
         })
       });
-      setResult(
-        `Success: ${res.testedApi} queued message ${res.messageId} with status ${res.status}.`
-      );
+      toast({
+        variant: "success",
+        title: "Email sent successfully",
+        description: `${res.testedApi} queued message ${res.messageId}.`
+      });
     } catch (err) {
-      setError((err as Error).message || "API test failed");
+      toast({
+        variant: "error",
+        title: "Email send unsuccessful",
+        description: (err as Error).message || "API test failed"
+      });
     } finally {
       setSubmitting(false);
     }
@@ -119,24 +137,24 @@ export default function TestApiPage() {
             </label>
 
             <label>
-              API Key
-              <select value={apiKeyId} onChange={(e) => setApiKeyId(e.target.value)} required>
-                <option value="">Select API key</option>
-                {apiKeys.map((key) => (
-                  <option value={key.id} key={key.id}>
-                    {key.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label>
               Sender
               <select value={senderId} onChange={(e) => setSenderId(e.target.value)} required>
                 <option value="">Select sender</option>
                 {senders.map((sender) => (
                   <option value={sender.id} key={sender.id}>
                     {sender.label} ({sender.gmailAddress})
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              API Key
+              <select value={apiKeyId} onChange={(e) => setApiKeyId(e.target.value)} required>
+                <option value="">Select API key</option>
+                {filteredApiKeys.map((key) => (
+                  <option value={key.id} key={key.id}>
+                    {key.name}
                   </option>
                 ))}
               </select>
@@ -165,8 +183,6 @@ export default function TestApiPage() {
             </div>
           </form>
         )}
-        {result ? <p style={{ color: "#0a7f51", marginTop: 12 }}>{result}</p> : null}
-        {error ? <p style={{ color: "#9f1a1a", marginTop: 12 }}>{error}</p> : null}
       </section>
     </main>
   );

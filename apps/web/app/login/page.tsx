@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { browserApi } from "../../lib/browser-api";
@@ -45,10 +44,13 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="container">
-      <section className="panel" style={{ maxWidth: 540, margin: "0 auto" }}>
-        <h1>Login</h1>
-        <p className="muted">Sign in to manage Gmail senders, keys, and logs.</p>
+    <main
+      className="container"
+      style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}
+    >
+      <div className="panel" style={{ width: "100%", maxWidth: 540 }}>
+        <h1>GMAIL SMTP API GENERATOR</h1>
+        <p className="muted">Sign in to continue.</p>
         <form onSubmit={onSubmit} className="grid" style={{ marginTop: 12 }}>
           <label>
             Email
@@ -76,13 +78,10 @@ export default function LoginPage() {
             <button className="btn" type="submit" disabled={loading}>
               {loading ? "Signing in..." : "Sign in"}
             </button>
-            <Link href="/" className="btn secondary">
-              Home
-            </Link>
           </div>
         </form>
         {error ? <p style={{ color: "#9f1a1a", marginTop: 12 }}>{error}</p> : null}
-      </section>
+      </div>
     </main>
   );
 }

@@ -7,7 +7,9 @@ import { z } from "zod";
 import {
   createApiKeySchema,
   createSenderSchema,
-  patchSenderSchema
+  createTemplateSchema,
+  patchSenderSchema,
+  patchTemplateSchema
 } from "@gmail-smtp/shared";
 import { prisma } from "../lib/prisma";
 import {
@@ -90,12 +92,12 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       data: { lastLogin: new Date() }
     });
 
-    await writeAuditLog(request, {
-      tenantId: user.tenantId,
-      actorType: "user",
-      actorId: user.id,
-      action: "admin.auth.login"
-    });
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.id,
+        action: "admin.auth.login"
+      });
 
     return reply.send({
       user: {
@@ -228,10 +230,8 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         action: "admin.test_api.send",
         metadata: {
           testedApi: "POST /v1/send",
-          apiKeyId: apiKey.id,
-          senderId: sender.id,
-          toEmail: parsed.data.toEmail,
-          messageId: message.id
+          apiKeyName: apiKey.name,
+          senderLabel: sender.label
         }
       });
 
@@ -258,6 +258,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           status: true,
           perMinuteLimit: true,
           perDayLimit: true,
+          sentTodayCount: true,
           errorStreak: true,
           healthScore: true,
           lastSuccessAt: true,
@@ -309,7 +310,11 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         actorType: "user",
         actorId: user.actorId,
         action: "admin.sender.create",
-        metadata: { senderId: sender.id, gmailAddress: sender.gmailAddress }
+        metadata: {
+          senderId: sender.id,
+          senderLabel: sender.label,
+          gmailAddress: sender.gmailAddress
+        }
       });
 
       return reply.code(201).send({ data: sender });
@@ -331,12 +336,22 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       });
       if (!sender.count) return reply.notFound("sender not found");
 
+      const updatedSender = await prisma.smtpAccount.findFirst({
+        where: { id: params.id, tenantId: user.tenantId },
+        select: { label: true, status: true }
+      });
+
       await writeAuditLog(request, {
         tenantId: user.tenantId,
         actorType: "user",
         actorId: user.actorId,
         action: "admin.sender.update",
-        metadata: { senderId: params.id, fields: Object.keys(parsed.data) }
+        metadata: {
+          senderId: params.id,
+          senderLabel: updatedSender?.label,
+          status: updatedSender?.status,
+          fields: Object.keys(parsed.data)
+        }
       });
 
       return reply.send({ ok: true });
@@ -355,12 +370,21 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       });
       if (!updated.count) return reply.notFound("sender not found");
 
+      const disabledSender = await prisma.smtpAccount.findFirst({
+        where: { id: params.id, tenantId: user.tenantId },
+        select: { label: true }
+      });
+
       await writeAuditLog(request, {
         tenantId: user.tenantId,
         actorType: "user",
         actorId: user.actorId,
         action: "admin.sender.disable",
-        metadata: { senderId: params.id }
+        metadata: {
+          senderId: params.id,
+          senderLabel: disabledSender?.label,
+          status: "disabled"
+        }
       });
 
       return reply.send({ ok: true });
@@ -409,7 +433,120 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         actorType: "user",
         actorId: user.actorId,
         action: "admin.sender.test_send",
-        metadata: { senderId: sender.id, to: body.to }
+        metadata: { senderId: sender.id, senderLabel: sender.label }
+      });
+
+      return reply.send({ ok: true });
+    }
+  );
+
+  app.get(
+    "/admin/v1/templates",
+    { preHandler: [authenticateUserSession] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const templates = await prisma.template.findMany({
+        where: { tenantId: user.tenantId },
+        orderBy: { createdAt: "desc" }
+      });
+      return reply.send({ data: templates });
+    }
+  );
+
+  app.post(
+    "/admin/v1/templates",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = createTemplateSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const template = await prisma.template.create({
+        data: {
+          tenantId: user.tenantId,
+          name: parsed.data.name,
+          subject: parsed.data.subject,
+          html: parsed.data.html,
+          text: parsed.data.text ?? null
+        }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.template.create",
+        metadata: { templateName: template.name }
+      });
+
+      return reply.code(201).send({ data: template });
+    }
+  );
+
+  app.patch(
+    "/admin/v1/templates/:id",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const parsed = patchTemplateSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const update = {
+        ...parsed.data,
+        text: parsed.data.text === undefined ? undefined : parsed.data.text
+      };
+
+      const updated = await prisma.template.updateMany({
+        where: { id: params.id, tenantId: user.tenantId },
+        data: update
+      });
+      if (!updated.count) return reply.notFound("template not found");
+
+      const latest = await prisma.template.findFirst({
+        where: { id: params.id, tenantId: user.tenantId },
+        select: { name: true, status: true }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.template.update",
+        metadata: {
+          templateName: latest?.name,
+          status: latest?.status,
+          fields: Object.keys(parsed.data)
+        }
+      });
+
+      return reply.send({ ok: true });
+    }
+  );
+
+  app.delete(
+    "/admin/v1/templates/:id",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const updated = await prisma.template.updateMany({
+        where: { id: params.id, tenantId: user.tenantId },
+        data: { status: "disabled" }
+      });
+      if (!updated.count) return reply.notFound("template not found");
+
+      const latest = await prisma.template.findFirst({
+        where: { id: params.id, tenantId: user.tenantId },
+        select: { name: true }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.template.disable",
+        metadata: { templateName: latest?.name, status: "disabled" }
       });
 
       return reply.send({ ok: true });
@@ -492,7 +629,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         actorType: "user",
         actorId: user.actorId,
         action: "admin.api_key.create",
-        metadata: { apiKeyId: apiKey.id, permissions: parsed.data.smtpAccountIds }
+        metadata: { apiKeyId: apiKey.id, apiKeyName: apiKey.name }
       });
 
       return reply.code(201).send({
@@ -515,7 +652,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       const user = getUserContext(request);
       const params = request.params as { id: string };
       const existing = await prisma.apiKey.findFirst({
-        where: { id: params.id, tenantId: user.tenantId, status: "active" }
+        where: { id: params.id, tenantId: user.tenantId }
       });
       if (!existing) return reply.notFound("api key not found");
 
@@ -523,7 +660,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       const keyHash = await hashApiKey(generated.token);
       await prisma.apiKey.update({
         where: { id: existing.id },
-        data: { keyHash, prefix: generated.prefix }
+        data: { keyHash, prefix: generated.prefix, status: "active", revokedAt: null }
       });
 
       await writeAuditLog(request, {
@@ -531,7 +668,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         actorType: "user",
         actorId: user.actorId,
         action: "admin.api_key.rotate",
-        metadata: { apiKeyId: existing.id }
+        metadata: { apiKeyId: existing.id, apiKeyName: existing.name }
       });
 
       return reply.send({
@@ -551,6 +688,11 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       const user = getUserContext(request);
       const params = request.params as { id: string };
 
+      const existing = await prisma.apiKey.findFirst({
+        where: { id: params.id, tenantId: user.tenantId }
+      });
+      if (!existing) return reply.notFound("api key not found");
+
       const updated = await prisma.apiKey.updateMany({
         where: { id: params.id, tenantId: user.tenantId, status: "active" },
         data: { status: "revoked", revokedAt: new Date() }
@@ -562,7 +704,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         actorType: "user",
         actorId: user.actorId,
         action: "admin.api_key.revoke",
-        metadata: { apiKeyId: params.id }
+        metadata: { apiKeyId: params.id, apiKeyName: existing.name }
       });
 
       return reply.send({ ok: true });
@@ -581,7 +723,265 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         orderBy: { createdAt: "desc" },
         take: limit
       });
-      return reply.send({ data: logs });
+      const userIds = Array.from(
+        new Set(logs.filter((entry) => entry.actorType === "user").map((entry) => entry.actorId))
+      );
+      const apiKeyIds = Array.from(
+        new Set(logs.filter((entry) => entry.actorType === "api_key").map((entry) => entry.actorId))
+      );
+
+      const [users, apiKeys] = await Promise.all([
+        userIds.length
+          ? prisma.user.findMany({
+              where: { tenantId: user.tenantId, id: { in: userIds } },
+              select: { id: true, email: true }
+            })
+          : Promise.resolve([]),
+        apiKeyIds.length
+          ? prisma.apiKey.findMany({
+              where: { tenantId: user.tenantId, id: { in: apiKeyIds } },
+              select: { id: true, name: true }
+            })
+          : Promise.resolve([])
+      ]);
+
+      const userNameById = new Map(
+        users.map((entry) => {
+          const raw = entry.email.split("@")[0] ?? "user";
+          const spaced = raw.replace(/[._-]+/g, " ").trim() || "User";
+          const titled = spaced.replace(/\b\w/g, (char) => char.toUpperCase());
+          return [entry.id, titled] as const;
+        })
+      );
+      const apiKeyNameById = new Map(apiKeys.map((entry) => [entry.id, entry.name]));
+
+      const formatted = formatAuditLogs(logs, userNameById, apiKeyNameById);
+
+      return reply.send({ data: formatted });
     }
   );
+
+  app.get(
+    "/admin/v1/system-logs",
+    { preHandler: [authenticateUserSession] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const query = request.query as { limit?: string };
+      const limit = Math.min(Number(query.limit ?? 50), 200);
+      const logs = await prisma.auditLog.findMany({
+        where: { tenantId: user.tenantId, actorType: "system" },
+        orderBy: { createdAt: "desc" },
+        take: limit
+      });
+
+      const formatted = formatAuditLogs(logs, new Map(), new Map());
+
+      return reply.send({ data: formatted });
+    }
+  );
+
+  app.get(
+    "/admin/v1/email-logs",
+    { preHandler: [authenticateUserSession] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const query = request.query as { limit?: string };
+      const limit = Math.min(Number(query.limit ?? 50), 200);
+      const messages = await prisma.message.findMany({
+        where: { tenantId: user.tenantId },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        select: {
+          status: true,
+          to: true,
+          subject: true,
+          createdAt: true,
+          sentAt: true,
+          smtpAccount: {
+            select: {
+              label: true,
+              gmailAddress: true
+            }
+          }
+        }
+      });
+
+      const formatted = messages.map((message) => {
+        const recipients = Array.isArray(message.to)
+          ? message.to.filter((value) => typeof value === "string")
+          : [];
+        const senderLabel =
+          message.smtpAccount.label || message.smtpAccount.gmailAddress || "Sender";
+
+        return {
+          status: message.status,
+          senderLabel,
+          to: recipients,
+          subject: message.subject,
+          createdAt: message.createdAt,
+          sentAt: message.sentAt
+        };
+      });
+
+      return reply.send({ data: formatted });
+    }
+  );
+
+  function isPrivateIp(ip: string): boolean {
+    const cleaned = ip.trim();
+    if (!cleaned) return true;
+    if (cleaned === "::1") return true;
+    const lower = cleaned.toLowerCase();
+    if (lower.startsWith("fc") || lower.startsWith("fd") || lower.startsWith("fe80")) {
+      return true;
+    }
+    if (cleaned.includes(".")) {
+      const parts = cleaned.split(".").map((part) => Number(part));
+      if (parts.length !== 4 || parts.some((part) => Number.isNaN(part))) return true;
+      const [a, b] = parts;
+      if (a === 10) return true;
+      if (a === 127) return true;
+      if (a === 192 && b === 168) return true;
+      if (a === 172 && b >= 16 && b <= 31) return true;
+      if (a === 169 && b === 254) return true;
+    }
+    return false;
+  }
+
+  function getString(value: unknown): string | undefined {
+    return typeof value === "string" && value.trim().length > 0 ? value : undefined;
+  }
+
+  function buildSummary(
+    action: string,
+    actorName: string,
+    metadata: Record<string, unknown> | null
+  ) {
+    const senderLabel = getString(metadata?.senderLabel);
+    const apiKeyName = getString(metadata?.apiKeyName);
+    const templateName = getString(metadata?.templateName);
+    const status = getString(metadata?.status);
+    const fields = Array.isArray(metadata?.fields)
+      ? metadata?.fields.filter((field) => typeof field === "string")
+      : null;
+    const statusChanged = fields ? fields.includes("status") : false;
+    const senderText = senderLabel ? `Sender ${senderLabel}` : "Sender";
+    const apiKeyText = apiKeyName ? `API key ${apiKeyName}` : "API key";
+    const templateText = templateName ? `Template ${templateName}` : "Template";
+    const fieldLabels: Record<string, string> = {
+      label: "name",
+      perMinuteLimit: "per-minute limit",
+      perDayLimit: "per-day limit",
+      status: "status",
+      name: "name",
+      subject: "subject",
+      html: "html",
+      text: "text"
+    };
+    const changeDetails =
+      fields && fields.length
+        ? fields
+            .map((field) => fieldLabels[field] ?? field)
+            .filter((field) => field !== "status")
+            .join(", ")
+        : "";
+
+    switch (action) {
+      case "system.worker.started":
+        return "Worker started by System";
+      case "system.worker.stopped":
+        return "Worker stopped by System";
+      case "system.api.started":
+        return "API started by System";
+      case "system.api.stopped":
+        return "API stopped by System";
+      case "admin.auth.login":
+        return `${actorName} signed in`;
+      case "admin.auth.logout":
+        return `${actorName} signed out`;
+      case "admin.sender.create":
+        return `${senderText} created by ${actorName}`;
+      case "admin.sender.update":
+        if (statusChanged && status === "active") {
+          return `${senderText} activated by ${actorName}`;
+        }
+        if (statusChanged && status === "disabled") {
+          return `${senderText} deactivated by ${actorName}`;
+        }
+        if (changeDetails) {
+          return `${senderText} updated (${changeDetails}) by ${actorName}`;
+        }
+        return `${senderText} updated by ${actorName}`;
+      case "admin.sender.disable":
+        return `${senderText} deactivated by ${actorName}`;
+      case "admin.sender.test_send":
+        return `${senderText} test email sent by ${actorName}`;
+      case "admin.api_key.create":
+        return `${apiKeyText} created by ${actorName}`;
+      case "admin.api_key.rotate":
+        return `${apiKeyText} rotated by ${actorName}`;
+      case "admin.api_key.revoke":
+        return `${apiKeyText} revoked by ${actorName}`;
+      case "admin.template.create":
+        return `${templateText} created by ${actorName}`;
+      case "admin.template.update":
+        if (statusChanged && status === "active") {
+          return `${templateText} activated by ${actorName}`;
+        }
+        if (statusChanged && status === "disabled") {
+          return `${templateText} deactivated by ${actorName}`;
+        }
+        if (changeDetails) {
+          return `${templateText} updated (${changeDetails}) by ${actorName}`;
+        }
+        return `${templateText} updated by ${actorName}`;
+      case "admin.template.disable":
+        return `${templateText} deactivated by ${actorName}`;
+      case "admin.test_api.send":
+        return senderLabel
+          ? `Test email queued by ${actorName} using ${senderLabel}`
+          : `Test email queued by ${actorName}`;
+      default:
+        return `Audit event recorded by ${actorName}`;
+    }
+  }
+
+  function formatAuditLogs(
+    logs: Array<{
+      id: string;
+      action: string;
+      actorType: "user" | "api_key" | "system";
+      actorId: string;
+      ip: string | null;
+      createdAt: Date;
+      metadata: unknown;
+    }>,
+    userNameById: Map<string, string>,
+    apiKeyNameById: Map<string, string>
+  ) {
+    return logs.map((entry) => {
+      const actorName =
+        entry.actorType === "system"
+          ? "System"
+          : entry.actorType === "api_key"
+          ? apiKeyNameById.get(entry.actorId) ?? "API Key"
+          : userNameById.get(entry.actorId) ?? "User";
+
+      const ip = entry.ip && !isPrivateIp(entry.ip) ? entry.ip : null;
+      const metadata =
+        entry.metadata && typeof entry.metadata === "object"
+          ? (entry.metadata as Record<string, unknown>)
+          : null;
+
+      return {
+        id: entry.id,
+        action: entry.action,
+        actorType: entry.actorType,
+        actorName,
+        ip,
+        createdAt: entry.createdAt,
+        summary: buildSummary(entry.action, actorName, metadata)
+      };
+    });
+  }
 }

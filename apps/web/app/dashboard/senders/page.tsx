@@ -1,7 +1,17 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { browserApi } from "../../../lib/browser-api";
+import { FormEvent, Fragment, useEffect, useState } from "react";
+import { AddGmailSenderDialog } from "../../../components/add-gmail-sender-dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "../../../components/ui/table";
+import { useToast } from "../../../components/ui/toast";
+import { browserApi, invalidateBrowserCache } from "../../../lib/browser-api";
 
 type Sender = {
   id: string;
@@ -10,16 +20,15 @@ type Sender = {
   status: "active" | "disabled" | "needs_attention";
   perMinuteLimit: number;
   perDayLimit: number;
+  sentTodayCount: number;
   errorStreak: number;
   healthScore: number;
 };
 
 type SenderResponse = { data: Sender[] };
 
-type CreateSenderPayload = {
+type UpdateSenderPayload = {
   label: string;
-  gmailAddress: string;
-  appPassword: string;
   perMinuteLimit: number;
   perDayLimit: number;
 };
@@ -32,10 +41,8 @@ function healthBadge(status: Sender["status"], healthScore: number) {
   return <span className="badge green">Healthy</span>;
 }
 
-const DEFAULT_FORM: CreateSenderPayload = {
+const DEFAULT_EDIT_FORM: UpdateSenderPayload = {
   label: "",
-  gmailAddress: "",
-  appPassword: "",
   perMinuteLimit: 60,
   perDayLimit: 2000
 };
@@ -43,19 +50,24 @@ const DEFAULT_FORM: CreateSenderPayload = {
 export default function SendersPage() {
   const [senders, setSenders] = useState<Sender[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<CreateSenderPayload>(DEFAULT_FORM);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<UpdateSenderPayload>(DEFAULT_EDIT_FORM);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const { toast } = useToast();
 
   async function loadSenders() {
     setLoading(true);
-    setError("");
     try {
       const response = await browserApi<SenderResponse>("/admin/v1/senders");
       setSenders(response.data);
     } catch (err) {
-      setError((err as Error).message || "Failed to load senders.");
+      toast({
+        variant: "error",
+        title: "Senders load unsuccessful",
+        description: (err as Error).message || "Failed to load senders."
+      });
     } finally {
       setLoading(false);
     }
@@ -65,150 +77,288 @@ export default function SendersPage() {
     void loadSenders();
   }, []);
 
-  const canSubmit = useMemo(() => {
-    return (
-      form.label.trim().length > 0 &&
-      form.gmailAddress.trim().length > 0 &&
-      form.appPassword.trim().length > 0 &&
-      form.perMinuteLimit > 0 &&
-      form.perDayLimit > 0
-    );
-  }, [form]);
-
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onUpdate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) return;
-    setSubmitting(true);
-    setError("");
-    setMessage("");
+    if (!editingId) return;
+    setUpdatingId(editingId);
     try {
-      await browserApi<{ data: Sender }>("/admin/v1/senders", {
-        method: "POST",
+      await browserApi(`/admin/v1/senders/${editingId}`, {
+        method: "PATCH",
         csrf: true,
         headers: {
           "content-type": "application/json"
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(editForm)
       });
-      setMessage("Sender added successfully.");
-      setForm(DEFAULT_FORM);
+      invalidateBrowserCache("/admin/v1/senders");
+      toast({
+        variant: "success",
+        title: "Sender updated successfully",
+        description: "Sender settings saved successfully."
+      });
+      setEditingId(null);
+      setEditForm(DEFAULT_EDIT_FORM);
       await loadSenders();
     } catch (err) {
-      setError((err as Error).message || "Failed to add sender.");
+      toast({
+        variant: "error",
+        title: "Sender update unsuccessful",
+        description: (err as Error).message || "Failed to update sender."
+      });
     } finally {
-      setSubmitting(false);
+      setUpdatingId(null);
     }
+  }
+
+  async function toggleStatus(sender: Sender) {
+    setTogglingId(sender.id);
+    try {
+      const nextStatus = sender.status === "active" ? "disabled" : "active";
+      await browserApi(`/admin/v1/senders/${sender.id}`, {
+        method: "PATCH",
+        csrf: true,
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({ status: nextStatus })
+      });
+      invalidateBrowserCache("/admin/v1/senders");
+      toast({
+        variant: "success",
+        title:
+          nextStatus === "active"
+            ? "Sender activated successfully"
+            : "Sender deactivated successfully",
+        description:
+          nextStatus === "active"
+            ? "Sender is now active and ready to use."
+            : "Sender is now disabled."
+      });
+      await loadSenders();
+    } catch (err) {
+      toast({
+        variant: "error",
+        title: "Sender status update unsuccessful",
+        description: (err as Error).message || "Failed to update sender status."
+      });
+    } finally {
+      setTogglingId(null);
+    }
+  }
+
+  function startEditing(sender: Sender) {
+    setEditingId(sender.id);
+    setEditForm({
+      label: sender.label,
+      perMinuteLimit: sender.perMinuteLimit,
+      perDayLimit: sender.perDayLimit
+    });
   }
 
   return (
     <main className="container">
       <section className="panel">
-        <h1>Senders</h1>
-        <p className="muted">
-          Add your Gmail sender account here. From address is always the configured Gmail account.
-        </p>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            flexWrap: "wrap"
+          }}
+        >
+          <div>
+            <h1>Senders</h1>
+            <p className="muted">
+              Add your Gmail sender account here. From address is always the configured Gmail account.
+            </p>
+          </div>
+          <button
+            className="btn"
+            type="button"
+            onClick={() => {
+              setDialogOpen(true);
+            }}
+          >
+            Add Gmail Sender
+          </button>
+        </div>
       </section>
+
+      <AddGmailSenderDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onCreated={loadSenders}
+      />
 
       <section className="panel" style={{ marginTop: 16 }}>
-        <h2>Add Gmail Sender</h2>
-        <form onSubmit={onSubmit} className="grid" style={{ marginTop: 12 }}>
-          <label>
-            Label
-            <input
-              value={form.label}
-              onChange={(e) => setForm((prev) => ({ ...prev, label: e.target.value }))}
-              placeholder="Primary Sender"
-              required
-            />
-          </label>
-          <label>
-            Gmail Address
-            <input
-              type="email"
-              value={form.gmailAddress}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, gmailAddress: e.target.value }))
-              }
-              placeholder="you@gmail.com"
-              required
-            />
-          </label>
-          <label>
-            App Password
-            <input
-              type="password"
-              value={form.appPassword}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, appPassword: e.target.value }))
-              }
-              placeholder="Gmail app password"
-              required
-            />
-          </label>
-          <label>
-            Per-Minute Limit
-            <input
-              type="number"
-              min={1}
-              value={form.perMinuteLimit}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, perMinuteLimit: Number(e.target.value) }))
-              }
-              required
-            />
-          </label>
-          <label>
-            Per-Day Limit
-            <input
-              type="number"
-              min={1}
-              value={form.perDayLimit}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, perDayLimit: Number(e.target.value) }))
-              }
-              required
-            />
-          </label>
-          <div>
-            <button className="btn" type="submit" disabled={submitting || !canSubmit}>
-              {submitting ? "Adding..." : "Add Sender"}
-            </button>
-          </div>
-        </form>
-        {message ? (
-          <p style={{ color: "#0a7f51", marginTop: 12 }}>{message}</p>
-        ) : null}
-        {error ? (
-          <p style={{ color: "#9f1a1a", marginTop: 12 }}>{error}</p>
-        ) : null}
-      </section>
-
-      <section className="grid" style={{ marginTop: 16 }}>
-        {loading ? (
-          <article className="panel">
-            <p>Loading senders...</p>
-          </article>
-        ) : senders.length === 0 ? (
-          <article className="panel">
-            <p>No senders found yet.</p>
-          </article>
-        ) : (
-          senders.map((sender) => (
-            <article className="panel" key={sender.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                <div>
-                  <h3>{sender.label}</h3>
-                  <p className="muted">{sender.gmailAddress}</p>
-                </div>
-                {healthBadge(sender.status, sender.healthScore)}
-              </div>
-              <p className="muted">
-                Limits: {sender.perMinuteLimit}/min, {sender.perDayLimit}/day | Error streak:{" "}
-                {sender.errorStreak}
-              </p>
-            </article>
-          ))
-        )}
+        <h2>Sender Overview</h2>
+        <div className="table-wrap">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Sender Email</TableHead>
+                <TableHead>Limits</TableHead>
+                <TableHead>Sent / Left</TableHead>
+                <TableHead>Error Streak</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading
+                ? Array.from({ length: 5 }).map((_, idx) => (
+                    <TableRow key={`skeleton-${idx}`}>
+                      <TableCell>
+                        <div className="skeleton" style={{ height: 14, width: 160 }} />
+                        <div className="skeleton" style={{ height: 12, width: 200, marginTop: 8 }} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="skeleton" style={{ height: 14, width: 80 }} />
+                        <div className="skeleton" style={{ height: 12, width: 70, marginTop: 8 }} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="skeleton" style={{ height: 14, width: 90 }} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="skeleton" style={{ height: 14, width: 40 }} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="skeleton" style={{ height: 18, width: 90 }} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="skeleton" style={{ height: 28, width: 140 }} />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : senders.length === 0
+                ? (
+                    <TableRow>
+                      <TableCell colSpan={6}>No senders found yet.</TableCell>
+                    </TableRow>
+                  )
+                : senders.map((sender) => {
+                    const remaining = Math.max(sender.perDayLimit - sender.sentTodayCount, 0);
+                    return (
+                      <Fragment key={sender.id}>
+                        <TableRow>
+                          <TableCell>
+                            <div style={{ fontWeight: 600 }}>{sender.label}</div>
+                            <div className="muted">{sender.gmailAddress}</div>
+                          </TableCell>
+                          <TableCell>
+                            {sender.perMinuteLimit}/min
+                            <br />
+                            {sender.perDayLimit}/day
+                          </TableCell>
+                          <TableCell>
+                            {sender.sentTodayCount} / {remaining}
+                            <div className="muted" style={{ fontSize: 12 }}>
+                              today
+                            </div>
+                          </TableCell>
+                          <TableCell>{sender.errorStreak}</TableCell>
+                          <TableCell>{healthBadge(sender.status, sender.healthScore)}</TableCell>
+                          <TableCell>
+                            <div className="table-actions">
+                              <button
+                                className="btn small secondary"
+                                type="button"
+                                onClick={() => startEditing(sender)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className={`btn small ${sender.status === "active" ? "ghost" : ""}`}
+                                type="button"
+                                onClick={() => void toggleStatus(sender)}
+                                disabled={togglingId === sender.id}
+                              >
+                                {togglingId === sender.id
+                                  ? "Updating..."
+                                  : sender.status === "active"
+                                  ? "Deactivate"
+                                  : "Activate"}
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        {editingId === sender.id ? (
+                          <TableRow>
+                            <TableCell colSpan={6}>
+                              <form onSubmit={onUpdate} className="table-edit">
+                                <label>
+                                  Label
+                                  <input
+                                    value={editForm.label}
+                                    onChange={(e) =>
+                                      setEditForm((prev) => ({
+                                        ...prev,
+                                        label: e.target.value
+                                      }))
+                                    }
+                                    required
+                                  />
+                                </label>
+                                <label>
+                                  Per-Minute Limit
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    value={editForm.perMinuteLimit}
+                                    onChange={(e) =>
+                                      setEditForm((prev) => ({
+                                        ...prev,
+                                        perMinuteLimit: Number(e.target.value)
+                                      }))
+                                    }
+                                    required
+                                  />
+                                </label>
+                                <label>
+                                  Per-Day Limit
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    value={editForm.perDayLimit}
+                                    onChange={(e) =>
+                                      setEditForm((prev) => ({
+                                        ...prev,
+                                        perDayLimit: Number(e.target.value)
+                                      }))
+                                    }
+                                    required
+                                  />
+                                </label>
+                                <div className="actions">
+                                  <button
+                                    className="btn small"
+                                    type="submit"
+                                    disabled={updatingId === sender.id}
+                                  >
+                                    {updatingId === sender.id ? "Saving..." : "Save"}
+                                  </button>
+                                  <button
+                                    className="btn small ghost"
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingId(null);
+                                      setEditForm(DEFAULT_EDIT_FORM);
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            </TableCell>
+                          </TableRow>
+                        ) : null}
+                      </Fragment>
+                    );
+                  })}
+            </TableBody>
+          </Table>
+        </div>
       </section>
     </main>
   );

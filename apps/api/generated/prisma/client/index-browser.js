@@ -209,6 +209,18 @@ exports.Prisma.MessageScalarFieldEnum = {
   sentAt: 'sentAt'
 };
 
+exports.Prisma.TemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  subject: 'subject',
+  html: 'html',
+  text: 'text',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AuditLogScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
@@ -279,6 +291,11 @@ exports.MessageStatus = exports.$Enums.MessageStatus = {
   failed: 'failed'
 };
 
+exports.TemplateStatus = exports.$Enums.TemplateStatus = {
+  active: 'active',
+  disabled: 'disabled'
+};
+
 exports.ActorType = exports.$Enums.ActorType = {
   user: 'user',
   api_key: 'api_key',
@@ -292,6 +309,7 @@ exports.Prisma.ModelName = {
   ApiKey: 'ApiKey',
   ApiKeyPermission: 'ApiKeyPermission',
   Message: 'Message',
+  Template: 'Template',
   AuditLog: 'AuditLog'
 };
 

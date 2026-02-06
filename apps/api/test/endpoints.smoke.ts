@@ -49,7 +49,7 @@ async function run() {
     const response = await app.inject({
       method: item.method,
       url: item.url,
-      payload: item.payload
+      payload: item.payload as any
     });
     if (response.statusCode !== item.expectedStatus) {
       throw new Error(

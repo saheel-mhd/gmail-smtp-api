@@ -44,6 +44,11 @@ export type ApiKeyPermission = $Result.DefaultSelection<Prisma.$ApiKeyPermission
  */
 export type Message = $Result.DefaultSelection<Prisma.$MessagePayload>
 /**
+ * Model Template
+ * 
+ */
+export type Template = $Result.DefaultSelection<Prisma.$TemplatePayload>
+/**
  * Model AuditLog
  * 
  */
@@ -87,6 +92,14 @@ export const ApiKeyStatus: {
 export type ApiKeyStatus = (typeof ApiKeyStatus)[keyof typeof ApiKeyStatus]
 
 
+export const TemplateStatus: {
+  active: 'active',
+  disabled: 'disabled'
+};
+
+export type TemplateStatus = (typeof TemplateStatus)[keyof typeof TemplateStatus]
+
+
 export const MessageStatus: {
   queued: 'queued',
   sending: 'sending',
@@ -122,6 +135,10 @@ export const SenderStatus: typeof $Enums.SenderStatus
 export type ApiKeyStatus = $Enums.ApiKeyStatus
 
 export const ApiKeyStatus: typeof $Enums.ApiKeyStatus
+
+export type TemplateStatus = $Enums.TemplateStatus
+
+export const TemplateStatus: typeof $Enums.TemplateStatus
 
 export type MessageStatus = $Enums.MessageStatus
 
@@ -307,6 +324,16 @@ export class PrismaClient<
     * ```
     */
   get message(): Prisma.MessageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.template`: Exposes CRUD operations for the **Template** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Templates
+    * const templates = await prisma.template.findMany()
+    * ```
+    */
+  get template(): Prisma.TemplateDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.auditLog`: Exposes CRUD operations for the **AuditLog** model.
@@ -757,6 +784,7 @@ export namespace Prisma {
     ApiKey: 'ApiKey',
     ApiKeyPermission: 'ApiKeyPermission',
     Message: 'Message',
+    Template: 'Template',
     AuditLog: 'AuditLog'
   };
 
@@ -773,7 +801,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "tenant" | "user" | "smtpAccount" | "apiKey" | "apiKeyPermission" | "message" | "auditLog"
+      modelProps: "tenant" | "user" | "smtpAccount" | "apiKey" | "apiKeyPermission" | "message" | "template" | "auditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1221,6 +1249,80 @@ export namespace Prisma {
           }
         }
       }
+      Template: {
+        payload: Prisma.$TemplatePayload<ExtArgs>
+        fields: Prisma.TemplateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TemplateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TemplateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>
+          }
+          findFirst: {
+            args: Prisma.TemplateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TemplateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>
+          }
+          findMany: {
+            args: Prisma.TemplateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>[]
+          }
+          create: {
+            args: Prisma.TemplateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>
+          }
+          createMany: {
+            args: Prisma.TemplateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TemplateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>[]
+          }
+          delete: {
+            args: Prisma.TemplateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>
+          }
+          update: {
+            args: Prisma.TemplateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>
+          }
+          deleteMany: {
+            args: Prisma.TemplateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TemplateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TemplateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>[]
+          }
+          upsert: {
+            args: Prisma.TemplateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TemplatePayload>
+          }
+          aggregate: {
+            args: Prisma.TemplateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTemplate>
+          }
+          groupBy: {
+            args: Prisma.TemplateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TemplateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TemplateCountArgs<ExtArgs>
+            result: $Utils.Optional<TemplateCountAggregateOutputType> | number
+          }
+        }
+      }
       AuditLog: {
         payload: Prisma.$AuditLogPayload<ExtArgs>
         fields: Prisma.AuditLogFieldRefs
@@ -1409,6 +1511,7 @@ export namespace Prisma {
     apiKey?: ApiKeyOmit
     apiKeyPermission?: ApiKeyPermissionOmit
     message?: MessageOmit
+    template?: TemplateOmit
     auditLog?: AuditLogOmit
   }
 
@@ -1493,6 +1596,7 @@ export namespace Prisma {
     users: number
     smtpAccounts: number
     apiKeys: number
+    templates: number
     messages: number
     auditLogs: number
   }
@@ -1501,6 +1605,7 @@ export namespace Prisma {
     users?: boolean | TenantCountOutputTypeCountUsersArgs
     smtpAccounts?: boolean | TenantCountOutputTypeCountSmtpAccountsArgs
     apiKeys?: boolean | TenantCountOutputTypeCountApiKeysArgs
+    templates?: boolean | TenantCountOutputTypeCountTemplatesArgs
     messages?: boolean | TenantCountOutputTypeCountMessagesArgs
     auditLogs?: boolean | TenantCountOutputTypeCountAuditLogsArgs
   }
@@ -1535,6 +1640,13 @@ export namespace Prisma {
    */
   export type TenantCountOutputTypeCountApiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ApiKeyWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TemplateWhereInput
   }
 
   /**
@@ -1861,6 +1973,7 @@ export namespace Prisma {
     users?: boolean | Tenant$usersArgs<ExtArgs>
     smtpAccounts?: boolean | Tenant$smtpAccountsArgs<ExtArgs>
     apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
+    templates?: boolean | Tenant$templatesArgs<ExtArgs>
     messages?: boolean | Tenant$messagesArgs<ExtArgs>
     auditLogs?: boolean | Tenant$auditLogsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
@@ -1904,6 +2017,7 @@ export namespace Prisma {
     users?: boolean | Tenant$usersArgs<ExtArgs>
     smtpAccounts?: boolean | Tenant$smtpAccountsArgs<ExtArgs>
     apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
+    templates?: boolean | Tenant$templatesArgs<ExtArgs>
     messages?: boolean | Tenant$messagesArgs<ExtArgs>
     auditLogs?: boolean | Tenant$auditLogsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
@@ -1917,6 +2031,7 @@ export namespace Prisma {
       users: Prisma.$UserPayload<ExtArgs>[]
       smtpAccounts: Prisma.$SmtpAccountPayload<ExtArgs>[]
       apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
+      templates: Prisma.$TemplatePayload<ExtArgs>[]
       messages: Prisma.$MessagePayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     }
@@ -2326,6 +2441,7 @@ export namespace Prisma {
     users<T extends Tenant$usersArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     smtpAccounts<T extends Tenant$smtpAccountsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$smtpAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SmtpAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     apiKeys<T extends Tenant$apiKeysArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    templates<T extends Tenant$templatesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     messages<T extends Tenant$messagesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends Tenant$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -2822,6 +2938,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.templates
+   */
+  export type Tenant$templatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    where?: TemplateWhereInput
+    orderBy?: TemplateOrderByWithRelationInput | TemplateOrderByWithRelationInput[]
+    cursor?: TemplateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TemplateScalarFieldEnum | TemplateScalarFieldEnum[]
   }
 
   /**
@@ -8914,6 +9054,1116 @@ export namespace Prisma {
 
 
   /**
+   * Model Template
+   */
+
+  export type AggregateTemplate = {
+    _count: TemplateCountAggregateOutputType | null
+    _min: TemplateMinAggregateOutputType | null
+    _max: TemplateMaxAggregateOutputType | null
+  }
+
+  export type TemplateMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    name: string | null
+    subject: string | null
+    html: string | null
+    text: string | null
+    status: $Enums.TemplateStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TemplateMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    name: string | null
+    subject: string | null
+    html: string | null
+    text: string | null
+    status: $Enums.TemplateStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TemplateCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    name: number
+    subject: number
+    html: number
+    text: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TemplateMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    subject?: true
+    html?: true
+    text?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TemplateMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    subject?: true
+    html?: true
+    text?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TemplateCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    name?: true
+    subject?: true
+    html?: true
+    text?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TemplateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Template to aggregate.
+     */
+    where?: TemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Templates to fetch.
+     */
+    orderBy?: TemplateOrderByWithRelationInput | TemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Templates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Templates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Templates
+    **/
+    _count?: true | TemplateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TemplateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TemplateMaxAggregateInputType
+  }
+
+  export type GetTemplateAggregateType<T extends TemplateAggregateArgs> = {
+        [P in keyof T & keyof AggregateTemplate]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTemplate[P]>
+      : GetScalarType<T[P], AggregateTemplate[P]>
+  }
+
+
+
+
+  export type TemplateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TemplateWhereInput
+    orderBy?: TemplateOrderByWithAggregationInput | TemplateOrderByWithAggregationInput[]
+    by: TemplateScalarFieldEnum[] | TemplateScalarFieldEnum
+    having?: TemplateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TemplateCountAggregateInputType | true
+    _min?: TemplateMinAggregateInputType
+    _max?: TemplateMaxAggregateInputType
+  }
+
+  export type TemplateGroupByOutputType = {
+    id: string
+    tenantId: string
+    name: string
+    subject: string
+    html: string
+    text: string | null
+    status: $Enums.TemplateStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: TemplateCountAggregateOutputType | null
+    _min: TemplateMinAggregateOutputType | null
+    _max: TemplateMaxAggregateOutputType | null
+  }
+
+  type GetTemplateGroupByPayload<T extends TemplateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TemplateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TemplateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TemplateGroupByOutputType[P]>
+            : GetScalarType<T[P], TemplateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TemplateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["template"]>
+
+  export type TemplateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["template"]>
+
+  export type TemplateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["template"]>
+
+  export type TemplateSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    name?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "name" | "subject" | "html" | "text" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["template"]>
+  export type TemplateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+  export type TemplateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+  export type TemplateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+
+  export type $TemplatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Template"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      name: string
+      subject: string
+      html: string
+      text: string | null
+      status: $Enums.TemplateStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["template"]>
+    composites: {}
+  }
+
+  type TemplateGetPayload<S extends boolean | null | undefined | TemplateDefaultArgs> = $Result.GetResult<Prisma.$TemplatePayload, S>
+
+  type TemplateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TemplateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TemplateCountAggregateInputType | true
+    }
+
+  export interface TemplateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Template'], meta: { name: 'Template' } }
+    /**
+     * Find zero or one Template that matches the filter.
+     * @param {TemplateFindUniqueArgs} args - Arguments to find a Template
+     * @example
+     * // Get one Template
+     * const template = await prisma.template.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TemplateFindUniqueArgs>(args: SelectSubset<T, TemplateFindUniqueArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Template that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TemplateFindUniqueOrThrowArgs} args - Arguments to find a Template
+     * @example
+     * // Get one Template
+     * const template = await prisma.template.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TemplateFindUniqueOrThrowArgs>(args: SelectSubset<T, TemplateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Template that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TemplateFindFirstArgs} args - Arguments to find a Template
+     * @example
+     * // Get one Template
+     * const template = await prisma.template.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TemplateFindFirstArgs>(args?: SelectSubset<T, TemplateFindFirstArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Template that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TemplateFindFirstOrThrowArgs} args - Arguments to find a Template
+     * @example
+     * // Get one Template
+     * const template = await prisma.template.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TemplateFindFirstOrThrowArgs>(args?: SelectSubset<T, TemplateFindFirstOrThrowArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Templates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TemplateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Templates
+     * const templates = await prisma.template.findMany()
+     * 
+     * // Get first 10 Templates
+     * const templates = await prisma.template.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const templateWithIdOnly = await prisma.template.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TemplateFindManyArgs>(args?: SelectSubset<T, TemplateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Template.
+     * @param {TemplateCreateArgs} args - Arguments to create a Template.
+     * @example
+     * // Create one Template
+     * const Template = await prisma.template.create({
+     *   data: {
+     *     // ... data to create a Template
+     *   }
+     * })
+     * 
+     */
+    create<T extends TemplateCreateArgs>(args: SelectSubset<T, TemplateCreateArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Templates.
+     * @param {TemplateCreateManyArgs} args - Arguments to create many Templates.
+     * @example
+     * // Create many Templates
+     * const template = await prisma.template.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TemplateCreateManyArgs>(args?: SelectSubset<T, TemplateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Templates and returns the data saved in the database.
+     * @param {TemplateCreateManyAndReturnArgs} args - Arguments to create many Templates.
+     * @example
+     * // Create many Templates
+     * const template = await prisma.template.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Templates and only return the `id`
+     * const templateWithIdOnly = await prisma.template.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TemplateCreateManyAndReturnArgs>(args?: SelectSubset<T, TemplateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Template.
+     * @param {TemplateDeleteArgs} args - Arguments to delete one Template.
+     * @example
+     * // Delete one Template
+     * const Template = await prisma.template.delete({
+     *   where: {
+     *     // ... filter to delete one Template
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TemplateDeleteArgs>(args: SelectSubset<T, TemplateDeleteArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Template.
+     * @param {TemplateUpdateArgs} args - Arguments to update one Template.
+     * @example
+     * // Update one Template
+     * const template = await prisma.template.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TemplateUpdateArgs>(args: SelectSubset<T, TemplateUpdateArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Templates.
+     * @param {TemplateDeleteManyArgs} args - Arguments to filter Templates to delete.
+     * @example
+     * // Delete a few Templates
+     * const { count } = await prisma.template.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TemplateDeleteManyArgs>(args?: SelectSubset<T, TemplateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Templates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TemplateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Templates
+     * const template = await prisma.template.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TemplateUpdateManyArgs>(args: SelectSubset<T, TemplateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Templates and returns the data updated in the database.
+     * @param {TemplateUpdateManyAndReturnArgs} args - Arguments to update many Templates.
+     * @example
+     * // Update many Templates
+     * const template = await prisma.template.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Templates and only return the `id`
+     * const templateWithIdOnly = await prisma.template.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TemplateUpdateManyAndReturnArgs>(args: SelectSubset<T, TemplateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Template.
+     * @param {TemplateUpsertArgs} args - Arguments to update or create a Template.
+     * @example
+     * // Update or create a Template
+     * const template = await prisma.template.upsert({
+     *   create: {
+     *     // ... data to create a Template
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Template we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TemplateUpsertArgs>(args: SelectSubset<T, TemplateUpsertArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Templates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TemplateCountArgs} args - Arguments to filter Templates to count.
+     * @example
+     * // Count the number of Templates
+     * const count = await prisma.template.count({
+     *   where: {
+     *     // ... the filter for the Templates we want to count
+     *   }
+     * })
+    **/
+    count<T extends TemplateCountArgs>(
+      args?: Subset<T, TemplateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TemplateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Template.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TemplateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TemplateAggregateArgs>(args: Subset<T, TemplateAggregateArgs>): Prisma.PrismaPromise<GetTemplateAggregateType<T>>
+
+    /**
+     * Group by Template.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TemplateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TemplateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TemplateGroupByArgs['orderBy'] }
+        : { orderBy?: TemplateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TemplateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTemplateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Template model
+   */
+  readonly fields: TemplateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Template.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Template model
+   */
+  interface TemplateFieldRefs {
+    readonly id: FieldRef<"Template", 'String'>
+    readonly tenantId: FieldRef<"Template", 'String'>
+    readonly name: FieldRef<"Template", 'String'>
+    readonly subject: FieldRef<"Template", 'String'>
+    readonly html: FieldRef<"Template", 'String'>
+    readonly text: FieldRef<"Template", 'String'>
+    readonly status: FieldRef<"Template", 'TemplateStatus'>
+    readonly createdAt: FieldRef<"Template", 'DateTime'>
+    readonly updatedAt: FieldRef<"Template", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Template findUnique
+   */
+  export type TemplateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which Template to fetch.
+     */
+    where: TemplateWhereUniqueInput
+  }
+
+  /**
+   * Template findUniqueOrThrow
+   */
+  export type TemplateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which Template to fetch.
+     */
+    where: TemplateWhereUniqueInput
+  }
+
+  /**
+   * Template findFirst
+   */
+  export type TemplateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which Template to fetch.
+     */
+    where?: TemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Templates to fetch.
+     */
+    orderBy?: TemplateOrderByWithRelationInput | TemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Templates.
+     */
+    cursor?: TemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Templates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Templates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Templates.
+     */
+    distinct?: TemplateScalarFieldEnum | TemplateScalarFieldEnum[]
+  }
+
+  /**
+   * Template findFirstOrThrow
+   */
+  export type TemplateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which Template to fetch.
+     */
+    where?: TemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Templates to fetch.
+     */
+    orderBy?: TemplateOrderByWithRelationInput | TemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Templates.
+     */
+    cursor?: TemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Templates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Templates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Templates.
+     */
+    distinct?: TemplateScalarFieldEnum | TemplateScalarFieldEnum[]
+  }
+
+  /**
+   * Template findMany
+   */
+  export type TemplateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which Templates to fetch.
+     */
+    where?: TemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Templates to fetch.
+     */
+    orderBy?: TemplateOrderByWithRelationInput | TemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Templates.
+     */
+    cursor?: TemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Templates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Templates.
+     */
+    skip?: number
+    distinct?: TemplateScalarFieldEnum | TemplateScalarFieldEnum[]
+  }
+
+  /**
+   * Template create
+   */
+  export type TemplateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Template.
+     */
+    data: XOR<TemplateCreateInput, TemplateUncheckedCreateInput>
+  }
+
+  /**
+   * Template createMany
+   */
+  export type TemplateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Templates.
+     */
+    data: TemplateCreateManyInput | TemplateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Template createManyAndReturn
+   */
+  export type TemplateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * The data used to create many Templates.
+     */
+    data: TemplateCreateManyInput | TemplateCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Template update
+   */
+  export type TemplateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Template.
+     */
+    data: XOR<TemplateUpdateInput, TemplateUncheckedUpdateInput>
+    /**
+     * Choose, which Template to update.
+     */
+    where: TemplateWhereUniqueInput
+  }
+
+  /**
+   * Template updateMany
+   */
+  export type TemplateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Templates.
+     */
+    data: XOR<TemplateUpdateManyMutationInput, TemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which Templates to update
+     */
+    where?: TemplateWhereInput
+    /**
+     * Limit how many Templates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Template updateManyAndReturn
+   */
+  export type TemplateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * The data used to update Templates.
+     */
+    data: XOR<TemplateUpdateManyMutationInput, TemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which Templates to update
+     */
+    where?: TemplateWhereInput
+    /**
+     * Limit how many Templates to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Template upsert
+   */
+  export type TemplateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Template to update in case it exists.
+     */
+    where: TemplateWhereUniqueInput
+    /**
+     * In case the Template found by the `where` argument doesn't exist, create a new Template with this data.
+     */
+    create: XOR<TemplateCreateInput, TemplateUncheckedCreateInput>
+    /**
+     * In case the Template was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TemplateUpdateInput, TemplateUncheckedUpdateInput>
+  }
+
+  /**
+   * Template delete
+   */
+  export type TemplateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    /**
+     * Filter which Template to delete.
+     */
+    where: TemplateWhereUniqueInput
+  }
+
+  /**
+   * Template deleteMany
+   */
+  export type TemplateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Templates to delete
+     */
+    where?: TemplateWhereInput
+    /**
+     * Limit how many Templates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Template without action
+   */
+  export type TemplateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model AuditLog
    */
 
@@ -10140,6 +11390,21 @@ export namespace Prisma {
   export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
 
 
+  export const TemplateScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    name: 'name',
+    subject: 'subject',
+    html: 'html',
+    text: 'text',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TemplateScalarFieldEnum = (typeof TemplateScalarFieldEnum)[keyof typeof TemplateScalarFieldEnum]
+
+
   export const AuditLogScalarFieldEnum: {
     id: 'id',
     tenantId: 'tenantId',
@@ -10342,6 +11607,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TemplateStatus'
+   */
+  export type EnumTemplateStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TemplateStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TemplateStatus[]'
+   */
+  export type ListEnumTemplateStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TemplateStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ActorType'
    */
   export type EnumActorTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActorType'>
@@ -10387,6 +11666,7 @@ export namespace Prisma {
     users?: UserListRelationFilter
     smtpAccounts?: SmtpAccountListRelationFilter
     apiKeys?: ApiKeyListRelationFilter
+    templates?: TemplateListRelationFilter
     messages?: MessageListRelationFilter
     auditLogs?: AuditLogListRelationFilter
   }
@@ -10403,6 +11683,7 @@ export namespace Prisma {
     users?: UserOrderByRelationAggregateInput
     smtpAccounts?: SmtpAccountOrderByRelationAggregateInput
     apiKeys?: ApiKeyOrderByRelationAggregateInput
+    templates?: TemplateOrderByRelationAggregateInput
     messages?: MessageOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
   }
@@ -10422,6 +11703,7 @@ export namespace Prisma {
     users?: UserListRelationFilter
     smtpAccounts?: SmtpAccountListRelationFilter
     apiKeys?: ApiKeyListRelationFilter
+    templates?: TemplateListRelationFilter
     messages?: MessageListRelationFilter
     auditLogs?: AuditLogListRelationFilter
   }, "id">
@@ -10952,6 +12234,82 @@ export namespace Prisma {
     sentAt?: DateTimeNullableWithAggregatesFilter<"Message"> | Date | string | null
   }
 
+  export type TemplateWhereInput = {
+    AND?: TemplateWhereInput | TemplateWhereInput[]
+    OR?: TemplateWhereInput[]
+    NOT?: TemplateWhereInput | TemplateWhereInput[]
+    id?: StringFilter<"Template"> | string
+    tenantId?: StringFilter<"Template"> | string
+    name?: StringFilter<"Template"> | string
+    subject?: StringFilter<"Template"> | string
+    html?: StringFilter<"Template"> | string
+    text?: StringNullableFilter<"Template"> | string | null
+    status?: EnumTemplateStatusFilter<"Template"> | $Enums.TemplateStatus
+    createdAt?: DateTimeFilter<"Template"> | Date | string
+    updatedAt?: DateTimeFilter<"Template"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+  }
+
+  export type TemplateOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+  }
+
+  export type TemplateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tenantId_name?: TemplateTenantIdNameCompoundUniqueInput
+    AND?: TemplateWhereInput | TemplateWhereInput[]
+    OR?: TemplateWhereInput[]
+    NOT?: TemplateWhereInput | TemplateWhereInput[]
+    tenantId?: StringFilter<"Template"> | string
+    name?: StringFilter<"Template"> | string
+    subject?: StringFilter<"Template"> | string
+    html?: StringFilter<"Template"> | string
+    text?: StringNullableFilter<"Template"> | string | null
+    status?: EnumTemplateStatusFilter<"Template"> | $Enums.TemplateStatus
+    createdAt?: DateTimeFilter<"Template"> | Date | string
+    updatedAt?: DateTimeFilter<"Template"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+  }, "id" | "tenantId_name">
+
+  export type TemplateOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TemplateCountOrderByAggregateInput
+    _max?: TemplateMaxOrderByAggregateInput
+    _min?: TemplateMinOrderByAggregateInput
+  }
+
+  export type TemplateScalarWhereWithAggregatesInput = {
+    AND?: TemplateScalarWhereWithAggregatesInput | TemplateScalarWhereWithAggregatesInput[]
+    OR?: TemplateScalarWhereWithAggregatesInput[]
+    NOT?: TemplateScalarWhereWithAggregatesInput | TemplateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Template"> | string
+    tenantId?: StringWithAggregatesFilter<"Template"> | string
+    name?: StringWithAggregatesFilter<"Template"> | string
+    subject?: StringWithAggregatesFilter<"Template"> | string
+    html?: StringWithAggregatesFilter<"Template"> | string
+    text?: StringNullableWithAggregatesFilter<"Template"> | string | null
+    status?: EnumTemplateStatusWithAggregatesFilter<"Template"> | $Enums.TemplateStatus
+    createdAt?: DateTimeWithAggregatesFilter<"Template"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Template"> | Date | string
+  }
+
   export type AuditLogWhereInput = {
     AND?: AuditLogWhereInput | AuditLogWhereInput[]
     OR?: AuditLogWhereInput[]
@@ -11039,6 +12397,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
   }
@@ -11055,6 +12414,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
   }
@@ -11071,6 +12431,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
   }
@@ -11087,6 +12448,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
   }
@@ -11679,6 +13041,89 @@ export namespace Prisma {
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type TemplateCreateInput = {
+    id?: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutTemplatesInput
+  }
+
+  export type TemplateUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TemplateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutTemplatesNestedInput
+  }
+
+  export type TemplateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TemplateCreateManyInput = {
+    id?: string
+    tenantId: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TemplateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TemplateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AuditLogCreateInput = {
     id?: string
     actorType: $Enums.ActorType
@@ -11835,6 +13280,12 @@ export namespace Prisma {
     none?: ApiKeyWhereInput
   }
 
+  export type TemplateListRelationFilter = {
+    every?: TemplateWhereInput
+    some?: TemplateWhereInput
+    none?: TemplateWhereInput
+  }
+
   export type MessageListRelationFilter = {
     every?: MessageWhereInput
     some?: MessageWhereInput
@@ -11861,6 +13312,10 @@ export namespace Prisma {
   }
 
   export type ApiKeyOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TemplateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12498,6 +13953,64 @@ export namespace Prisma {
     _max?: NestedEnumMessageStatusFilter<$PrismaModel>
   }
 
+  export type EnumTemplateStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TemplateStatus | EnumTemplateStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTemplateStatusFilter<$PrismaModel> | $Enums.TemplateStatus
+  }
+
+  export type TemplateTenantIdNameCompoundUniqueInput = {
+    tenantId: string
+    name: string
+  }
+
+  export type TemplateCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TemplateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TemplateMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    name?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumTemplateStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TemplateStatus | EnumTemplateStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTemplateStatusWithAggregatesFilter<$PrismaModel> | $Enums.TemplateStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTemplateStatusFilter<$PrismaModel>
+    _max?: NestedEnumTemplateStatusFilter<$PrismaModel>
+  }
+
   export type EnumActorTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ActorType | EnumActorTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ActorType[] | ListEnumActorTypeFieldRefInput<$PrismaModel>
@@ -12570,6 +14083,13 @@ export namespace Prisma {
     connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
   }
 
+  export type TemplateCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TemplateCreateWithoutTenantInput, TemplateUncheckedCreateWithoutTenantInput> | TemplateCreateWithoutTenantInput[] | TemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TemplateCreateOrConnectWithoutTenantInput | TemplateCreateOrConnectWithoutTenantInput[]
+    createMany?: TemplateCreateManyTenantInputEnvelope
+    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+  }
+
   export type MessageCreateNestedManyWithoutTenantInput = {
     create?: XOR<MessageCreateWithoutTenantInput, MessageUncheckedCreateWithoutTenantInput> | MessageCreateWithoutTenantInput[] | MessageUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutTenantInput | MessageCreateOrConnectWithoutTenantInput[]
@@ -12603,6 +14123,13 @@ export namespace Prisma {
     connectOrCreate?: ApiKeyCreateOrConnectWithoutTenantInput | ApiKeyCreateOrConnectWithoutTenantInput[]
     createMany?: ApiKeyCreateManyTenantInputEnvelope
     connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+  }
+
+  export type TemplateUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<TemplateCreateWithoutTenantInput, TemplateUncheckedCreateWithoutTenantInput> | TemplateCreateWithoutTenantInput[] | TemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TemplateCreateOrConnectWithoutTenantInput | TemplateCreateOrConnectWithoutTenantInput[]
+    createMany?: TemplateCreateManyTenantInputEnvelope
+    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
   }
 
   export type MessageUncheckedCreateNestedManyWithoutTenantInput = {
@@ -12685,6 +14212,20 @@ export namespace Prisma {
     deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
   }
 
+  export type TemplateUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TemplateCreateWithoutTenantInput, TemplateUncheckedCreateWithoutTenantInput> | TemplateCreateWithoutTenantInput[] | TemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TemplateCreateOrConnectWithoutTenantInput | TemplateCreateOrConnectWithoutTenantInput[]
+    upsert?: TemplateUpsertWithWhereUniqueWithoutTenantInput | TemplateUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TemplateCreateManyTenantInputEnvelope
+    set?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    disconnect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    delete?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    update?: TemplateUpdateWithWhereUniqueWithoutTenantInput | TemplateUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TemplateUpdateManyWithWhereWithoutTenantInput | TemplateUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
+  }
+
   export type MessageUpdateManyWithoutTenantNestedInput = {
     create?: XOR<MessageCreateWithoutTenantInput, MessageUncheckedCreateWithoutTenantInput> | MessageCreateWithoutTenantInput[] | MessageUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutTenantInput | MessageCreateOrConnectWithoutTenantInput[]
@@ -12753,6 +14294,20 @@ export namespace Prisma {
     update?: ApiKeyUpdateWithWhereUniqueWithoutTenantInput | ApiKeyUpdateWithWhereUniqueWithoutTenantInput[]
     updateMany?: ApiKeyUpdateManyWithWhereWithoutTenantInput | ApiKeyUpdateManyWithWhereWithoutTenantInput[]
     deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
+  }
+
+  export type TemplateUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<TemplateCreateWithoutTenantInput, TemplateUncheckedCreateWithoutTenantInput> | TemplateCreateWithoutTenantInput[] | TemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: TemplateCreateOrConnectWithoutTenantInput | TemplateCreateOrConnectWithoutTenantInput[]
+    upsert?: TemplateUpsertWithWhereUniqueWithoutTenantInput | TemplateUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: TemplateCreateManyTenantInputEnvelope
+    set?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    disconnect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    delete?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+    update?: TemplateUpdateWithWhereUniqueWithoutTenantInput | TemplateUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: TemplateUpdateManyWithWhereWithoutTenantInput | TemplateUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
   }
 
   export type MessageUncheckedUpdateManyWithoutTenantNestedInput = {
@@ -13087,6 +14642,24 @@ export namespace Prisma {
     update?: XOR<XOR<SmtpAccountUpdateToOneWithWhereWithoutMessagesInput, SmtpAccountUpdateWithoutMessagesInput>, SmtpAccountUncheckedUpdateWithoutMessagesInput>
   }
 
+  export type TenantCreateNestedOneWithoutTemplatesInput = {
+    create?: XOR<TenantCreateWithoutTemplatesInput, TenantUncheckedCreateWithoutTemplatesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutTemplatesInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type EnumTemplateStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TemplateStatus
+  }
+
+  export type TenantUpdateOneRequiredWithoutTemplatesNestedInput = {
+    create?: XOR<TenantCreateWithoutTemplatesInput, TenantUncheckedCreateWithoutTemplatesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutTemplatesInput
+    upsert?: TenantUpsertWithoutTemplatesInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutTemplatesInput, TenantUpdateWithoutTemplatesInput>, TenantUncheckedUpdateWithoutTemplatesInput>
+  }
+
   export type TenantCreateNestedOneWithoutAuditLogsInput = {
     create?: XOR<TenantCreateWithoutAuditLogsInput, TenantUncheckedCreateWithoutAuditLogsInput>
     connectOrCreate?: TenantCreateOrConnectWithoutAuditLogsInput
@@ -13410,6 +14983,23 @@ export namespace Prisma {
     _max?: NestedEnumMessageStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumTemplateStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TemplateStatus | EnumTemplateStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTemplateStatusFilter<$PrismaModel> | $Enums.TemplateStatus
+  }
+
+  export type NestedEnumTemplateStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TemplateStatus | EnumTemplateStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TemplateStatus[] | ListEnumTemplateStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTemplateStatusWithAggregatesFilter<$PrismaModel> | $Enums.TemplateStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTemplateStatusFilter<$PrismaModel>
+    _max?: NestedEnumTemplateStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumActorTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ActorType | EnumActorTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ActorType[] | ListEnumActorTypeFieldRefInput<$PrismaModel>
@@ -13556,6 +15146,38 @@ export namespace Prisma {
 
   export type ApiKeyCreateManyTenantInputEnvelope = {
     data: ApiKeyCreateManyTenantInput | ApiKeyCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TemplateCreateWithoutTenantInput = {
+    id?: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TemplateUncheckedCreateWithoutTenantInput = {
+    id?: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TemplateCreateOrConnectWithoutTenantInput = {
+    where: TemplateWhereUniqueInput
+    create: XOR<TemplateCreateWithoutTenantInput, TemplateUncheckedCreateWithoutTenantInput>
+  }
+
+  export type TemplateCreateManyTenantInputEnvelope = {
+    data: TemplateCreateManyTenantInput | TemplateCreateManyTenantInput[]
     skipDuplicates?: boolean
   }
 
@@ -13752,6 +15374,37 @@ export namespace Prisma {
     allowedIps?: JsonNullableFilter<"ApiKey">
   }
 
+  export type TemplateUpsertWithWhereUniqueWithoutTenantInput = {
+    where: TemplateWhereUniqueInput
+    update: XOR<TemplateUpdateWithoutTenantInput, TemplateUncheckedUpdateWithoutTenantInput>
+    create: XOR<TemplateCreateWithoutTenantInput, TemplateUncheckedCreateWithoutTenantInput>
+  }
+
+  export type TemplateUpdateWithWhereUniqueWithoutTenantInput = {
+    where: TemplateWhereUniqueInput
+    data: XOR<TemplateUpdateWithoutTenantInput, TemplateUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type TemplateUpdateManyWithWhereWithoutTenantInput = {
+    where: TemplateScalarWhereInput
+    data: XOR<TemplateUpdateManyMutationInput, TemplateUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type TemplateScalarWhereInput = {
+    AND?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
+    OR?: TemplateScalarWhereInput[]
+    NOT?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
+    id?: StringFilter<"Template"> | string
+    tenantId?: StringFilter<"Template"> | string
+    name?: StringFilter<"Template"> | string
+    subject?: StringFilter<"Template"> | string
+    html?: StringFilter<"Template"> | string
+    text?: StringNullableFilter<"Template"> | string | null
+    status?: EnumTemplateStatusFilter<"Template"> | $Enums.TemplateStatus
+    createdAt?: DateTimeFilter<"Template"> | Date | string
+    updatedAt?: DateTimeFilter<"Template"> | Date | string
+  }
+
   export type MessageUpsertWithWhereUniqueWithoutTenantInput = {
     where: MessageWhereUniqueInput
     update: XOR<MessageUpdateWithoutTenantInput, MessageUncheckedUpdateWithoutTenantInput>
@@ -13836,6 +15489,7 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
   }
@@ -13851,6 +15505,7 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
   }
@@ -13882,6 +15537,7 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
   }
@@ -13897,6 +15553,7 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
   }
@@ -13912,6 +15569,7 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
   }
@@ -13927,6 +15585,7 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
   }
@@ -14030,6 +15689,7 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
   }
@@ -14045,6 +15705,7 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
   }
@@ -14100,6 +15761,7 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
   }
@@ -14115,6 +15777,7 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
   }
@@ -14218,6 +15881,7 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
   }
@@ -14233,6 +15897,7 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
   }
@@ -14461,6 +16126,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
   }
 
@@ -14476,6 +16142,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
   }
 
@@ -14591,6 +16258,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
   }
 
@@ -14606,6 +16274,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
   }
 
@@ -14705,6 +16374,86 @@ export namespace Prisma {
     permissions?: ApiKeyPermissionUncheckedUpdateManyWithoutSmtpAccountNestedInput
   }
 
+  export type TenantCreateWithoutTemplatesInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    messages?: MessageCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutTemplatesInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutTemplatesInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutTemplatesInput, TenantUncheckedCreateWithoutTemplatesInput>
+  }
+
+  export type TenantUpsertWithoutTemplatesInput = {
+    update: XOR<TenantUpdateWithoutTemplatesInput, TenantUncheckedUpdateWithoutTemplatesInput>
+    create: XOR<TenantCreateWithoutTemplatesInput, TenantUncheckedCreateWithoutTemplatesInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutTemplatesInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutTemplatesInput, TenantUncheckedUpdateWithoutTemplatesInput>
+  }
+
+  export type TenantUpdateWithoutTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    messages?: MessageUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
   export type TenantCreateWithoutAuditLogsInput = {
     id?: string
     name: string
@@ -14717,6 +16466,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
   }
 
@@ -14732,6 +16482,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
   }
 
@@ -14763,6 +16514,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
   }
 
@@ -14778,6 +16530,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
   }
 
@@ -14826,6 +16579,17 @@ export namespace Prisma {
     revokedAt?: Date | string | null
     rateLimitPerMinute?: number
     allowedIps?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type TemplateCreateManyTenantInput = {
+    id?: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type MessageCreateManyTenantInput = {
@@ -15008,6 +16772,39 @@ export namespace Prisma {
     revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rateLimitPerMinute?: IntFieldUpdateOperationsInput | number
     allowedIps?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type TemplateUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TemplateUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TemplateUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MessageUpdateWithoutTenantInput = {

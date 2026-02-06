@@ -1,5 +1,6 @@
 process.env.SKIP_SMTP_VERIFY = "true";
 
+import type inject from "light-my-request";
 import bcrypt from "bcryptjs";
 
 function extractCookie(setCookieHeaders: string[] | undefined, name: string): string {
@@ -35,14 +36,14 @@ async function run() {
   });
 
   try {
-    const login = await app.inject({
+    const login = (await app.inject({
       method: "POST",
       url: "/admin/v1/auth/login",
       payload: {
         email,
         password: "pass12345"
       }
-    });
+    })) as inject.Response;
     if (login.statusCode !== 200) {
       throw new Error(`login failed ${login.statusCode}: ${login.body}`);
     }
@@ -53,14 +54,14 @@ async function run() {
     const csrfValue = csrfCookie.split("=")[1];
     const cookieHeader = `${sessionCookie}; ${csrfCookie}`;
 
-    const me = await app.inject({
+    const me = (await app.inject({
       method: "GET",
       url: "/admin/v1/me",
       headers: { cookie: cookieHeader }
-    });
+    })) as inject.Response;
     if (me.statusCode !== 200) throw new Error(`/admin/v1/me failed: ${me.statusCode}`);
 
-    const createSender = await app.inject({
+    const createSender = (await app.inject({
       method: "POST",
       url: "/admin/v1/senders",
       headers: {
@@ -74,13 +75,13 @@ async function run() {
         perMinuteLimit: 60,
         perDayLimit: 1000
       }
-    });
+    })) as inject.Response;
     if (createSender.statusCode !== 201) {
       throw new Error(`/admin/v1/senders failed: ${createSender.statusCode} ${createSender.body}`);
     }
     const senderId = createSender.json().data.id as string;
 
-    const createKey = await app.inject({
+    const createKey = (await app.inject({
       method: "POST",
       url: "/admin/v1/api-keys",
       headers: {
@@ -92,30 +93,30 @@ async function run() {
         smtpAccountIds: [senderId],
         rateLimitPerMinute: 100
       }
-    });
+    })) as inject.Response;
     if (createKey.statusCode !== 201) {
       throw new Error(`/admin/v1/api-keys failed: ${createKey.statusCode} ${createKey.body}`);
     }
     const apiToken = createKey.json().data.key as string;
 
-    const publicSenders = await app.inject({
+    const publicSenders = (await app.inject({
       method: "GET",
       url: "/v1/senders",
       headers: {
         authorization: `Bearer ${apiToken}`
       }
-    });
+    })) as inject.Response;
     if (publicSenders.statusCode !== 200) {
       throw new Error(`/v1/senders failed: ${publicSenders.statusCode} ${publicSenders.body}`);
     }
 
-    const logs = await app.inject({
+    const logs = (await app.inject({
       method: "GET",
       url: "/admin/v1/logs",
       headers: {
         cookie: cookieHeader
       }
-    });
+    })) as inject.Response;
     if (logs.statusCode !== 200) {
       throw new Error(`/admin/v1/logs failed: ${logs.statusCode}`);
     }
