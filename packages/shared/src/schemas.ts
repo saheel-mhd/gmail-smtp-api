@@ -56,14 +56,12 @@ export const createSenderSchema = z.object({
   label: z.string().min(1).max(80),
   gmailAddress: z.string().email(),
   appPassword: z.string().min(8).max(128),
-  perMinuteLimit: z.number().int().positive().max(10000).optional(),
   perDayLimit: z.number().int().positive().max(1000000).optional()
 });
 
 export const patchSenderSchema = z.object({
   label: z.string().min(1).max(80).optional(),
   status: z.enum(["active", "disabled", "needs_attention"]).optional(),
-  perMinuteLimit: z.number().int().positive().max(10000).optional(),
   perDayLimit: z.number().int().positive().max(1000000).optional()
 });
 

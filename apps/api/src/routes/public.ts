@@ -7,6 +7,7 @@ import { assertSafeHeaders } from "../lib/validation";
 import { getSendQueue } from "../queue";
 import { writeAuditLog } from "../plugins/audit";
 import { renderTemplate } from "../lib/template";
+import { redis } from "../lib/redis";
 
 export async function publicRoutes(app: FastifyInstance): Promise<void> {
   app.get(
@@ -103,24 +104,29 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
       }
 
       const minuteKeyPerApi = `rl:api:${actor.apiKeyId}:${Math.floor(Date.now() / 60000)}`;
-      const minuteKeyPerTenant = `rl:tenant:${actor.tenantId}:${Math.floor(Date.now() / 60000)}`;
-      const minuteKeyPerSender = `rl:sender:${sender.id}:${Math.floor(Date.now() / 60000)}`;
-      const dayKeyPerSender = `quota:sender:${sender.id}:${new Date().toISOString().slice(0, 10)}`;
-      const dayKeyPerTenant = `quota:tenant:${actor.tenantId}:${new Date().toISOString().slice(0, 10)}`;
+      const dayKey = new Date().toISOString().slice(0, 10);
+      const dayKeyPerTenant = `quota:tenant:${actor.tenantId}:${dayKey}`;
+      const dayKeyPerSender = `quota:sender:${sender.id}:${dayKey}`;
 
-      const [apiRate, tenantRate, senderRate, senderDaily, tenantDaily] = await Promise.all([
+      const [apiRate, tenantDaily] = await Promise.all([
         enforceRateLimit(minuteKeyPerApi, actor.rateLimitPerMinute),
-        enforceRateLimit(minuteKeyPerTenant, Math.max(actor.rateLimitPerMinute * 3, 200)),
-        enforceRateLimit(minuteKeyPerSender, sender.perMinuteLimit),
-        enforceDailyQuota(dayKeyPerSender, sender.perDayLimit),
         enforceDailyQuota(dayKeyPerTenant, Math.max(sender.perDayLimit * 2, 5000))
       ]);
 
-      if (!apiRate.allowed || !tenantRate.allowed || !senderRate.allowed) {
+      if (!apiRate.allowed) {
         return reply.tooManyRequests("rate limit exceeded");
       }
-      if (!senderDaily.allowed || !tenantDaily.allowed) {
+      if (!tenantDaily.allowed) {
         return reply.tooManyRequests("daily quota exceeded");
+      }
+      try {
+        const currentCount = await redis.get(dayKeyPerSender);
+        const sentToday = currentCount ? Number(currentCount) : 0;
+        if (Number.isFinite(sentToday) && sentToday >= sender.perDayLimit) {
+          return reply.tooManyRequests("sender daily limit reached");
+        }
+      } catch (error) {
+        request.log.warn({ err: error }, "failed to check sender daily quota");
       }
 
       try {

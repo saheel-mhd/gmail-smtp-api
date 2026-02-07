@@ -17,7 +17,17 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    void browserApi("/admin/v1/senders");
+    const prefetch = [
+      "/admin/v1/senders",
+      "/admin/v1/api-keys",
+      "/admin/v1/templates",
+      "/admin/v1/logs",
+      "/admin/v1/email-logs",
+      "/admin/v1/system-logs"
+    ];
+    void Promise.allSettled(
+      prefetch.map((path) => browserApi(path, { cacheTtlMs: 120_000 }))
+    );
   }, []);
 
   return (

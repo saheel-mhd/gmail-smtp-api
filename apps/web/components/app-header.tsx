@@ -38,6 +38,7 @@ type MenuItem = {
 export function AppHeader() {
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const appVersion = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
 
   async function onLogout() {
     setLoggingOut(true);
@@ -113,6 +114,9 @@ export function AppHeader() {
           <Link href="/dashboard" className="brand">
             GMAIL SMTP API GENERATOR
           </Link>
+          <span className="badge version-pill" title={`Build ${appVersion}`}>
+            v{appVersion}
+          </span>
         </div>
 
         <nav className="right">

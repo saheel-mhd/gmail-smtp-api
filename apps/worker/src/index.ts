@@ -71,13 +71,31 @@ function classifyError(error: unknown): "transient" | "permanent" | "auth" {
   return "transient";
 }
 
-async function senderThrottle(senderId: string, perMinuteLimit: number): Promise<void> {
-  const key = `worker:sender:${senderId}:${Math.floor(Date.now() / 60000)}`;
+function currentDayKey(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function dayStartUtc(dayKey: string): Date {
+  return new Date(`${dayKey}T00:00:00.000Z`);
+}
+
+async function reserveDailySlot(
+  senderId: string,
+  perDayLimit: number,
+  existingCount: number,
+  existingResetAt: Date | null
+): Promise<number> {
+  const dayKey = currentDayKey();
+  const key = `quota:sender:${senderId}:${dayKey}`;
+  const dayStart = dayStartUtc(dayKey);
+  const initialCount = existingResetAt && existingResetAt >= dayStart ? existingCount : 0;
+  await redis.set(key, String(initialCount), "EX", 24 * 60 * 60, "NX");
   const count = await redis.incr(key);
-  if (count === 1) await redis.expire(key, 60);
-  if (count > perMinuteLimit) {
-    throw new Error("sender minute throttle exceeded");
+  if (count > perDayLimit) {
+    await redis.decr(key);
+    throw new Error("sender daily limit reached");
   }
+  return count;
 }
 
 async function processSendJob(job: Job<SendJobData>): Promise<void> {
@@ -93,7 +111,26 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
     throw new UnrecoverableError("sender is not active");
   }
 
-  await senderThrottle(message.smtpAccount.id, message.smtpAccount.perMinuteLimit);
+  const dayKey = currentDayKey();
+  const quotaKey = `quota:sender:${message.smtpAccount.id}:${dayKey}`;
+  let reservedCount: number | null = null;
+  try {
+    reservedCount = await reserveDailySlot(
+      message.smtpAccount.id,
+      message.smtpAccount.perDayLimit,
+      message.smtpAccount.sentTodayCount ?? 0,
+      message.smtpAccount.sentTodayResetAt
+    );
+  } catch (error) {
+    await prisma.message.update({
+      where: { id: message.id },
+      data: {
+        status: "failed",
+        lastError: "sender daily limit reached"
+      }
+    });
+    throw new UnrecoverableError((error as Error).message);
+  }
 
   await prisma.message.update({
     where: { id: message.id },
@@ -154,7 +191,27 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
         }
       })
     ]);
+
+    if (reservedCount) {
+      await prisma.smtpAccount.updateMany({
+        where: {
+          id: message.smtpAccount.id,
+          OR: [
+            { sentTodayResetAt: null },
+            { sentTodayResetAt: { lt: dayStartUtc(dayKey) } },
+            { sentTodayCount: { lt: reservedCount } }
+          ]
+        },
+        data: {
+          sentTodayCount: reservedCount,
+          sentTodayResetAt: dayStartUtc(dayKey)
+        }
+      });
+    }
   } catch (error) {
+    if (reservedCount) {
+      await redis.decr(quotaKey);
+    }
     const errorType = classifyError(error);
     const nextAttempt = job.attemptsMade + 1;
     const lastAttempt = nextAttempt >= retryDelaysMs.length;

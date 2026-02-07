@@ -21,7 +21,6 @@ const envSchema = z.object({
   CSRF_COOKIE_NAME: z.string().default("gmail_smtp_csrf"),
   ENCRYPTION_MASTER_KEY: z.string().length(64),
   ENCRYPTION_KEY_VERSION: z.string().default("v1"),
-  DEFAULT_PER_MINUTE_LIMIT: z.coerce.number().default(60),
   DEFAULT_PER_DAY_LIMIT: z.coerce.number().default(2000),
   DEFAULT_API_KEY_RATE_LIMIT: z.coerce.number().default(120),
   APP_BASE_URL: z.string().default("http://localhost:3000"),

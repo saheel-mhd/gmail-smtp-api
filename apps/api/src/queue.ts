@@ -25,7 +25,7 @@ export function getSendQueue(): Queue<SendEmailJob> {
 
 export async function closeSendQueue(): Promise<void> {
   if (!queue) return;
-  await queue.close();
+  await queue.close();  
   queue = null;
 }
 

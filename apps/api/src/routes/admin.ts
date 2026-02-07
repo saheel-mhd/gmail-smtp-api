@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import { Prisma } from "../../generated/prisma/client";
 import { randomUUID } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { authenticator } from "otplib";
@@ -248,7 +249,10 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     { preHandler: [authenticateUserSession] },
     async (request, reply) => {
       const user = getUserContext(request);
-      const senders = await prisma.smtpAccount.findMany({
+      const dayKey = new Date().toISOString().slice(0, 10);
+      const dayStart = new Date(`${dayKey}T00:00:00.000Z`);
+
+      let senders = await prisma.smtpAccount.findMany({
         where: { tenantId: user.tenantId },
         orderBy: { createdAt: "desc" },
         select: {
@@ -256,9 +260,9 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           label: true,
           gmailAddress: true,
           status: true,
-          perMinuteLimit: true,
           perDayLimit: true,
           sentTodayCount: true,
+          sentTodayResetAt: true,
           errorStreak: true,
           healthScore: true,
           lastSuccessAt: true,
@@ -266,6 +270,26 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           createdAt: true
         }
       });
+      const resetIds = senders
+        .filter(
+          (sender) => !sender.sentTodayResetAt || sender.sentTodayResetAt < dayStart
+        )
+        .map((sender) => sender.id);
+      if (resetIds.length) {
+        await prisma.smtpAccount.updateMany({
+          where: { tenantId: user.tenantId, id: { in: resetIds } },
+          data: {
+            sentTodayCount: 0,
+            sentTodayResetAt: dayStart
+          }
+        });
+        const resetSet = new Set(resetIds);
+        senders = senders.map((sender) =>
+          resetSet.has(sender.id)
+            ? { ...sender, sentTodayCount: 0, sentTodayResetAt: dayStart }
+            : sender
+        );
+      }
       return reply.send({ data: senders });
     }
   );
@@ -279,31 +303,57 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       if (!parsed.success) return reply.badRequest(parsed.error.message);
 
       if (!env.SKIP_SMTP_VERIFY) {
-        await verifyGmailCredentials(parsed.data.gmailAddress, parsed.data.appPassword);
+        try {
+          await verifyGmailCredentials(parsed.data.gmailAddress, parsed.data.appPassword);
+        } catch (error) {
+          request.log.warn({ err: error }, "gmail credential verification failed");
+          return reply.badRequest(
+            "gmail credentials could not be verified. check the address and app password."
+          );
+        }
       }
       const encrypted = encryptSecret(parsed.data.appPassword);
 
-      const sender = await prisma.smtpAccount.create({
-        data: {
-          tenantId: user.tenantId,
-          label: parsed.data.label,
-          gmailAddress: parsed.data.gmailAddress,
-          encryptedAppPassword: encrypted.encrypted,
-          iv: encrypted.iv,
-          authTag: encrypted.authTag,
-          keyVersion: encrypted.keyVersion,
-          perMinuteLimit: parsed.data.perMinuteLimit ?? env.DEFAULT_PER_MINUTE_LIMIT,
-          perDayLimit: parsed.data.perDayLimit ?? env.DEFAULT_PER_DAY_LIMIT
-        },
-        select: {
-          id: true,
-          label: true,
-          gmailAddress: true,
-          status: true,
-          perMinuteLimit: true,
-          perDayLimit: true
+      let sender: {
+        id: string;
+        label: string;
+        gmailAddress: string;
+        status: string;
+        perDayLimit: number;
+      } | null = null;
+      try {
+        sender = await prisma.smtpAccount.create({
+          data: {
+            tenantId: user.tenantId,
+            label: parsed.data.label,
+            gmailAddress: parsed.data.gmailAddress,
+            encryptedAppPassword: encrypted.encrypted,
+            iv: encrypted.iv,
+            authTag: encrypted.authTag,
+            keyVersion: encrypted.keyVersion,
+            perDayLimit: parsed.data.perDayLimit ?? env.DEFAULT_PER_DAY_LIMIT
+          },
+          select: {
+            id: true,
+            label: true,
+            gmailAddress: true,
+            status: true,
+            perDayLimit: true
+          }
+        });
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          return reply.conflict("sender already exists");
         }
-      });
+        request.log.error({ err: error }, "failed to create sender");
+        return reply.internalServerError("failed to create sender");
+      }
+      if (!sender) {
+        return reply.internalServerError("failed to create sender");
+      }
 
       await writeAuditLog(request, {
         tenantId: user.tenantId,
@@ -870,7 +920,6 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     const templateText = templateName ? `Template ${templateName}` : "Template";
     const fieldLabels: Record<string, string> = {
       label: "name",
-      perMinuteLimit: "per-minute limit",
       perDayLimit: "per-day limit",
       status: "status",
       name: "name",

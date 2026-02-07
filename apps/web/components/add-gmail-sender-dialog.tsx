@@ -16,7 +16,6 @@ type CreateSenderPayload = {
   label: string;
   gmailAddress: string;
   appPassword: string;
-  perMinuteLimit: number;
   perDayLimit: number;
 };
 
@@ -24,7 +23,6 @@ const DEFAULT_FORM: CreateSenderPayload = {
   label: "",
   gmailAddress: "",
   appPassword: "",
-  perMinuteLimit: 60,
   perDayLimit: 2000
 };
 
@@ -55,7 +53,6 @@ export function AddGmailSenderDialog({
       form.label.trim().length > 0 &&
       form.gmailAddress.trim().length > 0 &&
       form.appPassword.trim().length > 0 &&
-      form.perMinuteLimit > 0 &&
       form.perDayLimit > 0
     );
   }, [form]);
@@ -132,18 +129,6 @@ export function AddGmailSenderDialog({
                 setForm((prev) => ({ ...prev, appPassword: e.target.value }))
               }
               placeholder="Gmail app password"
-              required
-            />
-          </label>
-          <label>
-            Per-Minute Limit
-            <input
-              type="number"
-              min={1}
-              value={form.perMinuteLimit}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, perMinuteLimit: Number(e.target.value) }))
-              }
               required
             />
           </label>

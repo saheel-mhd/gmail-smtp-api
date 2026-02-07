@@ -13,6 +13,7 @@
     "prisma:migrate": "prisma migrate dev",
     "test:endpoints": "tsx test/endpoints.smoke.ts",
     "test:admin-flow": "tsx test/admin-flow.integration.ts",
+    "test:full": "tsx test/endpoints.full.integration.ts",
     "bootstrap:owner": "tsx src/scripts/bootstrap-owner.ts"
   },
   "dependencies": {
