@@ -13,6 +13,7 @@
     "dev:worker": "npm run dev -w @gmail-smtp/worker",
     "dev:web": "npm run dev -w @gmail-smtp/web",
     "lint": "npm run lint -w @gmail-smtp/api && npm run lint -w @gmail-smtp/worker && npm run lint -w @gmail-smtp/web",
-    "test:endpoints": "npm run test:endpoints -w @gmail-smtp/api"
+    "test:endpoints": "npm run test:endpoints -w @gmail-smtp/api",
+    "postdeploy": "npm run prisma:migrate:deploy -w @gmail-smtp/api && npm run prisma:generate:prod -w @gmail-smtp/api"
   }
 }

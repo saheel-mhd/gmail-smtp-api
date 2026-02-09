@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { browserApi } from "../../lib/browser-api";
 
-type LoginResponse = {
+type RegisterResponse = {
   csrfToken: string;
   user: {
     id: string;
@@ -15,11 +15,12 @@ type LoginResponse = {
   };
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [tenantName, setTenantName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mfaCode, setMfaCode] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,18 +28,23 @@ export default function LoginPage() {
     event.preventDefault();
     setLoading(true);
     setError("");
+    if (password !== confirm) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await browserApi<LoginResponse>("/admin/v1/auth/login", {
+      await browserApi<RegisterResponse>("/admin/v1/auth/register", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, password, mfaCode: mfaCode || undefined })
+        body: JSON.stringify({ tenantName, email, password })
       });
 
-      const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
-      router.push(callbackUrl || "/dashboard");
+      router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError((err as Error).message || "Login failed");
+      setError((err as Error).message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -51,8 +57,16 @@ export default function LoginPage() {
     >
       <div className="panel" style={{ width: "100%", maxWidth: 540 }}>
         <h1>GMAIL SMTP API GENERATOR</h1>
-        <p className="muted">Sign in to continue.</p>
+        <p className="muted">Create your account to get started.</p>
         <form onSubmit={onSubmit} className="grid" style={{ marginTop: 12 }}>
+          <label>
+            Company Name
+            <input
+              value={tenantName}
+              onChange={(e) => setTenantName(e.target.value)}
+              required
+            />
+          </label>
           <label>
             Email
             <input
@@ -69,18 +83,25 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={8}
             />
           </label>
           <label>
-            MFA Code (optional unless owner requires it)
-            <input value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} />
+            Confirm Password
+            <input
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+              minLength={8}
+            />
           </label>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
             <button className="btn" type="submit" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Creating..." : "Create account"}
             </button>
-            <Link href="/register" className="btn ghost">
-              Create account
+            <Link href="/login" className="btn ghost">
+              Back to login
             </Link>
           </div>
         </form>

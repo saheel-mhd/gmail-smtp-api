@@ -6,7 +6,7 @@ export default function middleware(req: NextRequest) {
   const sessionCookie = req.cookies.get("gmail_smtp_session")?.value;
   const isLoggedIn = Boolean(sessionCookie);
 
-  if (pathname === "/login") {
+  if (pathname === "/login" || pathname === "/register") {
     if (isLoggedIn) {
       return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
     }

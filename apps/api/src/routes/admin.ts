@@ -46,6 +46,11 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     toEmail: z.string().email(),
     subject: z.string().min(1).max(250).optional()
   });
+  const registerSchema = z.object({
+    tenantName: z.string().min(2).max(120),
+    email: z.string().email(),
+    password: z.string().min(8).max(128)
+  });
 
   app.post("/admin/v1/auth/login", async (request, reply) => {
     const body = request.body as {
@@ -106,6 +111,59 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         email: user.email,
         role: user.role,
         tenantId: user.tenantId
+      },
+      csrfToken
+    });
+  });
+
+  app.post("/admin/v1/auth/register", async (request, reply) => {
+    const body = registerSchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.badRequest("invalid registration payload");
+    }
+
+    const existing = await prisma.user.findFirst({
+      where: { email: body.data.email }
+    });
+    if (existing) {
+      return reply.conflict("user already exists");
+    }
+
+    const passwordHash = await bcrypt.hash(body.data.password, 12);
+    const tenant = await prisma.tenant.create({
+      data: {
+        name: body.data.tenantName.trim(),
+        users: {
+          create: {
+            email: body.data.email,
+            passwordHash,
+            role: "owner"
+          }
+        }
+      },
+      include: { users: true }
+    });
+
+    const user = tenant.users[0];
+    const csrfToken = setSessionCookies(request, reply, {
+      sub: user.id,
+      tenantId: tenant.id,
+      role: user.role
+    });
+
+    await writeAuditLog(request, {
+      tenantId: tenant.id,
+      actorType: "user",
+      actorId: user.id,
+      action: "admin.auth.register"
+    });
+
+    return reply.send({
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        tenantId: tenant.id
       },
       csrfToken
     });
@@ -948,6 +1006,8 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         return `${actorName} signed in`;
       case "admin.auth.logout":
         return `${actorName} signed out`;
+      case "admin.auth.register":
+        return `${actorName} registered`;
       case "admin.sender.create":
         return `${senderText} created by ${actorName}`;
       case "admin.sender.update":
