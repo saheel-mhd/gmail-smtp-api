@@ -124,8 +124,19 @@ model ApiKey {
   tenant             Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   permissions        ApiKeyPermission[]
   messages           Message[]
+  rateLimits         ApiKeyRateLimit[]
 
   @@index([tenantId, status])
+}
+
+model ApiKeyRateLimit {
+  apiKeyId     String
+  minuteBucket DateTime
+  count        Int      @default(0)
+  apiKey       ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@id([apiKeyId, minuteBucket])
+  @@index([minuteBucket])
 }
 
 model ApiKeyPermission {

@@ -15,7 +15,6 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   API_PORT: z.coerce.number().default(4000),
   DATABASE_URL: z.string().min(1),
-  REDIS_URL: z.string().min(1),
   JWT_SECRET: z.string().min(16),
   SESSION_COOKIE_NAME: z.string().default("gmail_smtp_session"),
   CSRF_COOKIE_NAME: z.string().default("gmail_smtp_csrf"),

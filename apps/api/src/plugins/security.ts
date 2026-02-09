@@ -1,12 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { prisma } from "../lib/prisma";
 import { verifyApiKey } from "../lib/api-key";
-import { redis } from "../lib/redis";
 import { env } from "../env";
 import { randomToken } from "../lib/crypto";
-
-const minuteWindow = 60;
-const dayWindow = 24 * 60 * 60;
 
 export async function authenticateApiKey(
   request: FastifyRequest,
@@ -124,33 +120,4 @@ export function setSessionCookies(
   });
 
   return csrfToken;
-}
-
-export async function enforceRateLimit(
-  key: string,
-  limit: number,
-  windowSec = minuteWindow
-): Promise<{ allowed: boolean; remaining: number }> {
-  const current = await redis.incr(key);
-  if (current === 1) {
-    await redis.expire(key, windowSec);
-  }
-  return {
-    allowed: current <= limit,
-    remaining: Math.max(limit - current, 0)
-  };
-}
-
-export async function enforceDailyQuota(
-  key: string,
-  limit: number
-): Promise<{ allowed: boolean; remaining: number }> {
-  const current = await redis.incr(key);
-  if (current === 1) {
-    await redis.expire(key, dayWindow);
-  }
-  return {
-    allowed: current <= limit,
-    remaining: Math.max(limit - current, 0)
-  };
 }

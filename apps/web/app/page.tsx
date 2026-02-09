@@ -19,9 +19,9 @@ export default function HomePage() {
   return (
     <main className="container">
       <section className="panel" style={{ marginBottom: 16 }}>
-        <h1>Gmail SMTP API</h1>
+        <h1>YeetMail</h1>
         <p className="muted">
-          Queue-backed send API with multi-tenant sender controls, API-key scopes, and audit logs.
+          Direct send API with multi-tenant sender controls, API-key scopes, and audit logs.
         </p>
         <Link className="btn" href="/dashboard">
           Open Dashboard

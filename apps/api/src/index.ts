@@ -11,8 +11,6 @@ import { healthRoutes } from "./routes/health";
 import { publicRoutes } from "./routes/public";
 import { adminRoutes } from "./routes/admin";
 import { prisma } from "./lib/prisma";
-import { redis } from "./lib/redis";
-import { closeSendQueue } from "./queue";
 
 export function buildApp() {
   const app = Fastify({
@@ -33,20 +31,12 @@ export function buildApp() {
   app.register(adminRoutes);
 
   app.addHook("onClose", async () => {
-    await closeSendQueue();
     try {
       await writeSystemEvent("system.api.stopped");
     } catch (error) {
       app.log.warn({ err: error }, "failed to write api stopped system log");
     }
     await prisma.$disconnect();
-    try {
-      if (redis.status !== "end") {
-        await redis.quit();
-      }
-    } catch {
-      redis.disconnect(false);
-    }
   });
 
   return app;

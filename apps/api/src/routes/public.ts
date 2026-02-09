@@ -2,12 +2,18 @@ import { FastifyInstance } from "fastify";
 import { Prisma } from "../../generated/prisma/client";
 import { sendRequestSchema } from "@gmail-smtp/shared";
 import { prisma } from "../lib/prisma";
-import { authenticateApiKey, enforceDailyQuota, enforceRateLimit } from "../plugins/security";
+import { authenticateApiKey } from "../plugins/security";
 import { assertSafeHeaders } from "../lib/validation";
-import { getSendQueue } from "../queue";
 import { writeAuditLog } from "../plugins/audit";
 import { renderTemplate } from "../lib/template";
-import { redis } from "../lib/redis";
+import { decryptSecret } from "../lib/crypto";
+import { classifySendError, sendGmailMessage } from "../lib/smtp";
+import {
+  enforceApiKeyRateLimit,
+  releaseSenderDailyQuota,
+  reserveSenderDailyQuota,
+  reserveTenantDailyQuota
+} from "../lib/limits";
 
 export async function publicRoutes(app: FastifyInstance): Promise<void> {
   app.get(
@@ -91,6 +97,22 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
         where: {
           id: input.senderId,
           tenantId: actor.tenantId
+        },
+        select: {
+          id: true,
+          tenantId: true,
+          label: true,
+          gmailAddress: true,
+          encryptedAppPassword: true,
+          iv: true,
+          authTag: true,
+          keyVersion: true,
+          status: true,
+          perDayLimit: true,
+          sentTodayCount: true,
+          sentTodayResetAt: true,
+          errorStreak: true,
+          healthScore: true
         }
       });
 
@@ -103,30 +125,13 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
         return reply.badRequest("max 10 recipients allowed");
       }
 
-      const minuteKeyPerApi = `rl:api:${actor.apiKeyId}:${Math.floor(Date.now() / 60000)}`;
-      const dayKey = new Date().toISOString().slice(0, 10);
-      const dayKeyPerTenant = `quota:tenant:${actor.tenantId}:${dayKey}`;
-      const dayKeyPerSender = `quota:sender:${sender.id}:${dayKey}`;
-
-      const [apiRate, tenantDaily] = await Promise.all([
-        enforceRateLimit(minuteKeyPerApi, actor.rateLimitPerMinute),
-        enforceDailyQuota(dayKeyPerTenant, Math.max(sender.perDayLimit * 2, 5000))
-      ]);
+      const apiRate = await enforceApiKeyRateLimit(
+        actor.apiKeyId,
+        actor.rateLimitPerMinute
+      );
 
       if (!apiRate.allowed) {
         return reply.tooManyRequests("rate limit exceeded");
-      }
-      if (!tenantDaily.allowed) {
-        return reply.tooManyRequests("daily quota exceeded");
-      }
-      try {
-        const currentCount = await redis.get(dayKeyPerSender);
-        const sentToday = currentCount ? Number(currentCount) : 0;
-        if (Number.isFinite(sentToday) && sentToday >= sender.perDayLimit) {
-          return reply.tooManyRequests("sender daily limit reached");
-        }
-      } catch (error) {
-        request.log.warn({ err: error }, "failed to check sender daily quota");
       }
 
       try {
@@ -171,44 +176,148 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
           return reply.badRequest("one of text or html must be provided");
         }
 
-        const message = await prisma.message.create({
-          data: {
-            tenantId: actor.tenantId,
-            apiKeyId: actor.apiKeyId,
-            smtpAccountId: sender.id,
-            idempotencyKey: input.idempotencyKey,
+        const senderQuota = await reserveSenderDailyQuota(sender.id, sender.perDayLimit);
+        if (!senderQuota.allowed) {
+          return reply.tooManyRequests("sender daily limit reached");
+        }
+
+        const tenantDaily = await reserveTenantDailyQuota(
+          actor.tenantId,
+          Math.max(sender.perDayLimit * 2, 5000)
+        );
+        if (!tenantDaily.allowed) {
+          await releaseSenderDailyQuota(sender.id, senderQuota.dayStart);
+          return reply.tooManyRequests("daily quota exceeded");
+        }
+
+        let message;
+        try {
+          message = await prisma.message.create({
+            data: {
+              tenantId: actor.tenantId,
+              apiKeyId: actor.apiKeyId,
+              smtpAccountId: sender.id,
+              idempotencyKey: input.idempotencyKey,
+              to: input.to,
+              cc: input.cc,
+              bcc: input.bcc,
+              subject,
+              text,
+              html,
+              fromName: input.fromName,
+              replyTo: input.replyTo,
+              headers: input.headers ?? {},
+              status: "queued"
+            }
+          });
+        } catch (error) {
+          if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002"
+          ) {
+            await releaseSenderDailyQuota(sender.id, senderQuota.dayStart);
+            const existing = await prisma.message.findFirst({
+              where: {
+                apiKeyId: actor.apiKeyId,
+                idempotencyKey: input.idempotencyKey
+              },
+              select: {
+                id: true,
+                status: true
+              }
+            });
+            if (existing) {
+              return reply.code(200).send({
+                messageId: existing.id,
+                status: existing.status,
+                idempotentReplay: true
+              });
+            }
+          }
+          await releaseSenderDailyQuota(sender.id, senderQuota.dayStart);
+          throw error;
+        }
+
+        let finalStatus: "sent" | "failed" = "sent";
+        try {
+          await prisma.message.update({
+            where: { id: message.id },
+            data: { status: "sending", attempts: { increment: 1 } }
+          });
+
+          const appPassword = decryptSecret({
+            encrypted: sender.encryptedAppPassword,
+            iv: sender.iv,
+            authTag: sender.authTag,
+            keyVersion: sender.keyVersion
+          });
+
+          await sendGmailMessage({
+            gmailAddress: sender.gmailAddress,
+            appPassword,
+            fromName: input.fromName,
             to: input.to,
             cc: input.cc,
             bcc: input.bcc,
             subject,
-            text,
-            html,
-            fromName: input.fromName,
+            text: text ?? undefined,
+            html: html ?? undefined,
             replyTo: input.replyTo,
-            headers: input.headers ?? {},
-            status: "queued"
-          }
-        });
+            headers: input.headers ?? {}
+          });
 
-        try {
-          await getSendQueue().add(
-            "send-email",
-            { messageId: message.id },
-            { jobId: message.id }
-          );
+          await prisma.$transaction([
+            prisma.message.update({
+              where: { id: message.id },
+              data: {
+                status: "sent",
+                sentAt: new Date(),
+                lastError: null
+              }
+            }),
+            prisma.smtpAccount.update({
+              where: { id: sender.id },
+              data: {
+                lastSuccessAt: new Date(),
+                errorStreak: 0,
+                healthScore: {
+                  set: Math.min((sender.healthScore ?? 100) + 3, 100)
+                }
+              }
+            })
+          ]);
+          finalStatus = "sent";
         } catch (error) {
-          await prisma.message.update({
-            where: { id: message.id },
-            data: {
-              status: "failed",
-              lastError: "queue unavailable"
-            }
-          });
-          request.log.error({ err: error }, "failed to enqueue public message");
-          return reply.code(503).send({
-            error: "queue_unavailable",
-            message: "Redis queue is unavailable. Start Redis and worker, then retry."
-          });
+          await releaseSenderDailyQuota(sender.id, senderQuota.dayStart);
+
+          const errorType = classifySendError(error);
+          const lastError = (error as Error).message;
+
+          await prisma.$transaction([
+            prisma.smtpAccount.update({
+              where: { id: sender.id },
+              data: {
+                lastErrorAt: new Date(),
+                errorStreak: { increment: 1 },
+                healthScore: {
+                  set: Math.max((sender.healthScore ?? 100) - 15, 0)
+                },
+                status:
+                  errorType === "auth" && sender.errorStreak + 1 >= 3
+                    ? "needs_attention"
+                    : undefined
+              }
+            }),
+            prisma.message.update({
+              where: { id: message.id },
+              data: {
+                status: "failed",
+                lastError
+              }
+            })
+          ]);
+          request.log.error({ err: error }, "failed to send message");
+          finalStatus = "failed";
         }
 
         await writeAuditLog(request, {
@@ -221,33 +330,11 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
 
         return reply.code(202).send({
           messageId: message.id,
-          status: "queued"
+          status: finalStatus
         });
       } catch (error) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === "P2002"
-        ) {
-          const existing = await prisma.message.findFirst({
-            where: {
-              apiKeyId: actor.apiKeyId,
-              idempotencyKey: input.idempotencyKey
-            },
-            select: {
-              id: true,
-              status: true
-            }
-          });
-          if (existing) {
-            return reply.code(200).send({
-              messageId: existing.id,
-              status: existing.status,
-              idempotentReplay: true
-            });
-          }
-        }
-        request.log.error({ err: error }, "failed to enqueue message");
-        return reply.internalServerError("failed to queue message");
+        request.log.error({ err: error }, "failed to send message");
+        return reply.internalServerError("failed to send message");
       }
     }
   );

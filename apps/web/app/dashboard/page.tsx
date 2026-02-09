@@ -2,7 +2,7 @@ export default function DashboardHomePage() {
   return (
     <main className="container">
       <section className="panel">
-        <h1>Gmail SMTP Admin</h1>
+        <h1>YeetMail Admin</h1>
         <p className="muted">
           This dashboard is where you configure trusted senders, generate API keys, and monitor delivery activity.
         </p>
@@ -13,8 +13,8 @@ export default function DashboardHomePage() {
           <div className="panel" style={{ borderRadius: 12 }}>
             <h2 style={{ marginTop: 0 }}>How it works</h2>
             <p className="muted">
-              Your application calls the API with a valid key. We validate the request, queue it, and the worker
-              sends through your approved Gmail SMTP sender.
+              Your application calls the API with a valid key. We validate the request and send through your
+              approved Gmail sender.
             </p>
             <ul>
               <li>Create or confirm your company profile.</li>

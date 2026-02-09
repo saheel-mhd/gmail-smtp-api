@@ -5,8 +5,8 @@ import { TopLoader } from "../components/ui/top-loader";
 import { PageTransition } from "../components/page-transition";
 
 export const metadata: Metadata = {
-  title: "Gmail SMTP API",
-  description: "Fast queue-backed Gmail SMTP API"
+  title: "YeetMail",
+  description: "Fast direct-send Gmail SMTP platform"
 };
 
 export default function RootLayout({

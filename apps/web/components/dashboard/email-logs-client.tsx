@@ -49,7 +49,7 @@ export function EmailLogsClient({
     <main className="container">
       <section className="panel">
         <h1>Email Logs</h1>
-        <p className="muted">Status report for sent, queued, and failed messages.</p>
+        <p className="muted">Status report for sent, sending, and failed messages.</p>
       </section>
       <section style={{ marginTop: 12 }}>
         <button className="btn secondary" type="button" onClick={() => void load()}>

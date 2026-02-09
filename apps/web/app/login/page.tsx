@@ -49,7 +49,7 @@ export default function LoginPage() {
       style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}
     >
       <div className="panel" style={{ width: "100%", maxWidth: 540 }}>
-        <h1>GMAIL SMTP API GENERATOR</h1>
+        <h1>YeetMail</h1>
         <p className="muted">Sign in to continue.</p>
         <form onSubmit={onSubmit} className="grid" style={{ marginTop: 12 }}>
           <label>

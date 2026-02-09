@@ -6,12 +6,12 @@ export default function DocsPage() {
       <AppHeader />
       <main className="container">
         <section className="panel docs-hero doc-reveal">
-          <div className="badge green docs-pill">Gmail SMTP Platform</div>
+          <div className="badge green docs-pill">YeetMail Platform</div>
           <div className="docs-hero-grid">
             <div>
-              <h1>Gmail SMTP API Documentation</h1>
+              <h1>YeetMail Documentation</h1>
               <p className="muted">
-                A complete, operator‑friendly guide to running and integrating the Gmail SMTP
+                A complete, operator-friendly guide to running and integrating the YeetMail
                 platform. Learn the architecture, UI modules, API contracts, limits, and
                 operational behavior in one place.
               </p>
@@ -24,7 +24,7 @@ export default function DocsPage() {
               <div className="docs-kpi">
                 <div>
                   <div className="docs-kpi-label">Delivery Flow</div>
-                  <div className="docs-kpi-value">API → Queue → Worker</div>
+                  <div className="docs-kpi-value">API -> Gmail SMTP -> Logs</div>
                 </div>
                 <div>
                   <div className="docs-kpi-label">Auth</div>
@@ -32,11 +32,11 @@ export default function DocsPage() {
                 </div>
                 <div>
                   <div className="docs-kpi-label">Limits</div>
-                  <div className="docs-kpi-value">Per‑Minute + Per‑Day</div>
+                  <div className="docs-kpi-value">Per-Minute + Per-Day</div>
                 </div>
               </div>
               <div className="docs-hero-note">
-                Built for reliable Gmail delivery, with auditability and clear monitoring.
+                Built for reliable Gmail delivery without extra infrastructure.
               </div>
             </div>
           </div>
@@ -67,22 +67,21 @@ export default function DocsPage() {
                 <span className="badge">Setup</span>
               </div>
               <p className="muted">
-                Run the full stack locally: Web UI, API server, Worker, Postgres, Redis.
+                Run the full stack locally: Web UI, API server, Postgres.
               </p>
               <ol className="docs-list">
                 <li>Install dependencies: <code>npm install</code></li>
-                <li>Configure env: update <code>.env</code> with Postgres and Redis URLs.</li>
+                <li>Configure env: update <code>.env</code> with your Postgres URL.</li>
                 <li>Run migrations: <code>npx prisma migrate dev --schema apps/api/prisma/schema.prisma</code></li>
                 <li>Start services (separate terminals):</li>
               </ol>
               <pre className="docs-code">
                 <code>{`npm run dev:api
-npm run dev:worker
 npm run dev:web`}</code>
               </pre>
               <div className="docs-callout">
                 <strong>Tip:</strong> <code>npm run dev</code> starts the web app only.
-                The API + worker must be running to send email.
+                The API must be running to send email.
               </div>
             </section>
 
@@ -101,16 +100,12 @@ npm run dev:web`}</code>
                   <div className="muted">Fastify REST API for admin + public sending endpoints.</div>
                 </div>
                 <div className="docs-card">
-                  <div className="docs-card-title">Worker</div>
-                  <div className="muted">BullMQ worker that sends via Gmail SMTP.</div>
-                </div>
-                <div className="docs-card">
                   <div className="docs-card-title">Postgres</div>
                   <div className="muted">Data store for senders, keys, templates, messages, logs.</div>
                 </div>
                 <div className="docs-card">
-                  <div className="docs-card-title">Redis</div>
-                  <div className="muted">Queue + rate‑limit counters and daily quotas.</div>
+                  <div className="docs-card-title">Direct Send</div>
+                  <div className="muted">API sends immediately via Gmail SMTP with DB-backed limits.</div>
                 </div>
               </div>
             </section>
@@ -127,7 +122,7 @@ npm run dev:web`}</code>
                 </div>
                 <div className="docs-card">
                   <div className="docs-card-title">API Keys</div>
-                  <div className="muted">Create keys, set per‑minute rate limits, and scope senders.</div>
+                  <div className="muted">Create keys, set per-minute rate limits, and scope senders.</div>
                 </div>
                 <div className="docs-card">
                   <div className="docs-card-title">Templates</div>
@@ -139,7 +134,7 @@ npm run dev:web`}</code>
                 </div>
                 <div className="docs-card">
                   <div className="docs-card-title">Action Logs</div>
-                  <div className="muted">Human‑readable audit trail of admin actions.</div>
+                  <div className="muted">Human-readable audit trail of admin actions.</div>
                 </div>
                 <div className="docs-card">
                   <div className="docs-card-title">Email Logs</div>
@@ -147,7 +142,7 @@ npm run dev:web`}</code>
                 </div>
                 <div className="docs-card">
                   <div className="docs-card-title">System Logs</div>
-                  <div className="muted">Worker/API lifecycle events and system‑level activity.</div>
+                  <div className="muted">API lifecycle events and system-level activity.</div>
                 </div>
                 <div className="docs-card">
                   <div className="docs-card-title">Account</div>
@@ -181,7 +176,7 @@ npm run dev:web`}</code>
               <div className="docs-grid">
                 <div className="docs-card">
                   <div className="docs-card-title">POST /v1/send</div>
-                  <div className="muted">Queue an email. Returns 202 with a messageId.</div>
+                  <div className="muted">Send an email. Returns 202 with a messageId.</div>
                 </div>
                 <div className="docs-card">
                   <div className="docs-card-title">GET /v1/senders</div>
@@ -217,7 +212,7 @@ Content-Type: application/json
                 <span className="badge">Content</span>
               </div>
               <p className="muted">
-                Templates support Mustache‑style variables in both subject and HTML.
+                Templates support Mustache-style variables in both subject and HTML.
               </p>
               <pre className="docs-code">
                 <code>{`<h1>Hello {{firstName}},</h1>
@@ -244,7 +239,7 @@ Content-Type: application/json
                 <span className="badge">Limits</span>
               </div>
               <ul className="docs-list">
-                <li>API key rate limit is per‑minute. Exceeding returns 429.</li>
+                <li>API key rate limit is per-minute. Exceeding returns 429.</li>
                 <li>Sender daily limit controls how many emails can be sent per sender each day.</li>
                 <li>Daily limits reset at UTC midnight.</li>
                 <li>Max 10 total recipients (to + cc + bcc) per send request.</li>
@@ -259,7 +254,7 @@ Content-Type: application/json
               <ul className="docs-list">
                 <li>Action Logs show admin activity like sender updates and key rotations.</li>
                 <li>Email Logs show delivery attempts and outcomes per message.</li>
-                <li>System Logs track worker/API lifecycle events and internal health.</li>
+                <li>System Logs track API lifecycle events and internal health.</li>
               </ul>
             </section>
 
@@ -293,12 +288,11 @@ Content-Type: application/json
               </div>
               <div className="docs-grid">
                 <div className="docs-card"><code>DATABASE_URL</code> - Postgres connection string.</div>
-                <div className="docs-card"><code>REDIS_URL</code> - Redis connection for queue + counters.</div>
                 <div className="docs-card"><code>API_PORT</code> - API server port.</div>
                 <div className="docs-card"><code>WEB_PORT</code> - Web server port.</div>
                 <div className="docs-card"><code>JWT_SECRET</code> - session token signing secret.</div>
                 <div className="docs-card"><code>DEFAULT_PER_DAY_LIMIT</code> - sender daily limit default.</div>
-                <div className="docs-card"><code>DEFAULT_API_KEY_RATE_LIMIT</code> - per‑minute limit default.</div>
+                <div className="docs-card"><code>DEFAULT_API_KEY_RATE_LIMIT</code> - per-minute limit default.</div>
                 <div className="docs-card"><code>APP_BASE_URL</code> - public web URL.</div>
                 <div className="docs-card"><code>API_BASE_URL</code> - public API URL.</div>
               </div>
@@ -313,7 +307,7 @@ Content-Type: application/json
                 <li>401 Unauthorized: missing session cookie or API key.</li>
                 <li>403 Forbidden: CSRF token mismatch or IP not allowed.</li>
                 <li>429 Too Many Requests: rate limit or daily quota exceeded.</li>
-                <li>503 Queue Unavailable: Redis/worker not running.</li>
+                <li>SMTP failure: check Gmail app password and sender status.</li>
                 <li>Template errors: missing variables or inactive template.</li>
               </ul>
             </section>

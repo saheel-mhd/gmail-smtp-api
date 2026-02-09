@@ -15,11 +15,11 @@ export default function LogsPage() {
         </Link>
         <Link className="panel" href="/dashboard/logs/email">
           <h3>Email Logs</h3>
-          <p className="muted">Review sent, queued, and failed email delivery events.</p>
+          <p className="muted">Review sent, sending, and failed email delivery events.</p>
         </Link>
         <Link className="panel" href="/dashboard/logs/system">
           <h3>System Logs</h3>
-          <p className="muted">Background jobs, queue events, and system activity.</p>
+          <p className="muted">API lifecycle events and system activity.</p>
         </Link>
       </section>
     </main>

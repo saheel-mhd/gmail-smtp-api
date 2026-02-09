@@ -38,7 +38,7 @@ export function TestApiClient({
   const [senderId, setSenderId] = useState(initialSenders[0]?.id ?? "");
   const [apiKeyId, setApiKeyId] = useState(initialApiKeys[0]?.id ?? "");
   const [toEmail, setToEmail] = useState("");
-  const [subject, setSubject] = useState("Test Email from Gmail SMTP API");
+  const [subject, setSubject] = useState("Test Email from YeetMail");
 
   async function loadData() {
     setLoading(true);
@@ -110,7 +110,7 @@ export function TestApiClient({
       toast({
         variant: "success",
         title: "Email sent successfully",
-        description: `${res.testedApi} queued message ${res.messageId}.`
+        description: `${res.testedApi} sent message ${res.messageId}.`
       });
     } catch (err) {
       toast({

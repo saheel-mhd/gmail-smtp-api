@@ -22,9 +22,9 @@ import {
 import { decryptSecret, encryptSecret } from "../lib/crypto";
 import { generateApiKey, hashApiKey } from "../lib/api-key";
 import { writeAuditLog } from "../plugins/audit";
-import { verifyGmailCredentials } from "../lib/smtp";
+import { classifySendError, sendGmailMessage, verifyGmailCredentials } from "../lib/smtp";
 import { env } from "../env";
-import { getSendQueue } from "../queue";
+import { releaseSenderDailyQuota, reserveSenderDailyQuota } from "../lib/limits";
 
 const mutatingPreHandlers = [
   authenticateUserSession,
@@ -186,42 +186,109 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       });
       if (!sender) return reply.badRequest("sender unavailable");
 
-      const message = await prisma.message.create({
-        data: {
-          tenantId: user.tenantId,
-          apiKeyId: apiKey.id,
-          smtpAccountId: sender.id,
-          idempotencyKey: `admin-test-${randomUUID()}`,
-          to: [parsed.data.toEmail],
-          cc: [],
-          bcc: [],
-          subject: parsed.data.subject ?? "Test Email from Gmail SMTP API",
-          text: `This is a test message for API key '${apiKey.name}' using /v1/send.`,
-          html: `<p>This is a test message for API key '<strong>${apiKey.name}</strong>' using <code>/v1/send</code>.</p>`,
-          status: "queued"
-        },
-        select: { id: true, status: true }
-      });
+      const senderQuota = await reserveSenderDailyQuota(sender.id, sender.perDayLimit);
+      if (!senderQuota.allowed) {
+        return reply.tooManyRequests("sender daily limit reached");
+      }
 
+      let message: { id: string; status: string };
       try {
-        await getSendQueue().add(
-          "send-email",
-          { messageId: message.id },
-          { jobId: message.id }
-        );
+        message = await prisma.message.create({
+          data: {
+            tenantId: user.tenantId,
+            apiKeyId: apiKey.id,
+            smtpAccountId: sender.id,
+            idempotencyKey: `admin-test-${randomUUID()}`,
+            to: [parsed.data.toEmail],
+            cc: [],
+            bcc: [],
+            subject: parsed.data.subject ?? "Test Email from YeetMail",
+            text: `This is a test message for API key '${apiKey.name}' using /v1/send.`,
+            html: `<p>This is a test message for API key '<strong>${apiKey.name}</strong>' using <code>/v1/send</code>.</p>`,
+            status: "queued"
+          },
+          select: { id: true, status: true }
+        });
       } catch (error) {
+        await releaseSenderDailyQuota(sender.id, senderQuota.dayStart);
+        throw error;
+      }
+
+      let finalStatus: "sent" | "failed" = "sent";
+      try {
         await prisma.message.update({
           where: { id: message.id },
-          data: {
-            status: "failed",
-            lastError: "queue unavailable"
-          }
+          data: { status: "sending", attempts: { increment: 1 } }
         });
-        request.log.error({ err: error }, "failed to enqueue admin test-api message");
-        return reply.code(503).send({
-          error: "queue_unavailable",
-          message: "Redis queue is unavailable. Start Redis and worker, then retry."
+
+        const appPassword = decryptSecret({
+          encrypted: sender.encryptedAppPassword,
+          iv: sender.iv,
+          authTag: sender.authTag,
+          keyVersion: sender.keyVersion
         });
+
+        await sendGmailMessage({
+          gmailAddress: sender.gmailAddress,
+          appPassword,
+          to: [parsed.data.toEmail],
+          subject: parsed.data.subject ?? "Test Email from YeetMail",
+          text: `This is a test message for API key '${apiKey.name}' using /v1/send.`,
+          html: `<p>This is a test message for API key '<strong>${apiKey.name}</strong>' using <code>/v1/send</code>.</p>`
+        });
+
+        await prisma.$transaction([
+          prisma.message.update({
+            where: { id: message.id },
+            data: {
+              status: "sent",
+              sentAt: new Date(),
+              lastError: null
+            }
+          }),
+          prisma.smtpAccount.update({
+            where: { id: sender.id },
+            data: {
+              lastSuccessAt: new Date(),
+              errorStreak: 0,
+              healthScore: {
+                set: Math.min((sender.healthScore ?? 100) + 3, 100)
+              }
+            }
+          })
+        ]);
+        finalStatus = "sent";
+      } catch (error) {
+        await releaseSenderDailyQuota(sender.id, senderQuota.dayStart);
+
+        const errorType = classifySendError(error);
+        const lastError = (error as Error).message;
+
+        await prisma.$transaction([
+          prisma.smtpAccount.update({
+            where: { id: sender.id },
+            data: {
+              lastErrorAt: new Date(),
+              errorStreak: { increment: 1 },
+              healthScore: {
+                set: Math.max((sender.healthScore ?? 100) - 15, 0)
+              },
+              status:
+                errorType === "auth" && sender.errorStreak + 1 >= 3
+                  ? "needs_attention"
+                  : undefined
+            }
+          }),
+          prisma.message.update({
+            where: { id: message.id },
+            data: {
+              status: "failed",
+              lastError
+            }
+          })
+        ]);
+        request.log.error({ err: error }, "failed to send admin test-api message");
+        finalStatus = "failed";
       }
 
       await writeAuditLog(request, {
@@ -239,7 +306,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(202).send({
         testedApi: "POST /v1/send",
         messageId: message.id,
-        status: message.status
+        status: finalStatus
       });
     }
   );
@@ -473,7 +540,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         await transporter.sendMail({
           from: sender.gmailAddress,
           to: body.to,
-          subject: "Gmail SMTP API test",
+          subject: "YeetMail test",
           text: "Sender verification test successful."
         });
       }
@@ -988,8 +1055,8 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         return `${templateText} deactivated by ${actorName}`;
       case "admin.test_api.send":
         return senderLabel
-          ? `Test email queued by ${actorName} using ${senderLabel}`
-          : `Test email queued by ${actorName}`;
+          ? `Test email sent by ${actorName} using ${senderLabel}`
+          : `Test email sent by ${actorName}`;
       default:
         return `Audit event recorded by ${actorName}`;
     }

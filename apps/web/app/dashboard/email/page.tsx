@@ -7,7 +7,7 @@ export default function DashboardEmailPage() {
           Configure email workflows that use your approved senders. Create templates, then send via the API.
         </p>
         <p>
-          Start with Sender Config to add a verified Gmail SMTP account, then generate an API key for your
+          Start with Sender Config to add a verified Gmail sender account, then generate an API key for your
           application.
         </p>
       </section>

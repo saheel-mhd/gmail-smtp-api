@@ -112,7 +112,7 @@ export function AppHeader() {
             ) : null}
           </div>
           <Link href="/dashboard" className="brand">
-            GMAIL SMTP API GENERATOR
+            YeetMail
           </Link>
           <span className="badge version-pill" title={`Build ${appVersion}`}>
             v{appVersion}

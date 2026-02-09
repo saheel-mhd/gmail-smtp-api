@@ -38,7 +38,7 @@ export function SystemLogsClient({
     <main className="container">
       <section className="panel">
         <h1>System Logs</h1>
-        <p className="muted">System-level events like background jobs and queue activity.</p>
+        <p className="muted">System-level events like API lifecycle and configuration changes.</p>
       </section>
       <section style={{ marginTop: 12 }}>
         <button className="btn secondary" type="button" onClick={() => void load()}>

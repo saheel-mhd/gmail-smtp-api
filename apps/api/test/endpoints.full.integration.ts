@@ -32,7 +32,7 @@ async function run() {
   const ready = (await app.inject({ method: "GET", url: "/health/ready" })) as any;
   if (ready.statusCode !== 200) {
     throw new Error(
-      "GET /health/ready failed. Ensure database and Redis are running before tests."
+      "GET /health/ready failed. Ensure database is running before tests."
     );
   }
 
