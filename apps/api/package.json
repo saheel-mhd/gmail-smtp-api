@@ -24,6 +24,9 @@
     "@fastify/sensible": "^6.0.2",
     "@gmail-smtp/shared": "0.1.0",
     "@prisma/client": "^7.3.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/nodemailer": "^6.4.17",
+    "@types/node": "^22.10.5",
     "bcryptjs": "^2.4.3",
     "bullmq": "^5.34.7",
     "dotenv": "^16.4.7",
@@ -37,9 +40,6 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/nodemailer": "^6.4.17",
-    "@types/node": "^22.10.5",
     "prisma": "^7.3.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
