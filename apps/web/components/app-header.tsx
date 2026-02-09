@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { browserApi } from "../lib/browser-api";
 
 function Icon({
@@ -38,7 +38,22 @@ type MenuItem = {
 export function AppHeader() {
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
   const appVersion = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
+
+  useEffect(() => {
+    let isMounted = true;
+    browserApi("/admin/v1/me")
+      .then(() => {
+        if (isMounted) setIsAuthed(true);
+      })
+      .catch(() => {
+        if (isMounted) setIsAuthed(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   async function onLogout() {
     setLoggingOut(true);
@@ -128,6 +143,12 @@ export function AppHeader() {
             <Icon path="M22 12a10 10 0 1 1-4-8M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01" />
             Support
           </Link>
+          {isAuthed === false ? (
+            <Link href="/login" className="nav-link">
+              <Icon path="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10M10 17l5-5-5-5M15 12H3" />
+              Login
+            </Link>
+          ) : null}
         </nav>
       </div>
     </header>

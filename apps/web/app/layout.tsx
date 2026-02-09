@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { ToastProvider } from "../components/ui/toast";
 import { TopLoader } from "../components/ui/top-loader";
@@ -16,8 +17,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ToastProvider>
-          <TopLoader />
-          <PageTransition>{children}</PageTransition>
+          <Suspense fallback={null}>
+            <TopLoader />
+          </Suspense>
+          <Suspense fallback={null}>
+            <PageTransition>{children}</PageTransition>
+          </Suspense>
         </ToastProvider>
       </body>
     </html>
