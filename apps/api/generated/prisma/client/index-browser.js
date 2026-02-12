@@ -246,11 +246,17 @@ exports.Prisma.ApiKeyPermissionScalarFieldEnum = {
   smtpAccountId: 'smtpAccountId'
 };
 
+exports.Prisma.ApiKeyDomainPermissionScalarFieldEnum = {
+  apiKeyId: 'apiKeyId',
+  domainSenderId: 'domainSenderId'
+};
+
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
   apiKeyId: 'apiKeyId',
   smtpAccountId: 'smtpAccountId',
+  domainSenderId: 'domainSenderId',
   idempotencyKey: 'idempotencyKey',
   to: 'to',
   cc: 'cc',
@@ -377,6 +383,7 @@ exports.Prisma.ModelName = {
   DomainSender: 'DomainSender',
   ApiKey: 'ApiKey',
   ApiKeyPermission: 'ApiKeyPermission',
+  ApiKeyDomainPermission: 'ApiKeyDomainPermission',
   Message: 'Message',
   Template: 'Template',
   AuditLog: 'AuditLog'

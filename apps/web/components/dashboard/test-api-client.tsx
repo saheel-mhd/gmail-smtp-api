@@ -17,6 +17,7 @@ export type ApiKeyRow = {
   name: string;
   status: "active" | "revoked";
   smtpAccountIds: string[];
+  domainSenderIds: string[];
 };
 
 export function TestApiClient({
@@ -49,9 +50,7 @@ export function TestApiClient({
         browserApi<{ data: Sender[] }>("/admin/v1/senders"),
         browserApi<{ data: ApiKeyRow[] }>("/admin/v1/api-keys")
       ]);
-      const activeSenders = senderRes.data.filter(
-        (s) => s.status === "active" && s.type === "gmail"
-      );
+      const activeSenders = senderRes.data.filter((s) => s.status === "active");
       const activeKeys = keyRes.data.filter((k) => k.status === "active");
       setSenders(activeSenders);
       setApiKeys(activeKeys);
@@ -72,7 +71,10 @@ export function TestApiClient({
 
   const filteredApiKeys = useMemo(() => {
     if (!senderId) return apiKeys;
-    return apiKeys.filter((key) => key.smtpAccountIds.includes(senderId));
+    return apiKeys.filter(
+      (key) =>
+        key.smtpAccountIds.includes(senderId) || key.domainSenderIds.includes(senderId)
+    );
   }, [apiKeys, senderId]);
 
   useEffect(() => {
@@ -158,7 +160,7 @@ export function TestApiClient({
                 <option value="">Select sender</option>
                 {senders.map((sender) => (
                   <option value={sender.id} key={sender.id}>
-                    {sender.label} ({sender.emailAddress})
+                    {sender.label} ({sender.emailAddress}) {sender.type === "domain" ? "[domain]" : "[gmail]"}
                   </option>
                 ))}
               </select>

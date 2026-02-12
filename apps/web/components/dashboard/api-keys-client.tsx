@@ -21,6 +21,7 @@ export type ApiKeyRow = {
   status: "active" | "revoked";
   rateLimitPerMinute: number;
   smtpAccountIds: string[];
+  domainSenderIds: string[];
 };
 
 export function ApiKeysClient({
@@ -42,11 +43,7 @@ export function ApiKeysClient({
   const { toast } = useToast();
 
   const senderEmailById = useMemo(() => {
-    return new Map(
-      senders
-        .filter((sender) => sender.type === "gmail")
-        .map((sender) => [sender.id, sender.emailAddress])
-    );
+    return new Map(senders.map((sender) => [sender.id, sender.emailAddress]));
   }, [senders]);
 
   async function loadData() {
@@ -58,7 +55,7 @@ export function ApiKeysClient({
         browserApi<{ data: Sender[] }>("/admin/v1/senders")
       ]);
       setKeys(keyResponse.data);
-      setSenders(senderResponse.data.filter((sender) => sender.type === "gmail"));
+      setSenders(senderResponse.data);
     } catch (err) {
       const message = (err as Error).message || "Failed to load data";
       setError(message);
@@ -231,7 +228,7 @@ export function ApiKeysClient({
                 : keys
                     .filter((key) => (hideRevoked ? key.status !== "revoked" : true))
                     .map((key) => {
-                      const scopedSenders = key.smtpAccountIds
+                      const scopedSenders = [...key.smtpAccountIds, ...key.domainSenderIds]
                         .map((id) => senderEmailById.get(id))
                         .filter(Boolean)
                         .join(", ");

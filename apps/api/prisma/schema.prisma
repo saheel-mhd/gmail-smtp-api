@@ -194,6 +194,8 @@ model DomainSender {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  messages Message[]
+  permissions ApiKeyDomainPermission[]
 
   @@index([tenantId])
   @@unique([tenantId, emailAddress])
@@ -212,6 +214,7 @@ model ApiKey {
   allowedIps         Json?
   tenant             Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   permissions        ApiKeyPermission[]
+  domainPermissions  ApiKeyDomainPermission[]
   messages           Message[]
 
   @@index([tenantId, status])
@@ -226,11 +229,21 @@ model ApiKeyPermission {
   @@id([apiKeyId, smtpAccountId])
 }
 
+model ApiKeyDomainPermission {
+  apiKeyId       String
+  domainSenderId String
+  apiKey         ApiKey       @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  domainSender   DomainSender @relation(fields: [domainSenderId], references: [id], onDelete: Cascade)
+
+  @@id([apiKeyId, domainSenderId])
+}
+
 model Message {
   id             String        @id @default(cuid())
   tenantId       String
   apiKeyId       String
-  smtpAccountId  String
+  smtpAccountId  String?
+  domainSenderId String?
   idempotencyKey String
   to             Json
   cc             Json
@@ -249,7 +262,8 @@ model Message {
   sentAt         DateTime?
   tenant         Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   apiKey         ApiKey        @relation(fields: [apiKeyId], references: [id], onDelete: Restrict)
-  smtpAccount    SmtpAccount   @relation(fields: [smtpAccountId], references: [id], onDelete: Restrict)
+  smtpAccount    SmtpAccount?  @relation(fields: [smtpAccountId], references: [id], onDelete: Restrict)
+  domainSender   DomainSender? @relation(fields: [domainSenderId], references: [id], onDelete: Restrict)
 
   @@unique([apiKeyId, idempotencyKey])
   @@index([tenantId, createdAt])

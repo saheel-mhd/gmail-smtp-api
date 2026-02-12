@@ -35,6 +35,7 @@ type VerifyResult = {
     spfOk: boolean;
     cnameOk: boolean;
     mxOk: boolean;
+    mxCnameOk: boolean;
   };
 };
 
@@ -86,6 +87,9 @@ export default function DomainsPage() {
   const [activeDomain, setActiveDomain] = useState<Domain | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [smtpForm, setSmtpForm] = useState(DEFAULT_SMTP_FORM);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingForm, setEditingForm] = useState(DEFAULT_SMTP_FORM);
+  const [savingId, setSavingId] = useState<string | null>(null);
 
   function isRecordOk(domain: Domain, key: keyof VerifyResult["checks"]): boolean {
     const checks = verifyResult[domain.id];
@@ -165,6 +169,33 @@ export default function DomainsPage() {
       setError((err as Error).message || "Verification failed.");
     } finally {
       setVerifyingId((current) => (current === domainId ? null : current));
+    }
+  }
+
+  async function onSaveDomain(domain: Domain) {
+    if (!editingForm.smtpHost.trim()) {
+      setError("SMTP host is required.");
+      return;
+    }
+    setError("");
+    setSavingId(domain.id);
+    try {
+      await browserApi<{ data: Domain }>(`/admin/v1/domains/${domain.id}`, {
+        method: "PATCH",
+        csrf: true,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          smtpHost: editingForm.smtpHost,
+          smtpPort: editingForm.smtpPort,
+          smtpSecure: editingForm.smtpSecure
+        })
+      });
+      setEditingId(null);
+      await loadDomains();
+    } catch (err) {
+      setError((err as Error).message || "Failed to update domain.");
+    } finally {
+      setSavingId((current) => (current === domain.id ? null : current));
     }
   }
 
@@ -263,14 +294,95 @@ export default function DomainsPage() {
                     </span>
                   </div>
                 </div>
-                <button
-                  className="btn secondary"
-                  type="button"
-                  onClick={() => setActiveDomain(domain)}
-                >
-                  Records
-                </button>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <button
+                    className="btn secondary"
+                    type="button"
+                    onClick={() => setActiveDomain(domain)}
+                  >
+                    Records
+                  </button>
+                  <button
+                    className="btn secondary"
+                    type="button"
+                    onClick={() => {
+                      setEditingId(domain.id);
+                      setEditingForm({
+                        smtpHost: domain.smtpHost ?? "",
+                        smtpPort: domain.smtpPort,
+                        smtpSecure: domain.smtpSecure
+                      });
+                    }}
+                  >
+                    Edit
+                  </button>
+                </div>
               </div>
+              {editingId === domain.id ? (
+                <div className="domain-edit" style={{ marginTop: 12 }}>
+                  <div className="grid">
+                    <label>
+                      SMTP Host
+                      <input
+                        value={editingForm.smtpHost}
+                        onChange={(e) =>
+                          setEditingForm((prev) => ({ ...prev, smtpHost: e.target.value }))
+                        }
+                        placeholder="smtp.company.com"
+                        required
+                      />
+                    </label>
+                    <label>
+                      SMTP Port
+                      <input
+                        type="number"
+                        min={1}
+                        value={editingForm.smtpPort}
+                        onChange={(e) =>
+                          setEditingForm((prev) => ({
+                            ...prev,
+                            smtpPort: Number(e.target.value)
+                          }))
+                        }
+                        required
+                      />
+                    </label>
+                    <label className="switch" style={{ marginTop: 4 }}>
+                      <input
+                        type="checkbox"
+                        className="switch-input"
+                        checked={editingForm.smtpSecure}
+                        onChange={(e) =>
+                          setEditingForm((prev) => ({
+                            ...prev,
+                            smtpSecure: e.target.checked
+                          }))
+                        }
+                      />
+                      <span className="switch-track" aria-hidden="true" />
+                      <span className="switch-label">Use SSL/TLS</span>
+                    </label>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <button
+                        className="btn"
+                        type="button"
+                        onClick={() => void onSaveDomain(domain)}
+                        disabled={savingId === domain.id}
+                      >
+                        {savingId === domain.id ? "Saving..." : "Save"}
+                      </button>
+                      <button
+                        className="btn secondary"
+                        type="button"
+                        onClick={() => setEditingId(null)}
+                        disabled={savingId === domain.id}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               <div>
                 <p className="muted">Sender emails in this domain</p>
                 {domain.senders.length === 0 ? (
@@ -351,6 +463,22 @@ export default function DomainsPage() {
                 {hasVerification(activeDomain) ? (
                   <span className={`record-status ${isRecordOk(activeDomain, "mxOk") ? "ok" : "bad"}`}>
                     <StatusIcon ok={isRecordOk(activeDomain, "mxOk")} />
+                  </span>
+                ) : null}
+              </div>
+              <div className="record-row">
+                <div className="record-info">
+                  <strong>MX Alias (CNAME)</strong>
+                  <div className="muted">mx.{activeDomain.domain}</div>
+                  <div>{activeDomain.mxHost}</div>
+                </div>
+                {hasVerification(activeDomain) ? (
+                  <span
+                    className={`record-status ${
+                      isRecordOk(activeDomain, "mxCnameOk") ? "ok" : "bad"
+                    }`}
+                  >
+                    <StatusIcon ok={isRecordOk(activeDomain, "mxCnameOk")} />
                   </span>
                 ) : null}
               </div>

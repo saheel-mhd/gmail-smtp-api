@@ -9,6 +9,7 @@ export const recipientSchema = z.string().email().max(320);
 
 export const sendRequestSchema = z.object({
   senderId: z.string().min(1),
+  senderType: z.enum(["gmail", "domain"]).optional(),
   idempotencyKey: z.string().min(8).max(120),
   to: z.array(recipientSchema).min(1).max(10),
   cc: z.array(recipientSchema).max(10).optional().default([]),
@@ -81,12 +82,18 @@ export const patchSenderSchema = z.object({
   perDayLimit: z.number().int().positive().max(1000000).optional()
 });
 
-export const createApiKeySchema = z.object({
-  name: z.string().min(1).max(80),
-  smtpAccountIds: z.array(z.string().min(1)).min(1),
-  rateLimitPerMinute: z.number().int().positive().max(10000).optional(),
-  allowedIps: z.array(z.string().max(64)).optional().default([])
-});
+export const createApiKeySchema = z
+  .object({
+    name: z.string().min(1).max(80),
+    smtpAccountIds: z.array(z.string().min(1)).optional().default([]),
+    domainSenderIds: z.array(z.string().min(1)).optional().default([]),
+    rateLimitPerMinute: z.number().int().positive().max(10000).optional(),
+    allowedIps: z.array(z.string().max(64)).optional().default([])
+  })
+  .refine(
+    (data) => data.smtpAccountIds.length > 0 || data.domainSenderIds.length > 0,
+    { message: "at least one sender must be selected" }
+  );
 
 export type SendRequest = z.infer<typeof sendRequestSchema>;
 export type CreateSenderInput = z.infer<typeof createSenderSchema>;

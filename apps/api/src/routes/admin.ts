@@ -6,20 +6,9 @@ import bcrypt from "bcryptjs";
 import { authenticator } from "otplib";
 import nodemailer from "nodemailer";
 import { z } from "zod";
-import {
-  createApiKeySchema,
-  createSenderSchema,
-  createTemplateSchema,
-  patchSenderSchema,
-  patchTemplateSchema
-} from "@gmail-smtp/shared";
+import { createApiKeySchema, createSenderSchema, createTemplateSchema, patchSenderSchema, patchTemplateSchema } from "@gmail-smtp/shared";
 import { prisma } from "../lib/prisma";
-import {
-  authenticateUserSession,
-  enforceCsrf,
-  requireRole,
-  setSessionCookies
-} from "../plugins/security";
+import { authenticateUserSession, enforceCsrf, requireRole, setSessionCookies } from "../plugins/security";
 import { decryptSecret, encryptSecret } from "../lib/crypto";
 import { generateApiKey, hashApiKey } from "../lib/api-key";
 import { writeAuditLog } from "../plugins/audit";
@@ -69,6 +58,11 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     smtpHost: z.string().min(3).max(255).optional(),
     smtpPort: z.number().int().min(1).max(65535).optional(),
     smtpSecure: z.boolean().optional()
+  });
+  const patchDomainSchema = z.object({
+    smtpHost: z.string().min(3).max(255),
+    smtpPort: z.number().int().min(1).max(65535),
+    smtpSecure: z.boolean()
   });
 
   const normalizeTxt = (rows: string[][]) =>
@@ -353,13 +347,23 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           status: true
         }
       });
-      const sentCounts = await prisma.message.groupBy({
-        by: ["smtpAccountId"],
-        where: { tenantId: user.tenantId, status: "sent" },
-        _count: { _all: true }
-      });
-      const sentCountMap = new Map<string, number>(
-        sentCounts.map((row) => [row.smtpAccountId, row._count._all])
+      const [smtpCounts, domainCounts] = await Promise.all([
+        prisma.message.groupBy({
+          by: ["smtpAccountId"],
+          where: { tenantId: user.tenantId, status: "sent", smtpAccountId: { not: null } },
+          _count: { _all: true }
+        }),
+        prisma.message.groupBy({
+          by: ["domainSenderId"],
+          where: { tenantId: user.tenantId, status: "sent", domainSenderId: { not: null } },
+          _count: { _all: true }
+        })
+      ]);
+      const smtpCountMap = new Map<string, number>(
+        smtpCounts.map((row) => [row.smtpAccountId ?? "", row._count._all])
+      );
+      const domainCountMap = new Map<string, number>(
+        domainCounts.map((row) => [row.domainSenderId ?? "", row._count._all])
       );
 
       const allSenders = [
@@ -368,14 +372,14 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           label: sender.label,
           emailAddress: sender.gmailAddress,
           status: sender.status,
-          sentCount: sentCountMap.get(sender.id) ?? 0
+          sentCount: smtpCountMap.get(sender.id) ?? 0
         })),
         ...domainSenders.map((sender) => ({
           id: sender.id,
           label: sender.label,
           emailAddress: sender.emailAddress,
           status: sender.status,
-          sentCount: 0
+          sentCount: domainCountMap.get(sender.id) ?? 0
         }))
       ];
 
@@ -465,6 +469,41 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     }
   );
 
+  app.patch(
+    "/admin/v1/domains/:id",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const parsed = patchDomainSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const updated = await prisma.domain.updateMany({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId },
+        data: {
+          smtpHost: parsed.data.smtpHost,
+          smtpPort: parsed.data.smtpPort,
+          smtpSecure: parsed.data.smtpSecure
+        }
+      });
+      if (!updated.count) return reply.notFound("domain not found");
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.domain.update",
+        metadata: { domainId: params.id }
+      });
+
+      const fresh = await prisma.domain.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId }
+      });
+
+      return reply.send({ data: fresh });
+    }
+  );
+
   app.post(
     "/admin/v1/domains/:id/verify",
     { preHandler: [...mutatingPreHandlers] },
@@ -476,11 +515,13 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       });
       if (!domain) return reply.notFound("domain not found");
 
-      const [txtRecords, spfRecords, cnameRecords, mxRecords] = await Promise.all([
+      const mxAliasHost = `mx.${domain.domain}`.toLowerCase();
+      const [txtRecords, spfRecords, cnameRecords, mxRecords, mxAliasCnames] = await Promise.all([
         resolveTxt(domain.txtHost),
         resolveTxt(domain.spfHost),
         resolveCname(domain.cnameHost),
-        resolveMx(domain.domain)
+        resolveMx(domain.domain),
+        resolveCname(mxAliasHost)
       ]);
 
       const txtOk = txtRecords.includes(domain.txtValue);
@@ -488,9 +529,14 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         (value) => value.includes("v=spf1") && value.includes(`include:${env.APP_DOMAIN}`)
       );
       const cnameOk = cnameRecords.includes(domain.cnameValue.toLowerCase());
-      const mxOk = mxRecords.some((row) => row.exchange === domain.mxHost.toLowerCase());
+      const mxExpected = domain.mxHost.toLowerCase();
+      const mxUsesAlias = mxRecords.some((row) => row.exchange === mxAliasHost);
+      const mxOk = mxRecords.some(
+        (row) => row.exchange === mxExpected || row.exchange === mxAliasHost
+      );
+      const mxCnameOk = mxUsesAlias ? mxAliasCnames.includes(mxExpected) : true;
 
-      const allOk = txtOk && spfOk && cnameOk && mxOk;
+      const allOk = txtOk && spfOk && cnameOk && mxOk && mxCnameOk;
       const updated = await prisma.domain.update({
         where: { id: domain.id },
         data: {
@@ -513,7 +559,8 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           txtOk,
           spfOk,
           cnameOk,
-          mxOk
+          mxOk,
+          mxCnameOk
         }
       });
     }
@@ -536,32 +583,49 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         include: {
           permissions: {
             select: { smtpAccountId: true }
+          },
+          domainPermissions: {
+            select: { domainSenderId: true }
           }
         }
       });
       if (!apiKey) return reply.notFound("api key not found");
 
-      const senderAllowed = apiKey.permissions.some(
+      const allowGmail = apiKey.permissions.some(
         (p) => p.smtpAccountId === parsed.data.senderId
       );
-      if (!senderAllowed) {
+      const allowDomain = apiKey.domainPermissions.some(
+        (p) => p.domainSenderId === parsed.data.senderId
+      );
+      if (!allowGmail && !allowDomain) {
         return reply.badRequest("selected api key cannot use this sender");
       }
 
-      const sender = await prisma.smtpAccount.findFirst({
-        where: {
-          id: parsed.data.senderId,
-          tenantId: user.tenantId,
-          status: "active"
-        }
-      });
+      const senderType = allowGmail ? "gmail" : "domain";
+      const sender = senderType === "gmail"
+        ? await prisma.smtpAccount.findFirst({
+            where: {
+              id: parsed.data.senderId,
+              tenantId: user.tenantId,
+              status: "active"
+            }
+          })
+        : await prisma.domainSender.findFirst({
+            where: {
+              id: parsed.data.senderId,
+              tenantId: user.tenantId,
+              status: "active",
+              domain: { userId: user.actorId }
+            }
+          });
       if (!sender) return reply.badRequest("sender unavailable");
 
       const message = await prisma.message.create({
         data: {
           tenantId: user.tenantId,
           apiKeyId: apiKey.id,
-          smtpAccountId: sender.id,
+          smtpAccountId: senderType === "gmail" ? sender.id : null,
+          domainSenderId: senderType === "domain" ? sender.id : null,
           idempotencyKey: `admin-test-${randomUUID()}`,
           to: [parsed.data.toEmail],
           cc: [],
@@ -1265,6 +1329,9 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         include: {
           permissions: {
             select: { smtpAccountId: true }
+          },
+          domainPermissions: {
+            select: { domainSenderId: true }
           }
         },
         orderBy: { createdAt: "desc" }
@@ -1279,7 +1346,8 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           revokedAt: key.revokedAt,
           rateLimitPerMinute: key.rateLimitPerMinute,
           allowedIps: key.allowedIps,
-          smtpAccountIds: key.permissions.map((p) => p.smtpAccountId)
+          smtpAccountIds: key.permissions.map((p) => p.smtpAccountId),
+          domainSenderIds: key.domainPermissions.map((p) => p.domainSenderId)
         }))
       });
     }
@@ -1303,6 +1371,17 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       if (senders.length !== parsed.data.smtpAccountIds.length) {
         return reply.badRequest("one or more sender ids are invalid");
       }
+      const domainSenders = await prisma.domainSender.findMany({
+        where: {
+          tenantId: user.tenantId,
+          id: { in: parsed.data.domainSenderIds },
+          domain: { userId: user.actorId }
+        },
+        select: { id: true }
+      });
+      if (domainSenders.length !== parsed.data.domainSenderIds.length) {
+        return reply.badRequest("one or more domain sender ids are invalid");
+      }
 
       const generated = generateApiKey();
       const keyHash = await hashApiKey(generated.token);
@@ -1316,13 +1395,28 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           status: "active",
           rateLimitPerMinute: parsed.data.rateLimitPerMinute ?? env.DEFAULT_API_KEY_RATE_LIMIT,
           allowedIps: parsed.data.allowedIps,
-          permissions: {
-            createMany: {
-              data: parsed.data.smtpAccountIds.map((id) => ({
-                smtpAccountId: id
-              }))
-            }
-          }
+          ...(parsed.data.smtpAccountIds.length > 0
+            ? {
+                permissions: {
+                  createMany: {
+                    data: parsed.data.smtpAccountIds.map((id) => ({
+                      smtpAccountId: id
+                    }))
+                  }
+                }
+              }
+            : {}),
+          ...(parsed.data.domainSenderIds.length > 0
+            ? {
+                domainPermissions: {
+                  createMany: {
+                    data: parsed.data.domainSenderIds.map((id) => ({
+                      domainSenderId: id
+                    }))
+                  }
+                }
+              }
+            : {})
         }
       });
 
@@ -1504,6 +1598,12 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
               label: true,
               gmailAddress: true
             }
+          },
+          domainSender: {
+            select: {
+              label: true,
+              emailAddress: true
+            }
           }
         }
       });
@@ -1513,7 +1613,11 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           ? message.to.filter((value) => typeof value === "string")
           : [];
         const senderLabel =
-          message.smtpAccount.label || message.smtpAccount.gmailAddress || "Sender";
+          message.smtpAccount?.label ||
+          message.smtpAccount?.gmailAddress ||
+          message.domainSender?.label ||
+          message.domainSender?.emailAddress ||
+          "Sender";
 
         return {
           status: message.status,

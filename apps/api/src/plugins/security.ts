@@ -22,7 +22,8 @@ export async function authenticateApiKey(
   const candidates = await prisma.apiKey.findMany({
     where: { prefix, status: "active" },
     include: {
-      permissions: { select: { smtpAccountId: true } }
+      permissions: { select: { smtpAccountId: true } },
+      domainPermissions: { select: { domainSenderId: true } }
     }
   });
 
@@ -43,6 +44,7 @@ export async function authenticateApiKey(
       apiKeyId: candidate.id,
       tenantId: candidate.tenantId,
       allowedSmtpAccountIds: candidate.permissions.map((p) => p.smtpAccountId),
+      allowedDomainSenderIds: candidate.domainPermissions.map((p) => p.domainSenderId),
       rateLimitPerMinute: candidate.rateLimitPerMinute,
       allowedIps
     };
