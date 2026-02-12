@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useToast } from "../ui/toast";
 import { browserApi } from "../../lib/browser-api";
 
@@ -20,42 +20,54 @@ export type ApiKeyRow = {
   domainSenderIds: string[];
 };
 
+export type TemplateRow = {
+  id: string;
+  name: string;
+  status: "active" | "disabled";
+};
+
 export function TestApiClient({
   initialSenders,
   initialApiKeys,
+  initialTemplates,
   initialError
 }: {
   initialSenders: Sender[];
   initialApiKeys: ApiKeyRow[];
+  initialTemplates: TemplateRow[];
   initialError?: string;
 }) {
   const [senders, setSenders] = useState<Sender[]>(initialSenders);
   const [apiKeys, setApiKeys] = useState<ApiKeyRow[]>(initialApiKeys);
+  const [templates, setTemplates] = useState<TemplateRow[]>(initialTemplates);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(initialError ?? "");
   const { toast } = useToast();
 
   const [apiToTest, setApiToTest] = useState("POST /v1/send");
-  const [senderId, setSenderId] = useState(initialSenders[0]?.id ?? "");
   const [apiKeyId, setApiKeyId] = useState(initialApiKeys[0]?.id ?? "");
   const [toEmail, setToEmail] = useState("");
   const [subject, setSubject] = useState("Test Email from Gmail SMTP API");
+  const [templateName, setTemplateName] = useState(initialTemplates[0]?.name ?? "");
 
   async function loadData() {
     setLoading(true);
     setError("");
     try {
-      const [senderRes, keyRes] = await Promise.all([
+      const [senderRes, keyRes, templateRes] = await Promise.all([
         browserApi<{ data: Sender[] }>("/admin/v1/senders"),
-        browserApi<{ data: ApiKeyRow[] }>("/admin/v1/api-keys")
+        browserApi<{ data: ApiKeyRow[] }>("/admin/v1/api-keys"),
+        browserApi<{ data: TemplateRow[] }>("/admin/v1/templates")
       ]);
       const activeSenders = senderRes.data.filter((s) => s.status === "active");
       const activeKeys = keyRes.data.filter((k) => k.status === "active");
+      const activeTemplates = templateRes.data.filter((t) => t.status === "active");
       setSenders(activeSenders);
       setApiKeys(activeKeys);
+      setTemplates(activeTemplates);
       if (!apiKeyId && activeKeys[0]) setApiKeyId(activeKeys[0].id);
-      if (!senderId && activeSenders[0]) setSenderId(activeSenders[0].id);
+      if (!templateName && activeTemplates[0]) setTemplateName(activeTemplates[0].name);
     } catch (err) {
       const message = (err as Error).message || "Failed to load test data";
       setError(message);
@@ -69,28 +81,37 @@ export function TestApiClient({
     }
   }
 
-  const filteredApiKeys = useMemo(() => {
-    if (!senderId) return apiKeys;
-    return apiKeys.filter(
-      (key) =>
-        key.smtpAccountIds.includes(senderId) || key.domainSenderIds.includes(senderId)
-    );
-  }, [apiKeys, senderId]);
+  const senderById = useMemo(() => {
+    return new Map(senders.map((sender) => [sender.id, sender]));
+  }, [senders]);
 
-  useEffect(() => {
-    if (!senderId) return;
-    if (apiKeyId && filteredApiKeys.some((key) => key.id === apiKeyId)) return;
-    setApiKeyId(filteredApiKeys[0]?.id ?? "");
-  }, [senderId, filteredApiKeys, apiKeyId]);
+  const selectedKey = useMemo(() => {
+    return apiKeys.find((key) => key.id === apiKeyId) ?? null;
+  }, [apiKeys, apiKeyId]);
+
+  const selectedSenderIds = selectedKey
+    ? [...selectedKey.smtpAccountIds, ...selectedKey.domainSenderIds]
+    : [];
+  const selectedSender =
+    selectedSenderIds.length === 1 ? senderById.get(selectedSenderIds[0]) ?? null : null;
+  const senderError = selectedKey
+    ? selectedSenderIds.length !== 1
+      ? "API key must be scoped to exactly one sender."
+      : !selectedSender
+      ? "Sender is unavailable or inactive."
+      : ""
+    : "";
+  const isTemplateSend = apiToTest === "POST /v1/send/:templateName";
+  const templateError = isTemplateSend && !templateName ? "Select a template." : "";
 
   const canSubmit = useMemo(() => {
     return (
-      apiToTest === "POST /v1/send" &&
       apiKeyId.length > 0 &&
-      senderId.length > 0 &&
-      toEmail.length > 3
+      toEmail.length > 3 &&
+      Boolean(selectedSender) &&
+      !templateError
     );
-  }, [apiToTest, apiKeyId, senderId, toEmail]);
+  }, [apiKeyId, toEmail, selectedSender, templateError]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -107,9 +128,9 @@ export function TestApiClient({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           apiKeyId,
-          senderId,
           toEmail,
-          subject
+          subject: isTemplateSend ? undefined : subject,
+          templateName: isTemplateSend ? templateName : undefined
         })
       });
       toast({
@@ -144,39 +165,60 @@ export function TestApiClient({
 
       <section className="panel" style={{ marginTop: 16 }}>
         {loading ? (
-          <p>Loading API keys and senders...</p>
+          <p>Loading API keys, senders, and templates...</p>
         ) : (
           <form onSubmit={onSubmit} className="grid">
             <label>
               API To Test
               <select value={apiToTest} onChange={(e) => setApiToTest(e.target.value)}>
                 <option value="POST /v1/send">POST /v1/send</option>
+                <option value="POST /v1/send/:templateName">POST /v1/send/:templateName</option>
               </select>
             </label>
 
             <label>
-              Sender
-              <select value={senderId} onChange={(e) => setSenderId(e.target.value)} required>
-                <option value="">Select sender</option>
-                {senders.map((sender) => (
-                  <option value={sender.id} key={sender.id}>
-                    {sender.label} ({sender.emailAddress}) {sender.type === "domain" ? "[domain]" : "[gmail]"}
-                  </option>
-                ))}
-              </select>
+              Sender (from API key)
+              <input
+                value={
+                  selectedSender
+                    ? `${selectedSender.label} (${selectedSender.emailAddress})`
+                    : selectedKey
+                    ? "Sender unavailable for this API key"
+                    : "Select an API key"
+                }
+                readOnly
+              />
             </label>
 
             <label>
               API Key
               <select value={apiKeyId} onChange={(e) => setApiKeyId(e.target.value)} required>
                 <option value="">Select API key</option>
-                {filteredApiKeys.map((key) => (
+                {apiKeys.map((key) => (
                   <option value={key.id} key={key.id}>
                     {key.name}
                   </option>
                 ))}
               </select>
             </label>
+
+            {isTemplateSend ? (
+              <label>
+                Template
+                <select
+                  value={templateName}
+                  onChange={(e) => setTemplateName(e.target.value)}
+                  required
+                >
+                  <option value="">Select template</option>
+                  {templates.map((template) => (
+                    <option value={template.name} key={template.id}>
+                      {template.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
 
             <label>
               Recipient Email
@@ -189,10 +231,12 @@ export function TestApiClient({
               />
             </label>
 
-            <label>
-              Subject
-              <input value={subject} onChange={(e) => setSubject(e.target.value)} required />
-            </label>
+            {apiToTest === "POST /v1/send" ? (
+              <label>
+                Subject
+                <input value={subject} onChange={(e) => setSubject(e.target.value)} required />
+              </label>
+            ) : null}
 
             <div>
               <button className="btn" type="submit" disabled={!canSubmit || submitting}>
@@ -207,6 +251,11 @@ export function TestApiClient({
                 Refresh Data
               </button>
             </div>
+            {senderError || templateError ? (
+              <p className="muted" style={{ marginTop: 6, color: "#9f1a1a" }}>
+                {senderError || templateError}
+              </p>
+            ) : null}
           </form>
         )}
       </section>

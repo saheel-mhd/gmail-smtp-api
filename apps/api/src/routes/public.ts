@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { Prisma } from "../../generated/prisma/client";
-import { sendRequestSchema } from "@gmail-smtp/shared";
+import { sendRequestSchema, templateSendSchema } from "@gmail-smtp/shared";
 import { prisma } from "../lib/prisma";
 import { authenticateApiKey, enforceDailyQuota, enforceRateLimit } from "../plugins/security";
 import { assertSafeHeaders } from "../lib/validation";
@@ -114,32 +114,41 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
       const usingTemplate = Boolean(input.templateId);
       assertSafeHeaders(input.headers ?? {});
 
-      const allowGmail = actor.allowedSmtpAccountIds.includes(input.senderId);
-      const allowDomain = actor.allowedDomainSenderIds.includes(input.senderId);
-      const senderType =
-        input.senderType ??
-        (allowGmail ? "gmail" : allowDomain ? "domain" : "gmail");
-      if (senderType === "gmail" && !allowGmail) {
-        return reply.forbidden("api key cannot use this sender");
+      const allowedSenders = [
+        ...actor.allowedSmtpAccountIds.map((id) => ({ id, type: "gmail" as const })),
+        ...actor.allowedDomainSenderIds.map((id) => ({ id, type: "domain" as const }))
+      ];
+      if (allowedSenders.length !== 1) {
+        return reply.badRequest("api key must be scoped to exactly one sender");
       }
-      if (senderType === "domain" && !allowDomain) {
-        return reply.forbidden("api key cannot use this sender");
-      }
-      if (senderType !== "gmail" && senderType !== "domain") {
-        return reply.badRequest("invalid sender type");
-      }
+      const senderRef = allowedSenders[0];
+      const senderType = senderRef.type;
 
-      if (senderType === "gmail") {
-        const sender = await prisma.smtpAccount.findFirst({
-          where: {
-            id: input.senderId,
-            tenantId: actor.tenantId
-          }
-        });
+      const sender =
+        senderType === "gmail"
+          ? await prisma.smtpAccount.findFirst({
+              where: {
+                id: senderRef.id,
+                tenantId: actor.tenantId
+              }
+            })
+          : await prisma.domainSender.findFirst({
+              where: {
+                id: senderRef.id,
+                tenantId: actor.tenantId
+              },
+              include: { domain: true }
+            });
 
-        if (!sender || sender.status !== "active") {
-          return reply.badRequest("sender is unavailable");
+      if (!sender || sender.status !== "active") {
+        return reply.badRequest("sender is unavailable");
+      }
+      if (senderType === "domain") {
+        const domainSender = sender as typeof sender & { domain?: { smtpHost: string | null } };
+        if (!domainSender.domain?.smtpHost) {
+          return reply.badRequest("domain smtp settings are missing");
         }
+      }
 
       const totalRecipients = input.to.length + input.cc.length + input.bcc.length;
       if (totalRecipients > 10) {
@@ -149,11 +158,11 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
       const minuteKeyPerApi = `rl:api:${actor.apiKeyId}:${Math.floor(Date.now() / 60000)}`;
       const dayKey = new Date().toISOString().slice(0, 10);
       const dayKeyPerTenant = `quota:tenant:${actor.tenantId}:${dayKey}`;
-        const dayKeyPerSender = `quota:sender:${sender.id}:${dayKey}`;
+      const dayKeyPerSender = `quota:sender:${sender.id}:${dayKey}`;
 
       const [apiRate, tenantDaily] = await Promise.all([
         enforceRateLimit(minuteKeyPerApi, actor.rateLimitPerMinute),
-          enforceDailyQuota(dayKeyPerTenant, Math.max(sender.perDayLimit * 2, 5000))
+        enforceDailyQuota(dayKeyPerTenant, Math.max(sender.perDayLimit * 2, 5000))
       ]);
 
       if (!apiRate.allowed) {
@@ -163,10 +172,10 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
         return reply.tooManyRequests("daily quota exceeded");
       }
       try {
-          const currentCount = await redis.get(dayKeyPerSender);
+        const currentCount = await redis.get(dayKeyPerSender);
         const sentToday = currentCount ? Number(currentCount) : 0;
         if (Number.isFinite(sentToday) && sentToday >= sender.perDayLimit) {
-            return reply.tooManyRequests("sender daily limit reached");
+          return reply.tooManyRequests("sender daily limit reached");
         }
       } catch (error) {
         request.log.warn({ err: error }, "failed to check sender daily quota");
@@ -218,8 +227,8 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
           data: {
             tenantId: actor.tenantId,
             apiKeyId: actor.apiKeyId,
-            smtpAccountId: sender.id,
-            domainSenderId: null,
+            smtpAccountId: senderType === "gmail" ? sender.id : null,
+            domainSenderId: senderType === "domain" ? sender.id : null,
             idempotencyKey: input.idempotencyKey,
             to: input.to,
             cc: input.cc,
@@ -293,23 +302,65 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
         request.log.error({ err: error }, "failed to enqueue message");
         return reply.internalServerError("failed to queue message");
       }
+    }
+  );
+
+  app.post(
+    "/v1/send/:templateName",
+    { preHandler: authenticateApiKey },
+    async (request, reply) => {
+      const actor = request.actor;
+      if (!actor || actor.actorType !== "api_key") {
+        return reply.unauthorized();
       }
 
-      const domainSender = await prisma.domainSender.findFirst({
-        where: {
-          id: input.senderId,
-          tenantId: actor.tenantId
-        },
-        include: {
-          domain: true
-        }
-      });
+      const params = request.params as { templateName: string };
+      const templateName = params.templateName?.toLowerCase();
+      if (!templateName || !/^[a-z0-9-]+$/.test(templateName)) {
+        return reply.badRequest("template name must be URL-safe (lowercase letters, numbers, hyphens)");
+      }
 
-      if (!domainSender || domainSender.status !== "active") {
+      const parsed = templateSendSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.badRequest(parsed.error.message);
+      }
+      const input = parsed.data;
+      assertSafeHeaders(input.headers ?? {});
+
+      const allowedSenders = [
+        ...actor.allowedSmtpAccountIds.map((id) => ({ id, type: "gmail" as const })),
+        ...actor.allowedDomainSenderIds.map((id) => ({ id, type: "domain" as const }))
+      ];
+      if (allowedSenders.length !== 1) {
+        return reply.badRequest("api key must be scoped to exactly one sender");
+      }
+      const senderRef = allowedSenders[0];
+      const senderType = senderRef.type;
+
+      const sender =
+        senderType === "gmail"
+          ? await prisma.smtpAccount.findFirst({
+              where: {
+                id: senderRef.id,
+                tenantId: actor.tenantId
+              }
+            })
+          : await prisma.domainSender.findFirst({
+              where: {
+                id: senderRef.id,
+                tenantId: actor.tenantId
+              },
+              include: { domain: true }
+            });
+
+      if (!sender || sender.status !== "active") {
         return reply.badRequest("sender is unavailable");
       }
-      if (!domainSender.domain.smtpHost) {
-        return reply.badRequest("domain smtp settings are missing");
+      if (senderType === "domain") {
+        const domainSender = sender as typeof sender & { domain?: { smtpHost: string | null } };
+        if (!domainSender.domain?.smtpHost) {
+          return reply.badRequest("domain smtp settings are missing");
+        }
       }
 
       const totalRecipients = input.to.length + input.cc.length + input.bcc.length;
@@ -320,11 +371,11 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
       const minuteKeyPerApi = `rl:api:${actor.apiKeyId}:${Math.floor(Date.now() / 60000)}`;
       const dayKey = new Date().toISOString().slice(0, 10);
       const dayKeyPerTenant = `quota:tenant:${actor.tenantId}:${dayKey}`;
-      const dayKeyPerSender = `quota:sender:${domainSender.id}:${dayKey}`;
+      const dayKeyPerSender = `quota:sender:${sender.id}:${dayKey}`;
 
       const [apiRate, tenantDaily] = await Promise.all([
         enforceRateLimit(minuteKeyPerApi, actor.rateLimitPerMinute),
-        enforceDailyQuota(dayKeyPerTenant, Math.max(domainSender.perDayLimit * 2, 5000))
+        enforceDailyQuota(dayKeyPerTenant, Math.max(sender.perDayLimit * 2, 5000))
       ]);
 
       if (!apiRate.allowed) {
@@ -336,7 +387,7 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
       try {
         const currentCount = await redis.get(dayKeyPerSender);
         const sentToday = currentCount ? Number(currentCount) : 0;
-        if (Number.isFinite(sentToday) && sentToday >= domainSender.perDayLimit) {
+        if (Number.isFinite(sentToday) && sentToday >= sender.perDayLimit) {
           return reply.tooManyRequests("sender daily limit reached");
         }
       } catch (error) {
@@ -344,53 +395,41 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
       }
 
       try {
-        let subject = input.subject ?? "";
-        let html = input.html;
-        let text = input.text;
-
-        if (usingTemplate) {
-          const template = await prisma.template.findFirst({
-            where: {
-              id: input.templateId,
-              tenantId: actor.tenantId,
-              status: "active"
-            }
-          });
-          if (!template) {
-            return reply.badRequest("template not found or inactive");
+        const template = await prisma.template.findFirst({
+          where: {
+            name: { equals: templateName, mode: "insensitive" },
+            tenantId: actor.tenantId,
+            status: "active"
           }
-
-          const variables = input.variables ?? {};
-          const subjectRendered = renderTemplate(template.subject, variables);
-          const htmlRendered = renderTemplate(template.html, variables);
-          const textRendered = template.text
-            ? renderTemplate(template.text, variables)
-            : null;
-
-          const missing = [
-            ...subjectRendered.missing,
-            ...htmlRendered.missing,
-            ...(textRendered?.missing ?? [])
-          ];
-          if (missing.length) {
-            return reply.badRequest(`missing template variables: ${missing.join(", ")}`);
-          }
-
-          subject = subjectRendered.value;
-          html = htmlRendered.value;
-          text = textRendered ? textRendered.value : undefined;
+        });
+        if (!template) {
+          return reply.badRequest("template not found or inactive");
         }
 
-        if (!text && !html) {
-          return reply.badRequest("one of text or html must be provided");
+        const variables = input.variables ?? {};
+        const subjectRendered = renderTemplate(template.subject, variables);
+        const htmlRendered = renderTemplate(template.html, variables);
+        const textRendered = template.text ? renderTemplate(template.text, variables) : null;
+
+        const missing = [
+          ...subjectRendered.missing,
+          ...htmlRendered.missing,
+          ...(textRendered?.missing ?? [])
+        ];
+        if (missing.length) {
+          return reply.badRequest(`missing template variables: ${missing.join(", ")}`);
         }
+
+        const subject = subjectRendered.value;
+        const html = htmlRendered.value;
+        const text = textRendered ? textRendered.value : undefined;
 
         const message = await prisma.message.create({
           data: {
             tenantId: actor.tenantId,
             apiKeyId: actor.apiKeyId,
-            smtpAccountId: null,
-            domainSenderId: domainSender.id,
+            smtpAccountId: senderType === "gmail" ? sender.id : null,
+            domainSenderId: senderType === "domain" ? sender.id : null,
             idempotencyKey: input.idempotencyKey,
             to: input.to,
             cc: input.cc,
@@ -419,7 +458,7 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
               lastError: "queue unavailable"
             }
           });
-          request.log.error({ err: error }, "failed to enqueue public message");
+          request.log.error({ err: error }, "failed to enqueue public template message");
           return reply.code(503).send({
             error: "queue_unavailable",
             message: "Redis queue is unavailable. Start Redis and worker, then retry."
@@ -431,7 +470,7 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
           actorType: "api_key",
           actorId: actor.apiKeyId,
           action: "public.message.queued",
-          metadata: { messageId: message.id, senderId: domainSender.id, senderType }
+          metadata: { messageId: message.id, senderId: sender.id, senderType }
         });
 
         return reply.code(202).send({
@@ -461,7 +500,7 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
             });
           }
         }
-        request.log.error({ err: error }, "failed to enqueue message");
+        request.log.error({ err: error }, "failed to enqueue template message");
         return reply.internalServerError("failed to queue message");
       }
     }

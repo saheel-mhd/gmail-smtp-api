@@ -204,16 +204,21 @@ async function run() {
       method: "POST",
       url: "/admin/v1/templates",
       headers: authHeaders,
-      payload: { name: "" }
+      payload: {
+        name: "Bad Name",
+        subject: "Invalid name",
+        html: "<p>Invalid name</p>"
+      }
     })) as any;
     assertStatus(createTemplateInvalid, 400, "POST /admin/v1/templates invalid");
 
+    const templateAName = "welcome-template";
     const createTemplateA = (await app.inject({
       method: "POST",
       url: "/admin/v1/templates",
       headers: authHeaders,
       payload: {
-        name: "Welcome Template",
+        name: templateAName,
         subject: "Welcome {{firstName}}",
         html: "<h1>Hello {{firstName}}</h1>",
         text: "Hello {{firstName}}"
@@ -222,12 +227,13 @@ async function run() {
     assertStatus(createTemplateA, 201, "POST /admin/v1/templates");
     const templateAId = createTemplateA.json().data.id as string;
 
+    const templateBName = "disabled-template";
     const createTemplateB = (await app.inject({
       method: "POST",
       url: "/admin/v1/templates",
       headers: authHeaders,
       payload: {
-        name: "Disabled Template",
+        name: templateBName,
         subject: "Disabled {{firstName}}",
         html: "<p>Disabled {{firstName}}</p>",
         text: "Disabled {{firstName}}"
@@ -351,26 +357,11 @@ async function run() {
     })) as any;
     assertStatus(sendInvalidBody, 400, "POST /v1/send invalid body");
 
-    const sendWrongSender = (await app.inject({
-      method: "POST",
-      url: "/v1/send",
-      headers: { authorization: `Bearer ${apiToken}` },
-      payload: {
-        senderId: "invalid-sender",
-        idempotencyKey: `bad-sender-${stamp}`,
-        to: ["recipient@example.com"],
-        subject: "Hello",
-        text: "Hello"
-      }
-    })) as any;
-    assertStatus(sendWrongSender, 403, "POST /v1/send wrong sender");
-
     const sendTooManyRecipients = (await app.inject({
       method: "POST",
       url: "/v1/send",
       headers: { authorization: `Bearer ${apiToken}` },
       payload: {
-        senderId: senderAId,
         idempotencyKey: `too-many-${stamp}`,
         to: Array.from({ length: 11 }).map((_, idx) => `person${idx}@example.com`),
         subject: "Hello",
@@ -384,7 +375,6 @@ async function run() {
       url: "/v1/send",
       headers: { authorization: `Bearer ${apiToken}` },
       payload: {
-        senderId: senderAId,
         idempotencyKey: `missing-vars-${stamp}`,
         to: ["recipient@example.com"],
         templateId: templateAId,
@@ -398,7 +388,6 @@ async function run() {
       url: "/v1/send",
       headers: { authorization: `Bearer ${apiToken}` },
       payload: {
-        senderId: senderAId,
         idempotencyKey: `template-ok-${stamp}`,
         to: ["recipient@example.com"],
         templateId: templateAId,
@@ -407,6 +396,18 @@ async function run() {
     })) as any;
     assertStatus(sendTemplateValid, 202, "POST /v1/send template");
     const messageId = sendTemplateValid.json().messageId as string;
+
+    const sendTemplateByName = (await app.inject({
+      method: "POST",
+      url: `/v1/send/${templateAName}`,
+      headers: { authorization: `Bearer ${apiToken}` },
+      payload: {
+        idempotencyKey: `template-name-${stamp}`,
+        to: ["recipient@example.com"],
+        variables: { firstName: "Tester" }
+      }
+    })) as any;
+    assertStatus(sendTemplateByName, 202, "POST /v1/send/:templateName");
 
     const messageMissingAuth = (await app.inject({
       method: "GET",
@@ -442,7 +443,6 @@ async function run() {
       headers: authHeaders,
       payload: {
         apiKeyId,
-        senderId: senderAId,
         toEmail: "recipient@example.com",
         subject: "Test"
       }

@@ -29,6 +29,7 @@ export function TemplatesClient({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<TemplateRow | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [copyingId, setCopyingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   async function loadTemplates() {
@@ -51,6 +52,31 @@ export function TemplatesClient({
   }
 
   const rows = useMemo(() => templates, [templates]);
+
+  function formatTemplateId(id: string) {
+    const tail = id.length <= 10 ? id : id.slice(-10);
+    return `...${tail}`;
+  }
+
+  async function copyTemplateId(id: string) {
+    setCopyingId(id);
+    try {
+      await navigator.clipboard.writeText(id);
+      toast({
+        variant: "success",
+        title: "Template ID copied",
+        description: "The full template ID is now on your clipboard."
+      });
+    } catch (err) {
+      toast({
+        variant: "error",
+        title: "Copy failed",
+        description: (err as Error).message || "Failed to copy template ID"
+      });
+    } finally {
+      setCopyingId((current) => (current === id ? null : current));
+    }
+  }
 
   async function toggleStatus(template: TemplateRow) {
     setTogglingId(template.id);
@@ -130,13 +156,14 @@ export function TemplatesClient({
         <div className="table-wrap">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Updated</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
             </TableHeader>
             <TableBody>
               {loading
@@ -144,6 +171,9 @@ export function TemplatesClient({
                     <TableRow key={`skeleton-${idx}`}>
                       <TableCell>
                         <div className="skeleton" style={{ height: 14, width: 140 }} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="skeleton" style={{ height: 14, width: 120 }} />
                       </TableCell>
                       <TableCell>
                         <div className="skeleton" style={{ height: 14, width: 220 }} />
@@ -162,12 +192,41 @@ export function TemplatesClient({
                 : rows.length === 0
                 ? (
                     <TableRow>
-                      <TableCell colSpan={5}>No templates found.</TableCell>
+                      <TableCell colSpan={6}>No templates found.</TableCell>
                     </TableRow>
                   )
                 : rows.map((template) => (
                     <TableRow key={template.id}>
                       <TableCell>{template.name}</TableCell>
+                      <TableCell>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <code>{formatTemplateId(template.id)}</code>
+                          <button
+                            className="icon-btn"
+                            type="button"
+                            title="Copy template ID"
+                            aria-label="Copy template ID"
+                            onClick={() => void copyTemplateId(template.id)}
+                            disabled={copyingId === template.id}
+                            style={{ height: 26, width: 26 }}
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                          </button>
+                        </div>
+                      </TableCell>
                       <TableCell>{template.subject}</TableCell>
                       <TableCell>
                         <span

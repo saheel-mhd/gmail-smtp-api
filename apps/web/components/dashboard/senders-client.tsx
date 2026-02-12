@@ -54,6 +54,7 @@ export function SendersClient({
   const [editForm, setEditForm] = useState<UpdateSenderPayload>(DEFAULT_EDIT_FORM);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [copyingId, setCopyingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   async function loadSenders() {
@@ -72,6 +73,31 @@ export function SendersClient({
       });
     } finally {
       setLoading(false);
+    }
+  }
+
+  function formatSenderId(id: string) {
+    const tail = id.length <= 15 ? id : id.slice(-15);
+    return `...${tail}`;
+  }
+
+  async function copySenderId(id: string) {
+    setCopyingId(id);
+    try {
+      await navigator.clipboard.writeText(id);
+      toast({
+        variant: "success",
+        title: "Sender ID copied",
+        description: "The full sender ID is now on your clipboard."
+      });
+    } catch (err) {
+      toast({
+        variant: "error",
+        title: "Copy failed",
+        description: (err as Error).message || "Failed to copy sender ID"
+      });
+    } finally {
+      setCopyingId((current) => (current === id ? null : current));
     }
   }
 
@@ -241,6 +267,40 @@ export function SendersClient({
                           <TableCell>
                             <div style={{ fontWeight: 600 }}>{sender.label}</div>
                             <div className="muted">{sender.emailAddress}</div>
+                            <div
+                              style={{
+                                marginTop: 4,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 6
+                              }}
+                            >
+                              <code style={{ fontSize: 12 }}>{formatSenderId(sender.id)}</code>
+                              <button
+                                className="icon-btn"
+                                type="button"
+                                title="Copy sender ID"
+                                aria-label="Copy sender ID"
+                                onClick={() => void copySenderId(sender.id)}
+                                disabled={copyingId === sender.id}
+                                style={{ height: 24, width: 24 }}
+                              >
+                                <svg
+                                  width="13"
+                                  height="13"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                >
+                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                </svg>
+                              </button>
+                            </div>
                             <div style={{ marginTop: 6 }}>
                               <span className="badge">
                                 {sender.type === "gmail" ? "Gmail" : "Domain"}

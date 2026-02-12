@@ -141,9 +141,10 @@ export function TemplateDialog({
             <input
               value={form.name}
               onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-              placeholder="Welcome Email"
+              placeholder="welcome-email"
               required
             />
+            <small className="muted">URL-safe only: lowercase letters, numbers, hyphens.</small>
           </label>
           <label>
             Subject

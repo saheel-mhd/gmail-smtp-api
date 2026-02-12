@@ -148,17 +148,16 @@ export function AddApiKeyDialog({
             />
           </label>
           <label>
-            Allowed Sender Accounts
+            Sender Account
             <select
-              multiple
-              value={form.senderIds}
+              value={form.senderIds[0] ?? ""}
               onChange={(e) => {
-                const values = Array.from(e.target.selectedOptions).map((o) => o.value);
-                setForm((prev) => ({ ...prev, senderIds: values }));
+                const value = e.target.value;
+                setForm((prev) => ({ ...prev, senderIds: value ? [value] : [] }));
               }}
               required
-              style={{ minHeight: 120 }}
             >
+              <option value="">Select sender</option>
               {senders.map((sender) => (
                 <option value={sender.id} key={sender.id}>
                   {sender.label} ({sender.emailAddress}) {sender.type === "domain" ? "[domain]" : "[gmail]"}

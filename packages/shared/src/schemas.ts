@@ -8,8 +8,6 @@ export const headersSchema = z
 export const recipientSchema = z.string().email().max(320);
 
 export const sendRequestSchema = z.object({
-  senderId: z.string().min(1),
-  senderType: z.enum(["gmail", "domain"]).optional(),
   idempotencyKey: z.string().min(8).max(120),
   to: z.array(recipientSchema).min(1).max(10),
   cc: z.array(recipientSchema).max(10).optional().default([]),
@@ -38,15 +36,35 @@ export const sendRequestSchema = z.object({
   }
 );
 
+export const templateSendSchema = z.object({
+  idempotencyKey: z.string().min(8).max(120),
+  to: z.array(recipientSchema).min(1).max(10),
+  cc: z.array(recipientSchema).max(10).optional().default([]),
+  bcc: z.array(recipientSchema).max(10).optional().default([]),
+  variables: z
+    .record(z.string().min(1), z.union([z.string(), z.number(), z.boolean()]))
+    .optional()
+    .default({}),
+  fromName: z.string().max(120).optional(),
+  replyTo: recipientSchema.optional(),
+  headers: headersSchema
+});
+
+const templateNameSchema = z
+  .string()
+  .min(1)
+  .max(80)
+  .regex(/^[a-z0-9-]+$/, "Template name must be URL-safe (lowercase letters, numbers, hyphens).");
+
 export const createTemplateSchema = z.object({
-  name: z.string().min(1).max(80),
+  name: templateNameSchema,
   subject: z.string().min(1).max(250),
   html: z.string().min(1).max(100000),
   text: z.string().max(100000).optional().nullable()
 });
 
 export const patchTemplateSchema = z.object({
-  name: z.string().min(1).max(80).optional(),
+  name: templateNameSchema.optional(),
   subject: z.string().min(1).max(250).optional(),
   html: z.string().min(1).max(100000).optional(),
   text: z.string().max(100000).optional().nullable(),
@@ -91,11 +109,12 @@ export const createApiKeySchema = z
     allowedIps: z.array(z.string().max(64)).optional().default([])
   })
   .refine(
-    (data) => data.smtpAccountIds.length > 0 || data.domainSenderIds.length > 0,
-    { message: "at least one sender must be selected" }
+    (data) => data.smtpAccountIds.length + data.domainSenderIds.length === 1,
+    { message: "exactly one sender must be selected" }
   );
 
 export type SendRequest = z.infer<typeof sendRequestSchema>;
+export type TemplateSendRequest = z.infer<typeof templateSendSchema>;
 export type CreateSenderInput = z.infer<typeof createSenderSchema>;
 export type PatchSenderInput = z.infer<typeof patchSenderSchema>;
 export type CreateApiKeyInput = z.infer<typeof createApiKeySchema>;

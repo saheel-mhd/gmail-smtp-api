@@ -184,6 +184,10 @@ npm run dev:web`}</code>
                   <div className="muted">Queue an email. Returns 202 with a messageId.</div>
                 </div>
                 <div className="docs-card">
+                  <div className="docs-card-title">POST /v1/send/:templateName</div>
+                  <div className="muted">Send using a named template (URL-safe template name).</div>
+                </div>
+                <div className="docs-card">
                   <div className="docs-card-title">GET /v1/senders</div>
                   <div className="muted">List senders allowed by this API key.</div>
                 </div>
@@ -198,16 +202,26 @@ Authorization: Bearer gsk_xxx
 Content-Type: application/json
 
 {
-  "senderId": "sender_id",
   "idempotencyKey": "order-2026-0001",
   "to": ["user@example.com"],
   "subject": "Welcome!",
   "html": "<h1>Hello</h1>"
 }`}</code>
               </pre>
+              <pre className="docs-code">
+                <code>{`POST /v1/send/welcome-email
+Authorization: Bearer gsk_xxx
+Content-Type: application/json
+
+{
+  "idempotencyKey": "welcome-0001",
+  "to": ["user@example.com"],
+  "variables": { "firstName": "Stallone", "companyName": "Acme" }
+}`}</code>
+              </pre>
               <div className="docs-callout">
                 <strong>Idempotency:</strong> use a stable <code>idempotencyKey</code> to
-                avoid duplicate sends.
+                avoid duplicate sends. Sender is derived from the API key (one sender per key).
               </div>
             </section>
 
@@ -219,19 +233,26 @@ Content-Type: application/json
               <p className="muted">
                 Templates support Mustache‑style variables in both subject and HTML.
               </p>
+              <p className="muted">
+                Template names must be URL-safe (lowercase letters, numbers, hyphens). The name
+                becomes the endpoint slug for <code>/v1/send/:templateName</code>.
+              </p>
               <pre className="docs-code">
                 <code>{`<h1>Hello {{firstName}},</h1>
 <p>Thanks for joining {{companyName}}.</p>`}</code>
               </pre>
               <p className="muted">
-                Use templates by passing <code>templateId</code> and <code>variables</code> to
-                <code> /v1/send</code>. Missing variables return a 400.
+                Use templates by calling <code>/v1/send/:templateName</code> with variables.
+                Missing variables return a 400. You can also send via <code>/v1/send</code> with a
+                <code>templateId</code> if you prefer IDs.
               </p>
               <pre className="docs-code">
-                <code>{`{
-  "senderId": "sender_id",
+                <code>{`POST /v1/send/welcome-email
+Authorization: Bearer gsk_xxx
+Content-Type: application/json
+
+{
   "idempotencyKey": "welcome-0001",
-  "templateId": "template_id",
   "variables": { "firstName": "Stallone", "companyName": "Acme" },
   "to": ["stallonamg@gmail.com"]
 }`}</code>
@@ -323,3 +344,4 @@ Content-Type: application/json
     </>
   );
 }
+
