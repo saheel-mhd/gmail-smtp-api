@@ -109,17 +109,18 @@ export function setSessionCookies(
 ): string {
   const sessionToken = request.server.jwt.sign(payload, { expiresIn: "12h" });
   const csrfToken = randomToken(24);
+  const sameSite = env.NODE_ENV === "production" ? "none" : "lax";
 
   reply.setCookie(env.SESSION_COOKIE_NAME, sessionToken, {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite,
     path: "/"
   });
   reply.setCookie(env.CSRF_COOKIE_NAME, csrfToken, {
     httpOnly: false,
     secure: env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite,
     path: "/"
   });
 

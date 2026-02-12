@@ -10,7 +10,8 @@ import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
 export type Sender = {
   id: string;
   label: string;
-  gmailAddress: string;
+  emailAddress: string;
+  type: "gmail" | "domain";
 };
 
 export type ApiKeyRow = {
@@ -41,7 +42,11 @@ export function ApiKeysClient({
   const { toast } = useToast();
 
   const senderEmailById = useMemo(() => {
-    return new Map(senders.map((sender) => [sender.id, sender.gmailAddress]));
+    return new Map(
+      senders
+        .filter((sender) => sender.type === "gmail")
+        .map((sender) => [sender.id, sender.emailAddress])
+    );
   }, [senders]);
 
   async function loadData() {
@@ -53,7 +58,7 @@ export function ApiKeysClient({
         browserApi<{ data: Sender[] }>("/admin/v1/senders")
       ]);
       setKeys(keyResponse.data);
-      setSenders(senderResponse.data);
+      setSenders(senderResponse.data.filter((sender) => sender.type === "gmail"));
     } catch (err) {
       const message = (err as Error).message || "Failed to load data";
       setError(message);

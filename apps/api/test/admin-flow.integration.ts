@@ -69,6 +69,7 @@ async function run() {
         "x-csrf-token": csrfValue
       },
       payload: {
+        type: "gmail",
         label: "Primary",
         gmailAddress: "sender@example.com",
         appPassword: "app-password-1234",

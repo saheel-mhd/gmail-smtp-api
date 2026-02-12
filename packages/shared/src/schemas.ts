@@ -52,12 +52,28 @@ export const patchTemplateSchema = z.object({
   status: z.enum(["active", "disabled"]).optional()
 });
 
-export const createSenderSchema = z.object({
+const gmailSenderSchema = z.object({
+  type: z.literal("gmail"),
   label: z.string().min(1).max(80),
   gmailAddress: z.string().email(),
   appPassword: z.string().min(8).max(128),
   perDayLimit: z.number().int().positive().max(1000000).optional()
 });
+
+const domainSenderSchema = z.object({
+  type: z.literal("domain"),
+  label: z.string().min(1).max(80),
+  domainId: z.string().min(1),
+  emailAddress: z.string().email(),
+  username: z.string().min(1).max(160),
+  password: z.string().min(4).max(128),
+  perDayLimit: z.number().int().positive().max(1000000).optional()
+});
+
+export const createSenderSchema = z.discriminatedUnion("type", [
+  gmailSenderSchema,
+  domainSenderSchema
+]);
 
 export const patchSenderSchema = z.object({
   label: z.string().min(1).max(80).optional(),

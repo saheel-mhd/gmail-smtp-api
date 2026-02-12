@@ -30,6 +30,19 @@ const cases: Case[] = [
     payload: {},
     expectedStatus: 401
   },
+  { method: "GET", url: "/admin/v1/domains", expectedStatus: 401 },
+  {
+    method: "POST",
+    url: "/admin/v1/domains",
+    payload: {},
+    expectedStatus: 401
+  },
+  {
+    method: "POST",
+    url: "/admin/v1/domains/abc/verify",
+    payload: {},
+    expectedStatus: 401
+  },
   { method: "GET", url: "/admin/v1/api-keys", expectedStatus: 401 },
   { method: "POST", url: "/admin/v1/api-keys", payload: {}, expectedStatus: 401 },
   {

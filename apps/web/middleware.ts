@@ -7,9 +7,6 @@ export default function middleware(req: NextRequest) {
   const isLoggedIn = Boolean(sessionCookie);
 
   if (pathname === "/login" || pathname === "/register") {
-    if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-    }
     return NextResponse.next();
   }
 

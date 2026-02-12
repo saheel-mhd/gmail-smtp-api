@@ -7,7 +7,8 @@ import { browserApi } from "../../lib/browser-api";
 export type Sender = {
   id: string;
   label: string;
-  gmailAddress: string;
+  emailAddress: string;
+  type: "gmail" | "domain";
   status: "active" | "disabled" | "needs_attention";
 };
 
@@ -48,7 +49,9 @@ export function TestApiClient({
         browserApi<{ data: Sender[] }>("/admin/v1/senders"),
         browserApi<{ data: ApiKeyRow[] }>("/admin/v1/api-keys")
       ]);
-      const activeSenders = senderRes.data.filter((s) => s.status === "active");
+      const activeSenders = senderRes.data.filter(
+        (s) => s.status === "active" && s.type === "gmail"
+      );
       const activeKeys = keyRes.data.filter((k) => k.status === "active");
       setSenders(activeSenders);
       setApiKeys(activeKeys);
@@ -155,7 +158,7 @@ export function TestApiClient({
                 <option value="">Select sender</option>
                 {senders.map((sender) => (
                   <option value={sender.id} key={sender.id}>
-                    {sender.label} ({sender.gmailAddress})
+                    {sender.label} ({sender.emailAddress})
                   </option>
                 ))}
               </select>

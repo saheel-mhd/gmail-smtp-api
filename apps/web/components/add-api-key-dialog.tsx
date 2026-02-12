@@ -15,7 +15,8 @@ import { useToast } from "./ui/toast";
 type Sender = {
   id: string;
   label: string;
-  gmailAddress: string;
+  emailAddress: string;
+  type: "gmail" | "domain";
 };
 
 type CreateApiKeyPayload = {
@@ -146,9 +147,11 @@ export function AddApiKeyDialog({
               required
               style={{ minHeight: 120 }}
             >
-              {senders.map((sender) => (
+              {senders
+                .filter((sender) => sender.type === "gmail")
+                .map((sender) => (
                 <option value={sender.id} key={sender.id}>
-                  {sender.label} ({sender.gmailAddress})
+                  {sender.label} ({sender.emailAddress})
                 </option>
               ))}
             </select>

@@ -588,6 +588,145 @@
   .doc-reveal {
     animation: doc-reveal 0.35s ease-out;
   }
+
+  .sender-toggle {
+    display: inline-flex;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #f0f4f6;
+  }
+
+  .sender-toggle button {
+    border: 0;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .sender-toggle button.active {
+    background: #ffffff;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .domain-card {
+    display: grid;
+    gap: 14px;
+  }
+
+  .domain-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .domain-title {
+    display: grid;
+    gap: 6px;
+  }
+
+  .domain-meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .domain-pill {
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border: 1px solid var(--line);
+    background: #ffffff;
+  }
+
+  .domain-pill.pending {
+    background: #fff4c7;
+    border-color: rgba(212, 178, 47, 0.4);
+  }
+
+  .domain-pill.verified {
+    background: #d9f5e8;
+    border-color: rgba(10, 127, 81, 0.35);
+  }
+
+  .domain-pill.failed {
+    background: #ffd9d9;
+    border-color: rgba(159, 26, 26, 0.35);
+    color: var(--danger);
+  }
+
+  .sender-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .sender-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 10px 18px rgba(12, 34, 56, 0.05);
+  }
+
+  .sender-item small {
+    color: var(--muted);
+  }
+
+  .record-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .record-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #f7fafb;
+  }
+
+  .record-info {
+    display: grid;
+    gap: 6px;
+  }
+
+  .record-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #ffffff;
+  }
+
+  .record-status.ok {
+    color: var(--brand-strong);
+    border-color: rgba(10, 127, 81, 0.35);
+    background: #e9f6ef;
+  }
+
+  .record-status.bad {
+    color: var(--danger);
+    border-color: rgba(159, 26, 26, 0.35);
+    background: #fff3f3;
+  }
 }
 
 @media (max-width: 900px) {

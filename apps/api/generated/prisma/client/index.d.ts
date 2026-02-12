@@ -24,10 +24,25 @@ export type Tenant = $Result.DefaultSelection<Prisma.$TenantPayload>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model Domain
+ * 
+ */
+export type Domain = $Result.DefaultSelection<Prisma.$DomainPayload>
+/**
+ * Model Company
+ * 
+ */
+export type Company = $Result.DefaultSelection<Prisma.$CompanyPayload>
+/**
  * Model SmtpAccount
  * 
  */
 export type SmtpAccount = $Result.DefaultSelection<Prisma.$SmtpAccountPayload>
+/**
+ * Model DomainSender
+ * 
+ */
+export type DomainSender = $Result.DefaultSelection<Prisma.$DomainSenderPayload>
 /**
  * Model ApiKey
  * 
@@ -100,6 +115,15 @@ export const TemplateStatus: {
 export type TemplateStatus = (typeof TemplateStatus)[keyof typeof TemplateStatus]
 
 
+export const DomainStatus: {
+  pending: 'pending',
+  verified: 'verified',
+  failed: 'failed'
+};
+
+export type DomainStatus = (typeof DomainStatus)[keyof typeof DomainStatus]
+
+
 export const MessageStatus: {
   queued: 'queued',
   sending: 'sending',
@@ -139,6 +163,10 @@ export const ApiKeyStatus: typeof $Enums.ApiKeyStatus
 export type TemplateStatus = $Enums.TemplateStatus
 
 export const TemplateStatus: typeof $Enums.TemplateStatus
+
+export type DomainStatus = $Enums.DomainStatus
+
+export const DomainStatus: typeof $Enums.DomainStatus
 
 export type MessageStatus = $Enums.MessageStatus
 
@@ -286,6 +314,26 @@ export class PrismaClient<
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.domain`: Exposes CRUD operations for the **Domain** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Domains
+    * const domains = await prisma.domain.findMany()
+    * ```
+    */
+  get domain(): Prisma.DomainDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.company`: Exposes CRUD operations for the **Company** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Companies
+    * const companies = await prisma.company.findMany()
+    * ```
+    */
+  get company(): Prisma.CompanyDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.smtpAccount`: Exposes CRUD operations for the **SmtpAccount** model.
     * Example usage:
     * ```ts
@@ -294,6 +342,16 @@ export class PrismaClient<
     * ```
     */
   get smtpAccount(): Prisma.SmtpAccountDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.domainSender`: Exposes CRUD operations for the **DomainSender** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DomainSenders
+    * const domainSenders = await prisma.domainSender.findMany()
+    * ```
+    */
+  get domainSender(): Prisma.DomainSenderDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.apiKey`: Exposes CRUD operations for the **ApiKey** model.
@@ -780,7 +838,10 @@ export namespace Prisma {
   export const ModelName: {
     Tenant: 'Tenant',
     User: 'User',
+    Domain: 'Domain',
+    Company: 'Company',
     SmtpAccount: 'SmtpAccount',
+    DomainSender: 'DomainSender',
     ApiKey: 'ApiKey',
     ApiKeyPermission: 'ApiKeyPermission',
     Message: 'Message',
@@ -801,7 +862,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "tenant" | "user" | "smtpAccount" | "apiKey" | "apiKeyPermission" | "message" | "template" | "auditLog"
+      modelProps: "tenant" | "user" | "domain" | "company" | "smtpAccount" | "domainSender" | "apiKey" | "apiKeyPermission" | "message" | "template" | "auditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -953,6 +1014,154 @@ export namespace Prisma {
           }
         }
       }
+      Domain: {
+        payload: Prisma.$DomainPayload<ExtArgs>
+        fields: Prisma.DomainFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DomainFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DomainFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>
+          }
+          findFirst: {
+            args: Prisma.DomainFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DomainFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>
+          }
+          findMany: {
+            args: Prisma.DomainFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>[]
+          }
+          create: {
+            args: Prisma.DomainCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>
+          }
+          createMany: {
+            args: Prisma.DomainCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DomainCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>[]
+          }
+          delete: {
+            args: Prisma.DomainDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>
+          }
+          update: {
+            args: Prisma.DomainUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>
+          }
+          deleteMany: {
+            args: Prisma.DomainDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DomainUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DomainUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>[]
+          }
+          upsert: {
+            args: Prisma.DomainUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainPayload>
+          }
+          aggregate: {
+            args: Prisma.DomainAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDomain>
+          }
+          groupBy: {
+            args: Prisma.DomainGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DomainGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DomainCountArgs<ExtArgs>
+            result: $Utils.Optional<DomainCountAggregateOutputType> | number
+          }
+        }
+      }
+      Company: {
+        payload: Prisma.$CompanyPayload<ExtArgs>
+        fields: Prisma.CompanyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CompanyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CompanyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          findFirst: {
+            args: Prisma.CompanyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CompanyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          findMany: {
+            args: Prisma.CompanyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>[]
+          }
+          create: {
+            args: Prisma.CompanyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          createMany: {
+            args: Prisma.CompanyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CompanyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>[]
+          }
+          delete: {
+            args: Prisma.CompanyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          update: {
+            args: Prisma.CompanyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          deleteMany: {
+            args: Prisma.CompanyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CompanyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CompanyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>[]
+          }
+          upsert: {
+            args: Prisma.CompanyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          aggregate: {
+            args: Prisma.CompanyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCompany>
+          }
+          groupBy: {
+            args: Prisma.CompanyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CompanyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CompanyCountArgs<ExtArgs>
+            result: $Utils.Optional<CompanyCountAggregateOutputType> | number
+          }
+        }
+      }
       SmtpAccount: {
         payload: Prisma.$SmtpAccountPayload<ExtArgs>
         fields: Prisma.SmtpAccountFieldRefs
@@ -1024,6 +1233,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SmtpAccountCountArgs<ExtArgs>
             result: $Utils.Optional<SmtpAccountCountAggregateOutputType> | number
+          }
+        }
+      }
+      DomainSender: {
+        payload: Prisma.$DomainSenderPayload<ExtArgs>
+        fields: Prisma.DomainSenderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DomainSenderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DomainSenderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>
+          }
+          findFirst: {
+            args: Prisma.DomainSenderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DomainSenderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>
+          }
+          findMany: {
+            args: Prisma.DomainSenderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>[]
+          }
+          create: {
+            args: Prisma.DomainSenderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>
+          }
+          createMany: {
+            args: Prisma.DomainSenderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DomainSenderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>[]
+          }
+          delete: {
+            args: Prisma.DomainSenderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>
+          }
+          update: {
+            args: Prisma.DomainSenderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>
+          }
+          deleteMany: {
+            args: Prisma.DomainSenderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DomainSenderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DomainSenderUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>[]
+          }
+          upsert: {
+            args: Prisma.DomainSenderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DomainSenderPayload>
+          }
+          aggregate: {
+            args: Prisma.DomainSenderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDomainSender>
+          }
+          groupBy: {
+            args: Prisma.DomainSenderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DomainSenderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DomainSenderCountArgs<ExtArgs>
+            result: $Utils.Optional<DomainSenderCountAggregateOutputType> | number
           }
         }
       }
@@ -1507,7 +1790,10 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     tenant?: TenantOmit
     user?: UserOmit
+    domain?: DomainOmit
+    company?: CompanyOmit
     smtpAccount?: SmtpAccountOmit
+    domainSender?: DomainSenderOmit
     apiKey?: ApiKeyOmit
     apiKeyPermission?: ApiKeyPermissionOmit
     message?: MessageOmit
@@ -1595,19 +1881,25 @@ export namespace Prisma {
   export type TenantCountOutputType = {
     users: number
     smtpAccounts: number
+    domainSenders: number
     apiKeys: number
     templates: number
     messages: number
     auditLogs: number
+    companies: number
+    domains: number
   }
 
   export type TenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | TenantCountOutputTypeCountUsersArgs
     smtpAccounts?: boolean | TenantCountOutputTypeCountSmtpAccountsArgs
+    domainSenders?: boolean | TenantCountOutputTypeCountDomainSendersArgs
     apiKeys?: boolean | TenantCountOutputTypeCountApiKeysArgs
     templates?: boolean | TenantCountOutputTypeCountTemplatesArgs
     messages?: boolean | TenantCountOutputTypeCountMessagesArgs
     auditLogs?: boolean | TenantCountOutputTypeCountAuditLogsArgs
+    companies?: boolean | TenantCountOutputTypeCountCompaniesArgs
+    domains?: boolean | TenantCountOutputTypeCountDomainsArgs
   }
 
   // Custom InputTypes
@@ -1638,6 +1930,13 @@ export namespace Prisma {
   /**
    * TenantCountOutputType without action
    */
+  export type TenantCountOutputTypeCountDomainSendersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DomainSenderWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
   export type TenantCountOutputTypeCountApiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ApiKeyWhereInput
   }
@@ -1661,6 +1960,82 @@ export namespace Prisma {
    */
   export type TenantCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AuditLogWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountCompaniesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CompanyWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountDomainsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DomainWhereInput
+  }
+
+
+  /**
+   * Count Type UserCountOutputType
+   */
+
+  export type UserCountOutputType = {
+    domains: number
+  }
+
+  export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    domains?: boolean | UserCountOutputTypeCountDomainsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCountOutputType
+     */
+    select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDomainsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DomainWhereInput
+  }
+
+
+  /**
+   * Count Type DomainCountOutputType
+   */
+
+  export type DomainCountOutputType = {
+    senders: number
+  }
+
+  export type DomainCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    senders?: boolean | DomainCountOutputTypeCountSendersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * DomainCountOutputType without action
+   */
+  export type DomainCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainCountOutputType
+     */
+    select?: DomainCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * DomainCountOutputType without action
+   */
+  export type DomainCountOutputTypeCountSendersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DomainSenderWhereInput
   }
 
 
@@ -1972,10 +2347,13 @@ export namespace Prisma {
     dailyCountResetAt?: boolean
     users?: boolean | Tenant$usersArgs<ExtArgs>
     smtpAccounts?: boolean | Tenant$smtpAccountsArgs<ExtArgs>
+    domainSenders?: boolean | Tenant$domainSendersArgs<ExtArgs>
     apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
     templates?: boolean | Tenant$templatesArgs<ExtArgs>
     messages?: boolean | Tenant$messagesArgs<ExtArgs>
     auditLogs?: boolean | Tenant$auditLogsArgs<ExtArgs>
+    companies?: boolean | Tenant$companiesArgs<ExtArgs>
+    domains?: boolean | Tenant$domainsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenant"]>
 
@@ -2016,10 +2394,13 @@ export namespace Prisma {
   export type TenantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Tenant$usersArgs<ExtArgs>
     smtpAccounts?: boolean | Tenant$smtpAccountsArgs<ExtArgs>
+    domainSenders?: boolean | Tenant$domainSendersArgs<ExtArgs>
     apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
     templates?: boolean | Tenant$templatesArgs<ExtArgs>
     messages?: boolean | Tenant$messagesArgs<ExtArgs>
     auditLogs?: boolean | Tenant$auditLogsArgs<ExtArgs>
+    companies?: boolean | Tenant$companiesArgs<ExtArgs>
+    domains?: boolean | Tenant$domainsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2030,10 +2411,13 @@ export namespace Prisma {
     objects: {
       users: Prisma.$UserPayload<ExtArgs>[]
       smtpAccounts: Prisma.$SmtpAccountPayload<ExtArgs>[]
+      domainSenders: Prisma.$DomainSenderPayload<ExtArgs>[]
       apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
       templates: Prisma.$TemplatePayload<ExtArgs>[]
       messages: Prisma.$MessagePayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+      companies: Prisma.$CompanyPayload<ExtArgs>[]
+      domains: Prisma.$DomainPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2440,10 +2824,13 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     users<T extends Tenant$usersArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     smtpAccounts<T extends Tenant$smtpAccountsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$smtpAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SmtpAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    domainSenders<T extends Tenant$domainSendersArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$domainSendersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     apiKeys<T extends Tenant$apiKeysArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     templates<T extends Tenant$templatesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     messages<T extends Tenant$messagesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends Tenant$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    companies<T extends Tenant$companiesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    domains<T extends Tenant$domainsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$domainsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2917,6 +3304,30 @@ export namespace Prisma {
   }
 
   /**
+   * Tenant.domainSenders
+   */
+  export type Tenant$domainSendersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    where?: DomainSenderWhereInput
+    orderBy?: DomainSenderOrderByWithRelationInput | DomainSenderOrderByWithRelationInput[]
+    cursor?: DomainSenderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DomainSenderScalarFieldEnum | DomainSenderScalarFieldEnum[]
+  }
+
+  /**
    * Tenant.apiKeys
    */
   export type Tenant$apiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3010,6 +3421,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.companies
+   */
+  export type Tenant$companiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    where?: CompanyWhereInput
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    cursor?: CompanyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.domains
+   */
+  export type Tenant$domainsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    where?: DomainWhereInput
+    orderBy?: DomainOrderByWithRelationInput | DomainOrderByWithRelationInput[]
+    cursor?: DomainWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DomainScalarFieldEnum | DomainScalarFieldEnum[]
   }
 
   /**
@@ -3252,6 +3711,9 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    company?: boolean | User$companyArgs<ExtArgs>
+    domains?: boolean | User$domainsArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3304,6 +3766,9 @@ export namespace Prisma {
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "email" | "passwordHash" | "role" | "mfaEnabled" | "mfaSecretEnc" | "mfaSecretIv" | "mfaSecretTag" | "lastLogin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    company?: boolean | User$companyArgs<ExtArgs>
+    domains?: boolean | User$domainsArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -3316,6 +3781,8 @@ export namespace Prisma {
     name: "User"
     objects: {
       tenant: Prisma.$TenantPayload<ExtArgs>
+      company: Prisma.$CompanyPayload<ExtArgs> | null
+      domains: Prisma.$DomainPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3725,6 +4192,8 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    company<T extends User$companyArgs<ExtArgs> = {}>(args?: Subset<T, User$companyArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    domains<T extends User$domainsArgs<ExtArgs> = {}>(args?: Subset<T, User$domainsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4162,6 +4631,49 @@ export namespace Prisma {
   }
 
   /**
+   * User.company
+   */
+  export type User$companyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    where?: CompanyWhereInput
+  }
+
+  /**
+   * User.domains
+   */
+  export type User$domainsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    where?: DomainWhereInput
+    orderBy?: DomainOrderByWithRelationInput | DomainOrderByWithRelationInput[]
+    cursor?: DomainWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DomainScalarFieldEnum | DomainScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4177,6 +4689,2479 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Domain
+   */
+
+  export type AggregateDomain = {
+    _count: DomainCountAggregateOutputType | null
+    _avg: DomainAvgAggregateOutputType | null
+    _sum: DomainSumAggregateOutputType | null
+    _min: DomainMinAggregateOutputType | null
+    _max: DomainMaxAggregateOutputType | null
+  }
+
+  export type DomainAvgAggregateOutputType = {
+    mxPriority: number | null
+    smtpPort: number | null
+  }
+
+  export type DomainSumAggregateOutputType = {
+    mxPriority: number | null
+    smtpPort: number | null
+  }
+
+  export type DomainMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    domain: string | null
+    status: $Enums.DomainStatus | null
+    verificationToken: string | null
+    txtHost: string | null
+    txtValue: string | null
+    spfHost: string | null
+    spfValue: string | null
+    cnameHost: string | null
+    cnameValue: string | null
+    mxHost: string | null
+    mxPriority: number | null
+    smtpHost: string | null
+    smtpPort: number | null
+    smtpSecure: boolean | null
+    verifiedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DomainMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    domain: string | null
+    status: $Enums.DomainStatus | null
+    verificationToken: string | null
+    txtHost: string | null
+    txtValue: string | null
+    spfHost: string | null
+    spfValue: string | null
+    cnameHost: string | null
+    cnameValue: string | null
+    mxHost: string | null
+    mxPriority: number | null
+    smtpHost: string | null
+    smtpPort: number | null
+    smtpSecure: boolean | null
+    verifiedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DomainCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    userId: number
+    domain: number
+    status: number
+    verificationToken: number
+    txtHost: number
+    txtValue: number
+    spfHost: number
+    spfValue: number
+    cnameHost: number
+    cnameValue: number
+    mxHost: number
+    mxPriority: number
+    smtpHost: number
+    smtpPort: number
+    smtpSecure: number
+    verifiedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DomainAvgAggregateInputType = {
+    mxPriority?: true
+    smtpPort?: true
+  }
+
+  export type DomainSumAggregateInputType = {
+    mxPriority?: true
+    smtpPort?: true
+  }
+
+  export type DomainMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    domain?: true
+    status?: true
+    verificationToken?: true
+    txtHost?: true
+    txtValue?: true
+    spfHost?: true
+    spfValue?: true
+    cnameHost?: true
+    cnameValue?: true
+    mxHost?: true
+    mxPriority?: true
+    smtpHost?: true
+    smtpPort?: true
+    smtpSecure?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DomainMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    domain?: true
+    status?: true
+    verificationToken?: true
+    txtHost?: true
+    txtValue?: true
+    spfHost?: true
+    spfValue?: true
+    cnameHost?: true
+    cnameValue?: true
+    mxHost?: true
+    mxPriority?: true
+    smtpHost?: true
+    smtpPort?: true
+    smtpSecure?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DomainCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    domain?: true
+    status?: true
+    verificationToken?: true
+    txtHost?: true
+    txtValue?: true
+    spfHost?: true
+    spfValue?: true
+    cnameHost?: true
+    cnameValue?: true
+    mxHost?: true
+    mxPriority?: true
+    smtpHost?: true
+    smtpPort?: true
+    smtpSecure?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DomainAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Domain to aggregate.
+     */
+    where?: DomainWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Domains to fetch.
+     */
+    orderBy?: DomainOrderByWithRelationInput | DomainOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DomainWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Domains from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Domains.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Domains
+    **/
+    _count?: true | DomainCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DomainAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DomainSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DomainMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DomainMaxAggregateInputType
+  }
+
+  export type GetDomainAggregateType<T extends DomainAggregateArgs> = {
+        [P in keyof T & keyof AggregateDomain]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDomain[P]>
+      : GetScalarType<T[P], AggregateDomain[P]>
+  }
+
+
+
+
+  export type DomainGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DomainWhereInput
+    orderBy?: DomainOrderByWithAggregationInput | DomainOrderByWithAggregationInput[]
+    by: DomainScalarFieldEnum[] | DomainScalarFieldEnum
+    having?: DomainScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DomainCountAggregateInputType | true
+    _avg?: DomainAvgAggregateInputType
+    _sum?: DomainSumAggregateInputType
+    _min?: DomainMinAggregateInputType
+    _max?: DomainMaxAggregateInputType
+  }
+
+  export type DomainGroupByOutputType = {
+    id: string
+    tenantId: string
+    userId: string
+    domain: string
+    status: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority: number
+    smtpHost: string | null
+    smtpPort: number
+    smtpSecure: boolean
+    verifiedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: DomainCountAggregateOutputType | null
+    _avg: DomainAvgAggregateOutputType | null
+    _sum: DomainSumAggregateOutputType | null
+    _min: DomainMinAggregateOutputType | null
+    _max: DomainMaxAggregateOutputType | null
+  }
+
+  type GetDomainGroupByPayload<T extends DomainGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DomainGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DomainGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DomainGroupByOutputType[P]>
+            : GetScalarType<T[P], DomainGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DomainSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    domain?: boolean
+    status?: boolean
+    verificationToken?: boolean
+    txtHost?: boolean
+    txtValue?: boolean
+    spfHost?: boolean
+    spfValue?: boolean
+    cnameHost?: boolean
+    cnameValue?: boolean
+    mxHost?: boolean
+    mxPriority?: boolean
+    smtpHost?: boolean
+    smtpPort?: boolean
+    smtpSecure?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    senders?: boolean | Domain$sendersArgs<ExtArgs>
+    _count?: boolean | DomainCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["domain"]>
+
+  export type DomainSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    domain?: boolean
+    status?: boolean
+    verificationToken?: boolean
+    txtHost?: boolean
+    txtValue?: boolean
+    spfHost?: boolean
+    spfValue?: boolean
+    cnameHost?: boolean
+    cnameValue?: boolean
+    mxHost?: boolean
+    mxPriority?: boolean
+    smtpHost?: boolean
+    smtpPort?: boolean
+    smtpSecure?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["domain"]>
+
+  export type DomainSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    domain?: boolean
+    status?: boolean
+    verificationToken?: boolean
+    txtHost?: boolean
+    txtValue?: boolean
+    spfHost?: boolean
+    spfValue?: boolean
+    cnameHost?: boolean
+    cnameValue?: boolean
+    mxHost?: boolean
+    mxPriority?: boolean
+    smtpHost?: boolean
+    smtpPort?: boolean
+    smtpSecure?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["domain"]>
+
+  export type DomainSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    domain?: boolean
+    status?: boolean
+    verificationToken?: boolean
+    txtHost?: boolean
+    txtValue?: boolean
+    spfHost?: boolean
+    spfValue?: boolean
+    cnameHost?: boolean
+    cnameValue?: boolean
+    mxHost?: boolean
+    mxPriority?: boolean
+    smtpHost?: boolean
+    smtpPort?: boolean
+    smtpSecure?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DomainOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "domain" | "status" | "verificationToken" | "txtHost" | "txtValue" | "spfHost" | "spfValue" | "cnameHost" | "cnameValue" | "mxHost" | "mxPriority" | "smtpHost" | "smtpPort" | "smtpSecure" | "verifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["domain"]>
+  export type DomainInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    senders?: boolean | Domain$sendersArgs<ExtArgs>
+    _count?: boolean | DomainCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type DomainIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type DomainIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $DomainPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Domain"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      senders: Prisma.$DomainSenderPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      userId: string
+      domain: string
+      status: $Enums.DomainStatus
+      verificationToken: string
+      txtHost: string
+      txtValue: string
+      spfHost: string
+      spfValue: string
+      cnameHost: string
+      cnameValue: string
+      mxHost: string
+      mxPriority: number
+      smtpHost: string | null
+      smtpPort: number
+      smtpSecure: boolean
+      verifiedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["domain"]>
+    composites: {}
+  }
+
+  type DomainGetPayload<S extends boolean | null | undefined | DomainDefaultArgs> = $Result.GetResult<Prisma.$DomainPayload, S>
+
+  type DomainCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DomainFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DomainCountAggregateInputType | true
+    }
+
+  export interface DomainDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Domain'], meta: { name: 'Domain' } }
+    /**
+     * Find zero or one Domain that matches the filter.
+     * @param {DomainFindUniqueArgs} args - Arguments to find a Domain
+     * @example
+     * // Get one Domain
+     * const domain = await prisma.domain.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DomainFindUniqueArgs>(args: SelectSubset<T, DomainFindUniqueArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Domain that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DomainFindUniqueOrThrowArgs} args - Arguments to find a Domain
+     * @example
+     * // Get one Domain
+     * const domain = await prisma.domain.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DomainFindUniqueOrThrowArgs>(args: SelectSubset<T, DomainFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Domain that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainFindFirstArgs} args - Arguments to find a Domain
+     * @example
+     * // Get one Domain
+     * const domain = await prisma.domain.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DomainFindFirstArgs>(args?: SelectSubset<T, DomainFindFirstArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Domain that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainFindFirstOrThrowArgs} args - Arguments to find a Domain
+     * @example
+     * // Get one Domain
+     * const domain = await prisma.domain.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DomainFindFirstOrThrowArgs>(args?: SelectSubset<T, DomainFindFirstOrThrowArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Domains that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Domains
+     * const domains = await prisma.domain.findMany()
+     * 
+     * // Get first 10 Domains
+     * const domains = await prisma.domain.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const domainWithIdOnly = await prisma.domain.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DomainFindManyArgs>(args?: SelectSubset<T, DomainFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Domain.
+     * @param {DomainCreateArgs} args - Arguments to create a Domain.
+     * @example
+     * // Create one Domain
+     * const Domain = await prisma.domain.create({
+     *   data: {
+     *     // ... data to create a Domain
+     *   }
+     * })
+     * 
+     */
+    create<T extends DomainCreateArgs>(args: SelectSubset<T, DomainCreateArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Domains.
+     * @param {DomainCreateManyArgs} args - Arguments to create many Domains.
+     * @example
+     * // Create many Domains
+     * const domain = await prisma.domain.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DomainCreateManyArgs>(args?: SelectSubset<T, DomainCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Domains and returns the data saved in the database.
+     * @param {DomainCreateManyAndReturnArgs} args - Arguments to create many Domains.
+     * @example
+     * // Create many Domains
+     * const domain = await prisma.domain.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Domains and only return the `id`
+     * const domainWithIdOnly = await prisma.domain.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DomainCreateManyAndReturnArgs>(args?: SelectSubset<T, DomainCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Domain.
+     * @param {DomainDeleteArgs} args - Arguments to delete one Domain.
+     * @example
+     * // Delete one Domain
+     * const Domain = await prisma.domain.delete({
+     *   where: {
+     *     // ... filter to delete one Domain
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DomainDeleteArgs>(args: SelectSubset<T, DomainDeleteArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Domain.
+     * @param {DomainUpdateArgs} args - Arguments to update one Domain.
+     * @example
+     * // Update one Domain
+     * const domain = await prisma.domain.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DomainUpdateArgs>(args: SelectSubset<T, DomainUpdateArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Domains.
+     * @param {DomainDeleteManyArgs} args - Arguments to filter Domains to delete.
+     * @example
+     * // Delete a few Domains
+     * const { count } = await prisma.domain.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DomainDeleteManyArgs>(args?: SelectSubset<T, DomainDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Domains.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Domains
+     * const domain = await prisma.domain.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DomainUpdateManyArgs>(args: SelectSubset<T, DomainUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Domains and returns the data updated in the database.
+     * @param {DomainUpdateManyAndReturnArgs} args - Arguments to update many Domains.
+     * @example
+     * // Update many Domains
+     * const domain = await prisma.domain.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Domains and only return the `id`
+     * const domainWithIdOnly = await prisma.domain.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DomainUpdateManyAndReturnArgs>(args: SelectSubset<T, DomainUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Domain.
+     * @param {DomainUpsertArgs} args - Arguments to update or create a Domain.
+     * @example
+     * // Update or create a Domain
+     * const domain = await prisma.domain.upsert({
+     *   create: {
+     *     // ... data to create a Domain
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Domain we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DomainUpsertArgs>(args: SelectSubset<T, DomainUpsertArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Domains.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainCountArgs} args - Arguments to filter Domains to count.
+     * @example
+     * // Count the number of Domains
+     * const count = await prisma.domain.count({
+     *   where: {
+     *     // ... the filter for the Domains we want to count
+     *   }
+     * })
+    **/
+    count<T extends DomainCountArgs>(
+      args?: Subset<T, DomainCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DomainCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Domain.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DomainAggregateArgs>(args: Subset<T, DomainAggregateArgs>): Prisma.PrismaPromise<GetDomainAggregateType<T>>
+
+    /**
+     * Group by Domain.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DomainGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DomainGroupByArgs['orderBy'] }
+        : { orderBy?: DomainGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DomainGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDomainGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Domain model
+   */
+  readonly fields: DomainFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Domain.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DomainClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    senders<T extends Domain$sendersArgs<ExtArgs> = {}>(args?: Subset<T, Domain$sendersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Domain model
+   */
+  interface DomainFieldRefs {
+    readonly id: FieldRef<"Domain", 'String'>
+    readonly tenantId: FieldRef<"Domain", 'String'>
+    readonly userId: FieldRef<"Domain", 'String'>
+    readonly domain: FieldRef<"Domain", 'String'>
+    readonly status: FieldRef<"Domain", 'DomainStatus'>
+    readonly verificationToken: FieldRef<"Domain", 'String'>
+    readonly txtHost: FieldRef<"Domain", 'String'>
+    readonly txtValue: FieldRef<"Domain", 'String'>
+    readonly spfHost: FieldRef<"Domain", 'String'>
+    readonly spfValue: FieldRef<"Domain", 'String'>
+    readonly cnameHost: FieldRef<"Domain", 'String'>
+    readonly cnameValue: FieldRef<"Domain", 'String'>
+    readonly mxHost: FieldRef<"Domain", 'String'>
+    readonly mxPriority: FieldRef<"Domain", 'Int'>
+    readonly smtpHost: FieldRef<"Domain", 'String'>
+    readonly smtpPort: FieldRef<"Domain", 'Int'>
+    readonly smtpSecure: FieldRef<"Domain", 'Boolean'>
+    readonly verifiedAt: FieldRef<"Domain", 'DateTime'>
+    readonly createdAt: FieldRef<"Domain", 'DateTime'>
+    readonly updatedAt: FieldRef<"Domain", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Domain findUnique
+   */
+  export type DomainFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * Filter, which Domain to fetch.
+     */
+    where: DomainWhereUniqueInput
+  }
+
+  /**
+   * Domain findUniqueOrThrow
+   */
+  export type DomainFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * Filter, which Domain to fetch.
+     */
+    where: DomainWhereUniqueInput
+  }
+
+  /**
+   * Domain findFirst
+   */
+  export type DomainFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * Filter, which Domain to fetch.
+     */
+    where?: DomainWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Domains to fetch.
+     */
+    orderBy?: DomainOrderByWithRelationInput | DomainOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Domains.
+     */
+    cursor?: DomainWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Domains from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Domains.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Domains.
+     */
+    distinct?: DomainScalarFieldEnum | DomainScalarFieldEnum[]
+  }
+
+  /**
+   * Domain findFirstOrThrow
+   */
+  export type DomainFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * Filter, which Domain to fetch.
+     */
+    where?: DomainWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Domains to fetch.
+     */
+    orderBy?: DomainOrderByWithRelationInput | DomainOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Domains.
+     */
+    cursor?: DomainWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Domains from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Domains.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Domains.
+     */
+    distinct?: DomainScalarFieldEnum | DomainScalarFieldEnum[]
+  }
+
+  /**
+   * Domain findMany
+   */
+  export type DomainFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * Filter, which Domains to fetch.
+     */
+    where?: DomainWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Domains to fetch.
+     */
+    orderBy?: DomainOrderByWithRelationInput | DomainOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Domains.
+     */
+    cursor?: DomainWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Domains from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Domains.
+     */
+    skip?: number
+    distinct?: DomainScalarFieldEnum | DomainScalarFieldEnum[]
+  }
+
+  /**
+   * Domain create
+   */
+  export type DomainCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Domain.
+     */
+    data: XOR<DomainCreateInput, DomainUncheckedCreateInput>
+  }
+
+  /**
+   * Domain createMany
+   */
+  export type DomainCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Domains.
+     */
+    data: DomainCreateManyInput | DomainCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Domain createManyAndReturn
+   */
+  export type DomainCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * The data used to create many Domains.
+     */
+    data: DomainCreateManyInput | DomainCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Domain update
+   */
+  export type DomainUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Domain.
+     */
+    data: XOR<DomainUpdateInput, DomainUncheckedUpdateInput>
+    /**
+     * Choose, which Domain to update.
+     */
+    where: DomainWhereUniqueInput
+  }
+
+  /**
+   * Domain updateMany
+   */
+  export type DomainUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Domains.
+     */
+    data: XOR<DomainUpdateManyMutationInput, DomainUncheckedUpdateManyInput>
+    /**
+     * Filter which Domains to update
+     */
+    where?: DomainWhereInput
+    /**
+     * Limit how many Domains to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Domain updateManyAndReturn
+   */
+  export type DomainUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * The data used to update Domains.
+     */
+    data: XOR<DomainUpdateManyMutationInput, DomainUncheckedUpdateManyInput>
+    /**
+     * Filter which Domains to update
+     */
+    where?: DomainWhereInput
+    /**
+     * Limit how many Domains to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Domain upsert
+   */
+  export type DomainUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Domain to update in case it exists.
+     */
+    where: DomainWhereUniqueInput
+    /**
+     * In case the Domain found by the `where` argument doesn't exist, create a new Domain with this data.
+     */
+    create: XOR<DomainCreateInput, DomainUncheckedCreateInput>
+    /**
+     * In case the Domain was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DomainUpdateInput, DomainUncheckedUpdateInput>
+  }
+
+  /**
+   * Domain delete
+   */
+  export type DomainDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+    /**
+     * Filter which Domain to delete.
+     */
+    where: DomainWhereUniqueInput
+  }
+
+  /**
+   * Domain deleteMany
+   */
+  export type DomainDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Domains to delete
+     */
+    where?: DomainWhereInput
+    /**
+     * Limit how many Domains to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Domain.senders
+   */
+  export type Domain$sendersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    where?: DomainSenderWhereInput
+    orderBy?: DomainSenderOrderByWithRelationInput | DomainSenderOrderByWithRelationInput[]
+    cursor?: DomainSenderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DomainSenderScalarFieldEnum | DomainSenderScalarFieldEnum[]
+  }
+
+  /**
+   * Domain without action
+   */
+  export type DomainDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Domain
+     */
+    select?: DomainSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Domain
+     */
+    omit?: DomainOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Company
+   */
+
+  export type AggregateCompany = {
+    _count: CompanyCountAggregateOutputType | null
+    _min: CompanyMinAggregateOutputType | null
+    _max: CompanyMaxAggregateOutputType | null
+  }
+
+  export type CompanyMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    name: string | null
+    service: string | null
+    phone: string | null
+    email: string | null
+    address: string | null
+    website: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CompanyMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    name: string | null
+    service: string | null
+    phone: string | null
+    email: string | null
+    address: string | null
+    website: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CompanyCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    userId: number
+    name: number
+    service: number
+    phone: number
+    email: number
+    address: number
+    website: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CompanyMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    name?: true
+    service?: true
+    phone?: true
+    email?: true
+    address?: true
+    website?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CompanyMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    name?: true
+    service?: true
+    phone?: true
+    email?: true
+    address?: true
+    website?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CompanyCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    name?: true
+    service?: true
+    phone?: true
+    email?: true
+    address?: true
+    website?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CompanyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Company to aggregate.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Companies
+    **/
+    _count?: true | CompanyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CompanyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CompanyMaxAggregateInputType
+  }
+
+  export type GetCompanyAggregateType<T extends CompanyAggregateArgs> = {
+        [P in keyof T & keyof AggregateCompany]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCompany[P]>
+      : GetScalarType<T[P], AggregateCompany[P]>
+  }
+
+
+
+
+  export type CompanyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CompanyWhereInput
+    orderBy?: CompanyOrderByWithAggregationInput | CompanyOrderByWithAggregationInput[]
+    by: CompanyScalarFieldEnum[] | CompanyScalarFieldEnum
+    having?: CompanyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CompanyCountAggregateInputType | true
+    _min?: CompanyMinAggregateInputType
+    _max?: CompanyMaxAggregateInputType
+  }
+
+  export type CompanyGroupByOutputType = {
+    id: string
+    tenantId: string
+    userId: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: CompanyCountAggregateOutputType | null
+    _min: CompanyMinAggregateOutputType | null
+    _max: CompanyMaxAggregateOutputType | null
+  }
+
+  type GetCompanyGroupByPayload<T extends CompanyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CompanyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CompanyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CompanyGroupByOutputType[P]>
+            : GetScalarType<T[P], CompanyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CompanySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    service?: boolean
+    phone?: boolean
+    email?: boolean
+    address?: boolean
+    website?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["company"]>
+
+  export type CompanySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    service?: boolean
+    phone?: boolean
+    email?: boolean
+    address?: boolean
+    website?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["company"]>
+
+  export type CompanySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    service?: boolean
+    phone?: boolean
+    email?: boolean
+    address?: boolean
+    website?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["company"]>
+
+  export type CompanySelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    service?: boolean
+    phone?: boolean
+    email?: boolean
+    address?: boolean
+    website?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "name" | "service" | "phone" | "email" | "address" | "website" | "createdAt" | "updatedAt", ExtArgs["result"]["company"]>
+  export type CompanyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CompanyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CompanyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CompanyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Company"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      userId: string
+      name: string
+      service: string
+      phone: string
+      email: string
+      address: string
+      website: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["company"]>
+    composites: {}
+  }
+
+  type CompanyGetPayload<S extends boolean | null | undefined | CompanyDefaultArgs> = $Result.GetResult<Prisma.$CompanyPayload, S>
+
+  type CompanyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CompanyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CompanyCountAggregateInputType | true
+    }
+
+  export interface CompanyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Company'], meta: { name: 'Company' } }
+    /**
+     * Find zero or one Company that matches the filter.
+     * @param {CompanyFindUniqueArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CompanyFindUniqueArgs>(args: SelectSubset<T, CompanyFindUniqueArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Company that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CompanyFindUniqueOrThrowArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CompanyFindUniqueOrThrowArgs>(args: SelectSubset<T, CompanyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Company that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyFindFirstArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CompanyFindFirstArgs>(args?: SelectSubset<T, CompanyFindFirstArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Company that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyFindFirstOrThrowArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CompanyFindFirstOrThrowArgs>(args?: SelectSubset<T, CompanyFindFirstOrThrowArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Companies that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Companies
+     * const companies = await prisma.company.findMany()
+     * 
+     * // Get first 10 Companies
+     * const companies = await prisma.company.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const companyWithIdOnly = await prisma.company.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CompanyFindManyArgs>(args?: SelectSubset<T, CompanyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Company.
+     * @param {CompanyCreateArgs} args - Arguments to create a Company.
+     * @example
+     * // Create one Company
+     * const Company = await prisma.company.create({
+     *   data: {
+     *     // ... data to create a Company
+     *   }
+     * })
+     * 
+     */
+    create<T extends CompanyCreateArgs>(args: SelectSubset<T, CompanyCreateArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Companies.
+     * @param {CompanyCreateManyArgs} args - Arguments to create many Companies.
+     * @example
+     * // Create many Companies
+     * const company = await prisma.company.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CompanyCreateManyArgs>(args?: SelectSubset<T, CompanyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Companies and returns the data saved in the database.
+     * @param {CompanyCreateManyAndReturnArgs} args - Arguments to create many Companies.
+     * @example
+     * // Create many Companies
+     * const company = await prisma.company.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Companies and only return the `id`
+     * const companyWithIdOnly = await prisma.company.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CompanyCreateManyAndReturnArgs>(args?: SelectSubset<T, CompanyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Company.
+     * @param {CompanyDeleteArgs} args - Arguments to delete one Company.
+     * @example
+     * // Delete one Company
+     * const Company = await prisma.company.delete({
+     *   where: {
+     *     // ... filter to delete one Company
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CompanyDeleteArgs>(args: SelectSubset<T, CompanyDeleteArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Company.
+     * @param {CompanyUpdateArgs} args - Arguments to update one Company.
+     * @example
+     * // Update one Company
+     * const company = await prisma.company.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CompanyUpdateArgs>(args: SelectSubset<T, CompanyUpdateArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Companies.
+     * @param {CompanyDeleteManyArgs} args - Arguments to filter Companies to delete.
+     * @example
+     * // Delete a few Companies
+     * const { count } = await prisma.company.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CompanyDeleteManyArgs>(args?: SelectSubset<T, CompanyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Companies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Companies
+     * const company = await prisma.company.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CompanyUpdateManyArgs>(args: SelectSubset<T, CompanyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Companies and returns the data updated in the database.
+     * @param {CompanyUpdateManyAndReturnArgs} args - Arguments to update many Companies.
+     * @example
+     * // Update many Companies
+     * const company = await prisma.company.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Companies and only return the `id`
+     * const companyWithIdOnly = await prisma.company.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CompanyUpdateManyAndReturnArgs>(args: SelectSubset<T, CompanyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Company.
+     * @param {CompanyUpsertArgs} args - Arguments to update or create a Company.
+     * @example
+     * // Update or create a Company
+     * const company = await prisma.company.upsert({
+     *   create: {
+     *     // ... data to create a Company
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Company we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CompanyUpsertArgs>(args: SelectSubset<T, CompanyUpsertArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Companies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyCountArgs} args - Arguments to filter Companies to count.
+     * @example
+     * // Count the number of Companies
+     * const count = await prisma.company.count({
+     *   where: {
+     *     // ... the filter for the Companies we want to count
+     *   }
+     * })
+    **/
+    count<T extends CompanyCountArgs>(
+      args?: Subset<T, CompanyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CompanyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Company.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CompanyAggregateArgs>(args: Subset<T, CompanyAggregateArgs>): Prisma.PrismaPromise<GetCompanyAggregateType<T>>
+
+    /**
+     * Group by Company.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CompanyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CompanyGroupByArgs['orderBy'] }
+        : { orderBy?: CompanyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CompanyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCompanyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Company model
+   */
+  readonly fields: CompanyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Company.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Company model
+   */
+  interface CompanyFieldRefs {
+    readonly id: FieldRef<"Company", 'String'>
+    readonly tenantId: FieldRef<"Company", 'String'>
+    readonly userId: FieldRef<"Company", 'String'>
+    readonly name: FieldRef<"Company", 'String'>
+    readonly service: FieldRef<"Company", 'String'>
+    readonly phone: FieldRef<"Company", 'String'>
+    readonly email: FieldRef<"Company", 'String'>
+    readonly address: FieldRef<"Company", 'String'>
+    readonly website: FieldRef<"Company", 'String'>
+    readonly createdAt: FieldRef<"Company", 'DateTime'>
+    readonly updatedAt: FieldRef<"Company", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Company findUnique
+   */
+  export type CompanyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company findUniqueOrThrow
+   */
+  export type CompanyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company findFirst
+   */
+  export type CompanyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Companies.
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Companies.
+     */
+    distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
+  }
+
+  /**
+   * Company findFirstOrThrow
+   */
+  export type CompanyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Companies.
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Companies.
+     */
+    distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
+  }
+
+  /**
+   * Company findMany
+   */
+  export type CompanyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Companies to fetch.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Companies.
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
+  }
+
+  /**
+   * Company create
+   */
+  export type CompanyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Company.
+     */
+    data: XOR<CompanyCreateInput, CompanyUncheckedCreateInput>
+  }
+
+  /**
+   * Company createMany
+   */
+  export type CompanyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Companies.
+     */
+    data: CompanyCreateManyInput | CompanyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Company createManyAndReturn
+   */
+  export type CompanyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * The data used to create many Companies.
+     */
+    data: CompanyCreateManyInput | CompanyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Company update
+   */
+  export type CompanyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Company.
+     */
+    data: XOR<CompanyUpdateInput, CompanyUncheckedUpdateInput>
+    /**
+     * Choose, which Company to update.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company updateMany
+   */
+  export type CompanyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Companies.
+     */
+    data: XOR<CompanyUpdateManyMutationInput, CompanyUncheckedUpdateManyInput>
+    /**
+     * Filter which Companies to update
+     */
+    where?: CompanyWhereInput
+    /**
+     * Limit how many Companies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Company updateManyAndReturn
+   */
+  export type CompanyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * The data used to update Companies.
+     */
+    data: XOR<CompanyUpdateManyMutationInput, CompanyUncheckedUpdateManyInput>
+    /**
+     * Filter which Companies to update
+     */
+    where?: CompanyWhereInput
+    /**
+     * Limit how many Companies to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Company upsert
+   */
+  export type CompanyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Company to update in case it exists.
+     */
+    where: CompanyWhereUniqueInput
+    /**
+     * In case the Company found by the `where` argument doesn't exist, create a new Company with this data.
+     */
+    create: XOR<CompanyCreateInput, CompanyUncheckedCreateInput>
+    /**
+     * In case the Company was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CompanyUpdateInput, CompanyUncheckedUpdateInput>
+  }
+
+  /**
+   * Company delete
+   */
+  export type CompanyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter which Company to delete.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company deleteMany
+   */
+  export type CompanyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Companies to delete
+     */
+    where?: CompanyWhereInput
+    /**
+     * Limit how many Companies to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Company without action
+   */
+  export type CompanyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
   }
 
 
@@ -5525,6 +8510,1313 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SmtpAccountInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DomainSender
+   */
+
+  export type AggregateDomainSender = {
+    _count: DomainSenderCountAggregateOutputType | null
+    _avg: DomainSenderAvgAggregateOutputType | null
+    _sum: DomainSenderSumAggregateOutputType | null
+    _min: DomainSenderMinAggregateOutputType | null
+    _max: DomainSenderMaxAggregateOutputType | null
+  }
+
+  export type DomainSenderAvgAggregateOutputType = {
+    perDayLimit: number | null
+    sentTodayCount: number | null
+    errorStreak: number | null
+    healthScore: number | null
+  }
+
+  export type DomainSenderSumAggregateOutputType = {
+    perDayLimit: number | null
+    sentTodayCount: number | null
+    errorStreak: number | null
+    healthScore: number | null
+  }
+
+  export type DomainSenderMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    domainId: string | null
+    label: string | null
+    emailAddress: string | null
+    username: string | null
+    encryptedPassword: string | null
+    iv: string | null
+    authTag: string | null
+    keyVersion: string | null
+    status: $Enums.SenderStatus | null
+    perDayLimit: number | null
+    sentTodayCount: number | null
+    sentTodayResetAt: Date | null
+    lastSuccessAt: Date | null
+    lastErrorAt: Date | null
+    errorStreak: number | null
+    healthScore: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DomainSenderMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    domainId: string | null
+    label: string | null
+    emailAddress: string | null
+    username: string | null
+    encryptedPassword: string | null
+    iv: string | null
+    authTag: string | null
+    keyVersion: string | null
+    status: $Enums.SenderStatus | null
+    perDayLimit: number | null
+    sentTodayCount: number | null
+    sentTodayResetAt: Date | null
+    lastSuccessAt: Date | null
+    lastErrorAt: Date | null
+    errorStreak: number | null
+    healthScore: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DomainSenderCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    domainId: number
+    label: number
+    emailAddress: number
+    username: number
+    encryptedPassword: number
+    iv: number
+    authTag: number
+    keyVersion: number
+    status: number
+    perDayLimit: number
+    sentTodayCount: number
+    sentTodayResetAt: number
+    lastSuccessAt: number
+    lastErrorAt: number
+    errorStreak: number
+    healthScore: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DomainSenderAvgAggregateInputType = {
+    perDayLimit?: true
+    sentTodayCount?: true
+    errorStreak?: true
+    healthScore?: true
+  }
+
+  export type DomainSenderSumAggregateInputType = {
+    perDayLimit?: true
+    sentTodayCount?: true
+    errorStreak?: true
+    healthScore?: true
+  }
+
+  export type DomainSenderMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    domainId?: true
+    label?: true
+    emailAddress?: true
+    username?: true
+    encryptedPassword?: true
+    iv?: true
+    authTag?: true
+    keyVersion?: true
+    status?: true
+    perDayLimit?: true
+    sentTodayCount?: true
+    sentTodayResetAt?: true
+    lastSuccessAt?: true
+    lastErrorAt?: true
+    errorStreak?: true
+    healthScore?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DomainSenderMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    domainId?: true
+    label?: true
+    emailAddress?: true
+    username?: true
+    encryptedPassword?: true
+    iv?: true
+    authTag?: true
+    keyVersion?: true
+    status?: true
+    perDayLimit?: true
+    sentTodayCount?: true
+    sentTodayResetAt?: true
+    lastSuccessAt?: true
+    lastErrorAt?: true
+    errorStreak?: true
+    healthScore?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DomainSenderCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    domainId?: true
+    label?: true
+    emailAddress?: true
+    username?: true
+    encryptedPassword?: true
+    iv?: true
+    authTag?: true
+    keyVersion?: true
+    status?: true
+    perDayLimit?: true
+    sentTodayCount?: true
+    sentTodayResetAt?: true
+    lastSuccessAt?: true
+    lastErrorAt?: true
+    errorStreak?: true
+    healthScore?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DomainSenderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DomainSender to aggregate.
+     */
+    where?: DomainSenderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DomainSenders to fetch.
+     */
+    orderBy?: DomainSenderOrderByWithRelationInput | DomainSenderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DomainSenderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DomainSenders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DomainSenders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DomainSenders
+    **/
+    _count?: true | DomainSenderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DomainSenderAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DomainSenderSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DomainSenderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DomainSenderMaxAggregateInputType
+  }
+
+  export type GetDomainSenderAggregateType<T extends DomainSenderAggregateArgs> = {
+        [P in keyof T & keyof AggregateDomainSender]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDomainSender[P]>
+      : GetScalarType<T[P], AggregateDomainSender[P]>
+  }
+
+
+
+
+  export type DomainSenderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DomainSenderWhereInput
+    orderBy?: DomainSenderOrderByWithAggregationInput | DomainSenderOrderByWithAggregationInput[]
+    by: DomainSenderScalarFieldEnum[] | DomainSenderScalarFieldEnum
+    having?: DomainSenderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DomainSenderCountAggregateInputType | true
+    _avg?: DomainSenderAvgAggregateInputType
+    _sum?: DomainSenderSumAggregateInputType
+    _min?: DomainSenderMinAggregateInputType
+    _max?: DomainSenderMaxAggregateInputType
+  }
+
+  export type DomainSenderGroupByOutputType = {
+    id: string
+    tenantId: string
+    domainId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status: $Enums.SenderStatus
+    perDayLimit: number
+    sentTodayCount: number
+    sentTodayResetAt: Date | null
+    lastSuccessAt: Date | null
+    lastErrorAt: Date | null
+    errorStreak: number
+    healthScore: number
+    createdAt: Date
+    updatedAt: Date
+    _count: DomainSenderCountAggregateOutputType | null
+    _avg: DomainSenderAvgAggregateOutputType | null
+    _sum: DomainSenderSumAggregateOutputType | null
+    _min: DomainSenderMinAggregateOutputType | null
+    _max: DomainSenderMaxAggregateOutputType | null
+  }
+
+  type GetDomainSenderGroupByPayload<T extends DomainSenderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DomainSenderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DomainSenderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DomainSenderGroupByOutputType[P]>
+            : GetScalarType<T[P], DomainSenderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DomainSenderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    domainId?: boolean
+    label?: boolean
+    emailAddress?: boolean
+    username?: boolean
+    encryptedPassword?: boolean
+    iv?: boolean
+    authTag?: boolean
+    keyVersion?: boolean
+    status?: boolean
+    perDayLimit?: boolean
+    sentTodayCount?: boolean
+    sentTodayResetAt?: boolean
+    lastSuccessAt?: boolean
+    lastErrorAt?: boolean
+    errorStreak?: boolean
+    healthScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    domain?: boolean | DomainDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["domainSender"]>
+
+  export type DomainSenderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    domainId?: boolean
+    label?: boolean
+    emailAddress?: boolean
+    username?: boolean
+    encryptedPassword?: boolean
+    iv?: boolean
+    authTag?: boolean
+    keyVersion?: boolean
+    status?: boolean
+    perDayLimit?: boolean
+    sentTodayCount?: boolean
+    sentTodayResetAt?: boolean
+    lastSuccessAt?: boolean
+    lastErrorAt?: boolean
+    errorStreak?: boolean
+    healthScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    domain?: boolean | DomainDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["domainSender"]>
+
+  export type DomainSenderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    domainId?: boolean
+    label?: boolean
+    emailAddress?: boolean
+    username?: boolean
+    encryptedPassword?: boolean
+    iv?: boolean
+    authTag?: boolean
+    keyVersion?: boolean
+    status?: boolean
+    perDayLimit?: boolean
+    sentTodayCount?: boolean
+    sentTodayResetAt?: boolean
+    lastSuccessAt?: boolean
+    lastErrorAt?: boolean
+    errorStreak?: boolean
+    healthScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    domain?: boolean | DomainDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["domainSender"]>
+
+  export type DomainSenderSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    domainId?: boolean
+    label?: boolean
+    emailAddress?: boolean
+    username?: boolean
+    encryptedPassword?: boolean
+    iv?: boolean
+    authTag?: boolean
+    keyVersion?: boolean
+    status?: boolean
+    perDayLimit?: boolean
+    sentTodayCount?: boolean
+    sentTodayResetAt?: boolean
+    lastSuccessAt?: boolean
+    lastErrorAt?: boolean
+    errorStreak?: boolean
+    healthScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DomainSenderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "domainId" | "label" | "emailAddress" | "username" | "encryptedPassword" | "iv" | "authTag" | "keyVersion" | "status" | "perDayLimit" | "sentTodayCount" | "sentTodayResetAt" | "lastSuccessAt" | "lastErrorAt" | "errorStreak" | "healthScore" | "createdAt" | "updatedAt", ExtArgs["result"]["domainSender"]>
+  export type DomainSenderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    domain?: boolean | DomainDefaultArgs<ExtArgs>
+  }
+  export type DomainSenderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    domain?: boolean | DomainDefaultArgs<ExtArgs>
+  }
+  export type DomainSenderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    domain?: boolean | DomainDefaultArgs<ExtArgs>
+  }
+
+  export type $DomainSenderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DomainSender"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs>
+      domain: Prisma.$DomainPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      domainId: string
+      label: string
+      emailAddress: string
+      username: string
+      encryptedPassword: string
+      iv: string
+      authTag: string
+      keyVersion: string
+      status: $Enums.SenderStatus
+      perDayLimit: number
+      sentTodayCount: number
+      sentTodayResetAt: Date | null
+      lastSuccessAt: Date | null
+      lastErrorAt: Date | null
+      errorStreak: number
+      healthScore: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["domainSender"]>
+    composites: {}
+  }
+
+  type DomainSenderGetPayload<S extends boolean | null | undefined | DomainSenderDefaultArgs> = $Result.GetResult<Prisma.$DomainSenderPayload, S>
+
+  type DomainSenderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DomainSenderFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DomainSenderCountAggregateInputType | true
+    }
+
+  export interface DomainSenderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DomainSender'], meta: { name: 'DomainSender' } }
+    /**
+     * Find zero or one DomainSender that matches the filter.
+     * @param {DomainSenderFindUniqueArgs} args - Arguments to find a DomainSender
+     * @example
+     * // Get one DomainSender
+     * const domainSender = await prisma.domainSender.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DomainSenderFindUniqueArgs>(args: SelectSubset<T, DomainSenderFindUniqueArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DomainSender that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DomainSenderFindUniqueOrThrowArgs} args - Arguments to find a DomainSender
+     * @example
+     * // Get one DomainSender
+     * const domainSender = await prisma.domainSender.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DomainSenderFindUniqueOrThrowArgs>(args: SelectSubset<T, DomainSenderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DomainSender that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainSenderFindFirstArgs} args - Arguments to find a DomainSender
+     * @example
+     * // Get one DomainSender
+     * const domainSender = await prisma.domainSender.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DomainSenderFindFirstArgs>(args?: SelectSubset<T, DomainSenderFindFirstArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DomainSender that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainSenderFindFirstOrThrowArgs} args - Arguments to find a DomainSender
+     * @example
+     * // Get one DomainSender
+     * const domainSender = await prisma.domainSender.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DomainSenderFindFirstOrThrowArgs>(args?: SelectSubset<T, DomainSenderFindFirstOrThrowArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DomainSenders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainSenderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DomainSenders
+     * const domainSenders = await prisma.domainSender.findMany()
+     * 
+     * // Get first 10 DomainSenders
+     * const domainSenders = await prisma.domainSender.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const domainSenderWithIdOnly = await prisma.domainSender.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DomainSenderFindManyArgs>(args?: SelectSubset<T, DomainSenderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DomainSender.
+     * @param {DomainSenderCreateArgs} args - Arguments to create a DomainSender.
+     * @example
+     * // Create one DomainSender
+     * const DomainSender = await prisma.domainSender.create({
+     *   data: {
+     *     // ... data to create a DomainSender
+     *   }
+     * })
+     * 
+     */
+    create<T extends DomainSenderCreateArgs>(args: SelectSubset<T, DomainSenderCreateArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DomainSenders.
+     * @param {DomainSenderCreateManyArgs} args - Arguments to create many DomainSenders.
+     * @example
+     * // Create many DomainSenders
+     * const domainSender = await prisma.domainSender.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DomainSenderCreateManyArgs>(args?: SelectSubset<T, DomainSenderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DomainSenders and returns the data saved in the database.
+     * @param {DomainSenderCreateManyAndReturnArgs} args - Arguments to create many DomainSenders.
+     * @example
+     * // Create many DomainSenders
+     * const domainSender = await prisma.domainSender.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DomainSenders and only return the `id`
+     * const domainSenderWithIdOnly = await prisma.domainSender.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DomainSenderCreateManyAndReturnArgs>(args?: SelectSubset<T, DomainSenderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DomainSender.
+     * @param {DomainSenderDeleteArgs} args - Arguments to delete one DomainSender.
+     * @example
+     * // Delete one DomainSender
+     * const DomainSender = await prisma.domainSender.delete({
+     *   where: {
+     *     // ... filter to delete one DomainSender
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DomainSenderDeleteArgs>(args: SelectSubset<T, DomainSenderDeleteArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DomainSender.
+     * @param {DomainSenderUpdateArgs} args - Arguments to update one DomainSender.
+     * @example
+     * // Update one DomainSender
+     * const domainSender = await prisma.domainSender.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DomainSenderUpdateArgs>(args: SelectSubset<T, DomainSenderUpdateArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DomainSenders.
+     * @param {DomainSenderDeleteManyArgs} args - Arguments to filter DomainSenders to delete.
+     * @example
+     * // Delete a few DomainSenders
+     * const { count } = await prisma.domainSender.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DomainSenderDeleteManyArgs>(args?: SelectSubset<T, DomainSenderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DomainSenders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainSenderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DomainSenders
+     * const domainSender = await prisma.domainSender.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DomainSenderUpdateManyArgs>(args: SelectSubset<T, DomainSenderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DomainSenders and returns the data updated in the database.
+     * @param {DomainSenderUpdateManyAndReturnArgs} args - Arguments to update many DomainSenders.
+     * @example
+     * // Update many DomainSenders
+     * const domainSender = await prisma.domainSender.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DomainSenders and only return the `id`
+     * const domainSenderWithIdOnly = await prisma.domainSender.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DomainSenderUpdateManyAndReturnArgs>(args: SelectSubset<T, DomainSenderUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DomainSender.
+     * @param {DomainSenderUpsertArgs} args - Arguments to update or create a DomainSender.
+     * @example
+     * // Update or create a DomainSender
+     * const domainSender = await prisma.domainSender.upsert({
+     *   create: {
+     *     // ... data to create a DomainSender
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DomainSender we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DomainSenderUpsertArgs>(args: SelectSubset<T, DomainSenderUpsertArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DomainSenders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainSenderCountArgs} args - Arguments to filter DomainSenders to count.
+     * @example
+     * // Count the number of DomainSenders
+     * const count = await prisma.domainSender.count({
+     *   where: {
+     *     // ... the filter for the DomainSenders we want to count
+     *   }
+     * })
+    **/
+    count<T extends DomainSenderCountArgs>(
+      args?: Subset<T, DomainSenderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DomainSenderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DomainSender.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainSenderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DomainSenderAggregateArgs>(args: Subset<T, DomainSenderAggregateArgs>): Prisma.PrismaPromise<GetDomainSenderAggregateType<T>>
+
+    /**
+     * Group by DomainSender.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DomainSenderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DomainSenderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DomainSenderGroupByArgs['orderBy'] }
+        : { orderBy?: DomainSenderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DomainSenderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDomainSenderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DomainSender model
+   */
+  readonly fields: DomainSenderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DomainSender.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DomainSenderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    domain<T extends DomainDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DomainDefaultArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DomainSender model
+   */
+  interface DomainSenderFieldRefs {
+    readonly id: FieldRef<"DomainSender", 'String'>
+    readonly tenantId: FieldRef<"DomainSender", 'String'>
+    readonly domainId: FieldRef<"DomainSender", 'String'>
+    readonly label: FieldRef<"DomainSender", 'String'>
+    readonly emailAddress: FieldRef<"DomainSender", 'String'>
+    readonly username: FieldRef<"DomainSender", 'String'>
+    readonly encryptedPassword: FieldRef<"DomainSender", 'String'>
+    readonly iv: FieldRef<"DomainSender", 'String'>
+    readonly authTag: FieldRef<"DomainSender", 'String'>
+    readonly keyVersion: FieldRef<"DomainSender", 'String'>
+    readonly status: FieldRef<"DomainSender", 'SenderStatus'>
+    readonly perDayLimit: FieldRef<"DomainSender", 'Int'>
+    readonly sentTodayCount: FieldRef<"DomainSender", 'Int'>
+    readonly sentTodayResetAt: FieldRef<"DomainSender", 'DateTime'>
+    readonly lastSuccessAt: FieldRef<"DomainSender", 'DateTime'>
+    readonly lastErrorAt: FieldRef<"DomainSender", 'DateTime'>
+    readonly errorStreak: FieldRef<"DomainSender", 'Int'>
+    readonly healthScore: FieldRef<"DomainSender", 'Int'>
+    readonly createdAt: FieldRef<"DomainSender", 'DateTime'>
+    readonly updatedAt: FieldRef<"DomainSender", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DomainSender findUnique
+   */
+  export type DomainSenderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * Filter, which DomainSender to fetch.
+     */
+    where: DomainSenderWhereUniqueInput
+  }
+
+  /**
+   * DomainSender findUniqueOrThrow
+   */
+  export type DomainSenderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * Filter, which DomainSender to fetch.
+     */
+    where: DomainSenderWhereUniqueInput
+  }
+
+  /**
+   * DomainSender findFirst
+   */
+  export type DomainSenderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * Filter, which DomainSender to fetch.
+     */
+    where?: DomainSenderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DomainSenders to fetch.
+     */
+    orderBy?: DomainSenderOrderByWithRelationInput | DomainSenderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DomainSenders.
+     */
+    cursor?: DomainSenderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DomainSenders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DomainSenders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DomainSenders.
+     */
+    distinct?: DomainSenderScalarFieldEnum | DomainSenderScalarFieldEnum[]
+  }
+
+  /**
+   * DomainSender findFirstOrThrow
+   */
+  export type DomainSenderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * Filter, which DomainSender to fetch.
+     */
+    where?: DomainSenderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DomainSenders to fetch.
+     */
+    orderBy?: DomainSenderOrderByWithRelationInput | DomainSenderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DomainSenders.
+     */
+    cursor?: DomainSenderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DomainSenders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DomainSenders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DomainSenders.
+     */
+    distinct?: DomainSenderScalarFieldEnum | DomainSenderScalarFieldEnum[]
+  }
+
+  /**
+   * DomainSender findMany
+   */
+  export type DomainSenderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * Filter, which DomainSenders to fetch.
+     */
+    where?: DomainSenderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DomainSenders to fetch.
+     */
+    orderBy?: DomainSenderOrderByWithRelationInput | DomainSenderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DomainSenders.
+     */
+    cursor?: DomainSenderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DomainSenders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DomainSenders.
+     */
+    skip?: number
+    distinct?: DomainSenderScalarFieldEnum | DomainSenderScalarFieldEnum[]
+  }
+
+  /**
+   * DomainSender create
+   */
+  export type DomainSenderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DomainSender.
+     */
+    data: XOR<DomainSenderCreateInput, DomainSenderUncheckedCreateInput>
+  }
+
+  /**
+   * DomainSender createMany
+   */
+  export type DomainSenderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DomainSenders.
+     */
+    data: DomainSenderCreateManyInput | DomainSenderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DomainSender createManyAndReturn
+   */
+  export type DomainSenderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * The data used to create many DomainSenders.
+     */
+    data: DomainSenderCreateManyInput | DomainSenderCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DomainSender update
+   */
+  export type DomainSenderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DomainSender.
+     */
+    data: XOR<DomainSenderUpdateInput, DomainSenderUncheckedUpdateInput>
+    /**
+     * Choose, which DomainSender to update.
+     */
+    where: DomainSenderWhereUniqueInput
+  }
+
+  /**
+   * DomainSender updateMany
+   */
+  export type DomainSenderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DomainSenders.
+     */
+    data: XOR<DomainSenderUpdateManyMutationInput, DomainSenderUncheckedUpdateManyInput>
+    /**
+     * Filter which DomainSenders to update
+     */
+    where?: DomainSenderWhereInput
+    /**
+     * Limit how many DomainSenders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DomainSender updateManyAndReturn
+   */
+  export type DomainSenderUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * The data used to update DomainSenders.
+     */
+    data: XOR<DomainSenderUpdateManyMutationInput, DomainSenderUncheckedUpdateManyInput>
+    /**
+     * Filter which DomainSenders to update
+     */
+    where?: DomainSenderWhereInput
+    /**
+     * Limit how many DomainSenders to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DomainSender upsert
+   */
+  export type DomainSenderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DomainSender to update in case it exists.
+     */
+    where: DomainSenderWhereUniqueInput
+    /**
+     * In case the DomainSender found by the `where` argument doesn't exist, create a new DomainSender with this data.
+     */
+    create: XOR<DomainSenderCreateInput, DomainSenderUncheckedCreateInput>
+    /**
+     * In case the DomainSender was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DomainSenderUpdateInput, DomainSenderUncheckedUpdateInput>
+  }
+
+  /**
+   * DomainSender delete
+   */
+  export type DomainSenderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    /**
+     * Filter which DomainSender to delete.
+     */
+    where: DomainSenderWhereUniqueInput
+  }
+
+  /**
+   * DomainSender deleteMany
+   */
+  export type DomainSenderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DomainSenders to delete
+     */
+    where?: DomainSenderWhereInput
+    /**
+     * Limit how many DomainSenders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DomainSender without action
+   */
+  export type DomainSenderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
   }
 
 
@@ -11315,6 +15607,49 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const DomainScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    userId: 'userId',
+    domain: 'domain',
+    status: 'status',
+    verificationToken: 'verificationToken',
+    txtHost: 'txtHost',
+    txtValue: 'txtValue',
+    spfHost: 'spfHost',
+    spfValue: 'spfValue',
+    cnameHost: 'cnameHost',
+    cnameValue: 'cnameValue',
+    mxHost: 'mxHost',
+    mxPriority: 'mxPriority',
+    smtpHost: 'smtpHost',
+    smtpPort: 'smtpPort',
+    smtpSecure: 'smtpSecure',
+    verifiedAt: 'verifiedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DomainScalarFieldEnum = (typeof DomainScalarFieldEnum)[keyof typeof DomainScalarFieldEnum]
+
+
+  export const CompanyScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    userId: 'userId',
+    name: 'name',
+    service: 'service',
+    phone: 'phone',
+    email: 'email',
+    address: 'address',
+    website: 'website',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
+
+
   export const SmtpAccountScalarFieldEnum: {
     id: 'id',
     tenantId: 'tenantId',
@@ -11338,6 +15673,32 @@ export namespace Prisma {
   };
 
   export type SmtpAccountScalarFieldEnum = (typeof SmtpAccountScalarFieldEnum)[keyof typeof SmtpAccountScalarFieldEnum]
+
+
+  export const DomainSenderScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    domainId: 'domainId',
+    label: 'label',
+    emailAddress: 'emailAddress',
+    username: 'username',
+    encryptedPassword: 'encryptedPassword',
+    iv: 'iv',
+    authTag: 'authTag',
+    keyVersion: 'keyVersion',
+    status: 'status',
+    perDayLimit: 'perDayLimit',
+    sentTodayCount: 'sentTodayCount',
+    sentTodayResetAt: 'sentTodayResetAt',
+    lastSuccessAt: 'lastSuccessAt',
+    lastErrorAt: 'lastErrorAt',
+    errorStreak: 'errorStreak',
+    healthScore: 'healthScore',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DomainSenderScalarFieldEnum = (typeof DomainSenderScalarFieldEnum)[keyof typeof DomainSenderScalarFieldEnum]
 
 
   export const ApiKeyScalarFieldEnum: {
@@ -11551,6 +15912,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'DomainStatus'
+   */
+  export type EnumDomainStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DomainStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'DomainStatus[]'
+   */
+  export type ListEnumDomainStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DomainStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'SenderStatus'
    */
   export type EnumSenderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SenderStatus'>
@@ -11665,10 +16040,13 @@ export namespace Prisma {
     dailyCountResetAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
     users?: UserListRelationFilter
     smtpAccounts?: SmtpAccountListRelationFilter
+    domainSenders?: DomainSenderListRelationFilter
     apiKeys?: ApiKeyListRelationFilter
     templates?: TemplateListRelationFilter
     messages?: MessageListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    companies?: CompanyListRelationFilter
+    domains?: DomainListRelationFilter
   }
 
   export type TenantOrderByWithRelationInput = {
@@ -11682,10 +16060,13 @@ export namespace Prisma {
     dailyCountResetAt?: SortOrderInput | SortOrder
     users?: UserOrderByRelationAggregateInput
     smtpAccounts?: SmtpAccountOrderByRelationAggregateInput
+    domainSenders?: DomainSenderOrderByRelationAggregateInput
     apiKeys?: ApiKeyOrderByRelationAggregateInput
     templates?: TemplateOrderByRelationAggregateInput
     messages?: MessageOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
+    companies?: CompanyOrderByRelationAggregateInput
+    domains?: DomainOrderByRelationAggregateInput
   }
 
   export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -11702,10 +16083,13 @@ export namespace Prisma {
     dailyCountResetAt?: DateTimeNullableFilter<"Tenant"> | Date | string | null
     users?: UserListRelationFilter
     smtpAccounts?: SmtpAccountListRelationFilter
+    domainSenders?: DomainSenderListRelationFilter
     apiKeys?: ApiKeyListRelationFilter
     templates?: TemplateListRelationFilter
     messages?: MessageListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    companies?: CompanyListRelationFilter
+    domains?: DomainListRelationFilter
   }, "id">
 
   export type TenantOrderByWithAggregationInput = {
@@ -11755,6 +16139,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
+    domains?: DomainListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -11771,6 +16157,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenant?: TenantOrderByWithRelationInput
+    company?: CompanyOrderByWithRelationInput
+    domains?: DomainOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -11791,6 +16179,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
+    domains?: DomainListRelationFilter
   }, "id" | "tenantId_email">
 
   export type UserOrderByWithAggregationInput = {
@@ -11827,6 +16217,233 @@ export namespace Prisma {
     lastLogin?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type DomainWhereInput = {
+    AND?: DomainWhereInput | DomainWhereInput[]
+    OR?: DomainWhereInput[]
+    NOT?: DomainWhereInput | DomainWhereInput[]
+    id?: StringFilter<"Domain"> | string
+    tenantId?: StringFilter<"Domain"> | string
+    userId?: StringFilter<"Domain"> | string
+    domain?: StringFilter<"Domain"> | string
+    status?: EnumDomainStatusFilter<"Domain"> | $Enums.DomainStatus
+    verificationToken?: StringFilter<"Domain"> | string
+    txtHost?: StringFilter<"Domain"> | string
+    txtValue?: StringFilter<"Domain"> | string
+    spfHost?: StringFilter<"Domain"> | string
+    spfValue?: StringFilter<"Domain"> | string
+    cnameHost?: StringFilter<"Domain"> | string
+    cnameValue?: StringFilter<"Domain"> | string
+    mxHost?: StringFilter<"Domain"> | string
+    mxPriority?: IntFilter<"Domain"> | number
+    smtpHost?: StringNullableFilter<"Domain"> | string | null
+    smtpPort?: IntFilter<"Domain"> | number
+    smtpSecure?: BoolFilter<"Domain"> | boolean
+    verifiedAt?: DateTimeNullableFilter<"Domain"> | Date | string | null
+    createdAt?: DateTimeFilter<"Domain"> | Date | string
+    updatedAt?: DateTimeFilter<"Domain"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    senders?: DomainSenderListRelationFilter
+  }
+
+  export type DomainOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    domain?: SortOrder
+    status?: SortOrder
+    verificationToken?: SortOrder
+    txtHost?: SortOrder
+    txtValue?: SortOrder
+    spfHost?: SortOrder
+    spfValue?: SortOrder
+    cnameHost?: SortOrder
+    cnameValue?: SortOrder
+    mxHost?: SortOrder
+    mxPriority?: SortOrder
+    smtpHost?: SortOrderInput | SortOrder
+    smtpPort?: SortOrder
+    smtpSecure?: SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    senders?: DomainSenderOrderByRelationAggregateInput
+  }
+
+  export type DomainWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_domain?: DomainUserIdDomainCompoundUniqueInput
+    AND?: DomainWhereInput | DomainWhereInput[]
+    OR?: DomainWhereInput[]
+    NOT?: DomainWhereInput | DomainWhereInput[]
+    tenantId?: StringFilter<"Domain"> | string
+    userId?: StringFilter<"Domain"> | string
+    domain?: StringFilter<"Domain"> | string
+    status?: EnumDomainStatusFilter<"Domain"> | $Enums.DomainStatus
+    verificationToken?: StringFilter<"Domain"> | string
+    txtHost?: StringFilter<"Domain"> | string
+    txtValue?: StringFilter<"Domain"> | string
+    spfHost?: StringFilter<"Domain"> | string
+    spfValue?: StringFilter<"Domain"> | string
+    cnameHost?: StringFilter<"Domain"> | string
+    cnameValue?: StringFilter<"Domain"> | string
+    mxHost?: StringFilter<"Domain"> | string
+    mxPriority?: IntFilter<"Domain"> | number
+    smtpHost?: StringNullableFilter<"Domain"> | string | null
+    smtpPort?: IntFilter<"Domain"> | number
+    smtpSecure?: BoolFilter<"Domain"> | boolean
+    verifiedAt?: DateTimeNullableFilter<"Domain"> | Date | string | null
+    createdAt?: DateTimeFilter<"Domain"> | Date | string
+    updatedAt?: DateTimeFilter<"Domain"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    senders?: DomainSenderListRelationFilter
+  }, "id" | "userId_domain">
+
+  export type DomainOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    domain?: SortOrder
+    status?: SortOrder
+    verificationToken?: SortOrder
+    txtHost?: SortOrder
+    txtValue?: SortOrder
+    spfHost?: SortOrder
+    spfValue?: SortOrder
+    cnameHost?: SortOrder
+    cnameValue?: SortOrder
+    mxHost?: SortOrder
+    mxPriority?: SortOrder
+    smtpHost?: SortOrderInput | SortOrder
+    smtpPort?: SortOrder
+    smtpSecure?: SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DomainCountOrderByAggregateInput
+    _avg?: DomainAvgOrderByAggregateInput
+    _max?: DomainMaxOrderByAggregateInput
+    _min?: DomainMinOrderByAggregateInput
+    _sum?: DomainSumOrderByAggregateInput
+  }
+
+  export type DomainScalarWhereWithAggregatesInput = {
+    AND?: DomainScalarWhereWithAggregatesInput | DomainScalarWhereWithAggregatesInput[]
+    OR?: DomainScalarWhereWithAggregatesInput[]
+    NOT?: DomainScalarWhereWithAggregatesInput | DomainScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Domain"> | string
+    tenantId?: StringWithAggregatesFilter<"Domain"> | string
+    userId?: StringWithAggregatesFilter<"Domain"> | string
+    domain?: StringWithAggregatesFilter<"Domain"> | string
+    status?: EnumDomainStatusWithAggregatesFilter<"Domain"> | $Enums.DomainStatus
+    verificationToken?: StringWithAggregatesFilter<"Domain"> | string
+    txtHost?: StringWithAggregatesFilter<"Domain"> | string
+    txtValue?: StringWithAggregatesFilter<"Domain"> | string
+    spfHost?: StringWithAggregatesFilter<"Domain"> | string
+    spfValue?: StringWithAggregatesFilter<"Domain"> | string
+    cnameHost?: StringWithAggregatesFilter<"Domain"> | string
+    cnameValue?: StringWithAggregatesFilter<"Domain"> | string
+    mxHost?: StringWithAggregatesFilter<"Domain"> | string
+    mxPriority?: IntWithAggregatesFilter<"Domain"> | number
+    smtpHost?: StringNullableWithAggregatesFilter<"Domain"> | string | null
+    smtpPort?: IntWithAggregatesFilter<"Domain"> | number
+    smtpSecure?: BoolWithAggregatesFilter<"Domain"> | boolean
+    verifiedAt?: DateTimeNullableWithAggregatesFilter<"Domain"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Domain"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Domain"> | Date | string
+  }
+
+  export type CompanyWhereInput = {
+    AND?: CompanyWhereInput | CompanyWhereInput[]
+    OR?: CompanyWhereInput[]
+    NOT?: CompanyWhereInput | CompanyWhereInput[]
+    id?: StringFilter<"Company"> | string
+    tenantId?: StringFilter<"Company"> | string
+    userId?: StringFilter<"Company"> | string
+    name?: StringFilter<"Company"> | string
+    service?: StringFilter<"Company"> | string
+    phone?: StringFilter<"Company"> | string
+    email?: StringFilter<"Company"> | string
+    address?: StringFilter<"Company"> | string
+    website?: StringNullableFilter<"Company"> | string | null
+    createdAt?: DateTimeFilter<"Company"> | Date | string
+    updatedAt?: DateTimeFilter<"Company"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CompanyOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    service?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    website?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type CompanyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    AND?: CompanyWhereInput | CompanyWhereInput[]
+    OR?: CompanyWhereInput[]
+    NOT?: CompanyWhereInput | CompanyWhereInput[]
+    tenantId?: StringFilter<"Company"> | string
+    name?: StringFilter<"Company"> | string
+    service?: StringFilter<"Company"> | string
+    phone?: StringFilter<"Company"> | string
+    email?: StringFilter<"Company"> | string
+    address?: StringFilter<"Company"> | string
+    website?: StringNullableFilter<"Company"> | string | null
+    createdAt?: DateTimeFilter<"Company"> | Date | string
+    updatedAt?: DateTimeFilter<"Company"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId">
+
+  export type CompanyOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    service?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    website?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CompanyCountOrderByAggregateInput
+    _max?: CompanyMaxOrderByAggregateInput
+    _min?: CompanyMinOrderByAggregateInput
+  }
+
+  export type CompanyScalarWhereWithAggregatesInput = {
+    AND?: CompanyScalarWhereWithAggregatesInput | CompanyScalarWhereWithAggregatesInput[]
+    OR?: CompanyScalarWhereWithAggregatesInput[]
+    NOT?: CompanyScalarWhereWithAggregatesInput | CompanyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Company"> | string
+    tenantId?: StringWithAggregatesFilter<"Company"> | string
+    userId?: StringWithAggregatesFilter<"Company"> | string
+    name?: StringWithAggregatesFilter<"Company"> | string
+    service?: StringWithAggregatesFilter<"Company"> | string
+    phone?: StringWithAggregatesFilter<"Company"> | string
+    email?: StringWithAggregatesFilter<"Company"> | string
+    address?: StringWithAggregatesFilter<"Company"> | string
+    website?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
   }
 
   export type SmtpAccountWhereInput = {
@@ -11961,6 +16578,142 @@ export namespace Prisma {
     healthScore?: IntWithAggregatesFilter<"SmtpAccount"> | number
     createdAt?: DateTimeWithAggregatesFilter<"SmtpAccount"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SmtpAccount"> | Date | string
+  }
+
+  export type DomainSenderWhereInput = {
+    AND?: DomainSenderWhereInput | DomainSenderWhereInput[]
+    OR?: DomainSenderWhereInput[]
+    NOT?: DomainSenderWhereInput | DomainSenderWhereInput[]
+    id?: StringFilter<"DomainSender"> | string
+    tenantId?: StringFilter<"DomainSender"> | string
+    domainId?: StringFilter<"DomainSender"> | string
+    label?: StringFilter<"DomainSender"> | string
+    emailAddress?: StringFilter<"DomainSender"> | string
+    username?: StringFilter<"DomainSender"> | string
+    encryptedPassword?: StringFilter<"DomainSender"> | string
+    iv?: StringFilter<"DomainSender"> | string
+    authTag?: StringFilter<"DomainSender"> | string
+    keyVersion?: StringFilter<"DomainSender"> | string
+    status?: EnumSenderStatusFilter<"DomainSender"> | $Enums.SenderStatus
+    perDayLimit?: IntFilter<"DomainSender"> | number
+    sentTodayCount?: IntFilter<"DomainSender"> | number
+    sentTodayResetAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    lastSuccessAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    lastErrorAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    errorStreak?: IntFilter<"DomainSender"> | number
+    healthScore?: IntFilter<"DomainSender"> | number
+    createdAt?: DateTimeFilter<"DomainSender"> | Date | string
+    updatedAt?: DateTimeFilter<"DomainSender"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    domain?: XOR<DomainScalarRelationFilter, DomainWhereInput>
+  }
+
+  export type DomainSenderOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    domainId?: SortOrder
+    label?: SortOrder
+    emailAddress?: SortOrder
+    username?: SortOrder
+    encryptedPassword?: SortOrder
+    iv?: SortOrder
+    authTag?: SortOrder
+    keyVersion?: SortOrder
+    status?: SortOrder
+    perDayLimit?: SortOrder
+    sentTodayCount?: SortOrder
+    sentTodayResetAt?: SortOrderInput | SortOrder
+    lastSuccessAt?: SortOrderInput | SortOrder
+    lastErrorAt?: SortOrderInput | SortOrder
+    errorStreak?: SortOrder
+    healthScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+    domain?: DomainOrderByWithRelationInput
+  }
+
+  export type DomainSenderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tenantId_emailAddress?: DomainSenderTenantIdEmailAddressCompoundUniqueInput
+    AND?: DomainSenderWhereInput | DomainSenderWhereInput[]
+    OR?: DomainSenderWhereInput[]
+    NOT?: DomainSenderWhereInput | DomainSenderWhereInput[]
+    tenantId?: StringFilter<"DomainSender"> | string
+    domainId?: StringFilter<"DomainSender"> | string
+    label?: StringFilter<"DomainSender"> | string
+    emailAddress?: StringFilter<"DomainSender"> | string
+    username?: StringFilter<"DomainSender"> | string
+    encryptedPassword?: StringFilter<"DomainSender"> | string
+    iv?: StringFilter<"DomainSender"> | string
+    authTag?: StringFilter<"DomainSender"> | string
+    keyVersion?: StringFilter<"DomainSender"> | string
+    status?: EnumSenderStatusFilter<"DomainSender"> | $Enums.SenderStatus
+    perDayLimit?: IntFilter<"DomainSender"> | number
+    sentTodayCount?: IntFilter<"DomainSender"> | number
+    sentTodayResetAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    lastSuccessAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    lastErrorAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    errorStreak?: IntFilter<"DomainSender"> | number
+    healthScore?: IntFilter<"DomainSender"> | number
+    createdAt?: DateTimeFilter<"DomainSender"> | Date | string
+    updatedAt?: DateTimeFilter<"DomainSender"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    domain?: XOR<DomainScalarRelationFilter, DomainWhereInput>
+  }, "id" | "tenantId_emailAddress">
+
+  export type DomainSenderOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    domainId?: SortOrder
+    label?: SortOrder
+    emailAddress?: SortOrder
+    username?: SortOrder
+    encryptedPassword?: SortOrder
+    iv?: SortOrder
+    authTag?: SortOrder
+    keyVersion?: SortOrder
+    status?: SortOrder
+    perDayLimit?: SortOrder
+    sentTodayCount?: SortOrder
+    sentTodayResetAt?: SortOrderInput | SortOrder
+    lastSuccessAt?: SortOrderInput | SortOrder
+    lastErrorAt?: SortOrderInput | SortOrder
+    errorStreak?: SortOrder
+    healthScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DomainSenderCountOrderByAggregateInput
+    _avg?: DomainSenderAvgOrderByAggregateInput
+    _max?: DomainSenderMaxOrderByAggregateInput
+    _min?: DomainSenderMinOrderByAggregateInput
+    _sum?: DomainSenderSumOrderByAggregateInput
+  }
+
+  export type DomainSenderScalarWhereWithAggregatesInput = {
+    AND?: DomainSenderScalarWhereWithAggregatesInput | DomainSenderScalarWhereWithAggregatesInput[]
+    OR?: DomainSenderScalarWhereWithAggregatesInput[]
+    NOT?: DomainSenderScalarWhereWithAggregatesInput | DomainSenderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DomainSender"> | string
+    tenantId?: StringWithAggregatesFilter<"DomainSender"> | string
+    domainId?: StringWithAggregatesFilter<"DomainSender"> | string
+    label?: StringWithAggregatesFilter<"DomainSender"> | string
+    emailAddress?: StringWithAggregatesFilter<"DomainSender"> | string
+    username?: StringWithAggregatesFilter<"DomainSender"> | string
+    encryptedPassword?: StringWithAggregatesFilter<"DomainSender"> | string
+    iv?: StringWithAggregatesFilter<"DomainSender"> | string
+    authTag?: StringWithAggregatesFilter<"DomainSender"> | string
+    keyVersion?: StringWithAggregatesFilter<"DomainSender"> | string
+    status?: EnumSenderStatusWithAggregatesFilter<"DomainSender"> | $Enums.SenderStatus
+    perDayLimit?: IntWithAggregatesFilter<"DomainSender"> | number
+    sentTodayCount?: IntWithAggregatesFilter<"DomainSender"> | number
+    sentTodayResetAt?: DateTimeNullableWithAggregatesFilter<"DomainSender"> | Date | string | null
+    lastSuccessAt?: DateTimeNullableWithAggregatesFilter<"DomainSender"> | Date | string | null
+    lastErrorAt?: DateTimeNullableWithAggregatesFilter<"DomainSender"> | Date | string | null
+    errorStreak?: IntWithAggregatesFilter<"DomainSender"> | number
+    healthScore?: IntWithAggregatesFilter<"DomainSender"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"DomainSender"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DomainSender"> | Date | string
   }
 
   export type ApiKeyWhereInput = {
@@ -12396,10 +17149,13 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateInput = {
@@ -12413,10 +17169,13 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUpdateInput = {
@@ -12430,10 +17189,13 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateInput = {
@@ -12447,10 +17209,13 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateManyInput = {
@@ -12499,6 +17264,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutUsersInput
+    company?: CompanyCreateNestedOneWithoutUserInput
+    domains?: DomainCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -12514,6 +17281,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    company?: CompanyUncheckedCreateNestedOneWithoutUserInput
+    domains?: DomainUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -12529,6 +17298,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutUsersNestedInput
+    company?: CompanyUpdateOneWithoutUserNestedInput
+    domains?: DomainUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -12544,6 +17315,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12586,6 +17359,265 @@ export namespace Prisma {
     mfaSecretIv?: NullableStringFieldUpdateOperationsInput | string | null
     mfaSecretTag?: NullableStringFieldUpdateOperationsInput | string | null
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainCreateInput = {
+    id?: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutDomainsInput
+    user: UserCreateNestedOneWithoutDomainsInput
+    senders?: DomainSenderCreateNestedManyWithoutDomainInput
+  }
+
+  export type DomainUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    senders?: DomainSenderUncheckedCreateNestedManyWithoutDomainInput
+  }
+
+  export type DomainUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutDomainsNestedInput
+    user?: UserUpdateOneRequiredWithoutDomainsNestedInput
+    senders?: DomainSenderUpdateManyWithoutDomainNestedInput
+  }
+
+  export type DomainUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    senders?: DomainSenderUncheckedUpdateManyWithoutDomainNestedInput
+  }
+
+  export type DomainCreateManyInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyCreateInput = {
+    id?: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCompaniesInput
+    user: UserCreateNestedOneWithoutCompanyInput
+  }
+
+  export type CompanyUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CompanyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCompaniesNestedInput
+    user?: UserUpdateOneRequiredWithoutCompanyNestedInput
+  }
+
+  export type CompanyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyCreateManyInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CompanyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12740,6 +17772,165 @@ export namespace Prisma {
     keyVersion?: StringFieldUpdateOperationsInput | string
     status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
     perMinuteLimit?: IntFieldUpdateOperationsInput | number
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainSenderCreateInput = {
+    id?: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutDomainSendersInput
+    domain: DomainCreateNestedOneWithoutSendersInput
+  }
+
+  export type DomainSenderUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    domainId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainSenderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutDomainSendersNestedInput
+    domain?: DomainUpdateOneRequiredWithoutSendersNestedInput
+  }
+
+  export type DomainSenderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    domainId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainSenderCreateManyInput = {
+    id?: string
+    tenantId: string
+    domainId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainSenderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainSenderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    domainId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
     perDayLimit?: IntFieldUpdateOperationsInput | number
     sentTodayCount?: IntFieldUpdateOperationsInput | number
     sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13274,6 +18465,12 @@ export namespace Prisma {
     none?: SmtpAccountWhereInput
   }
 
+  export type DomainSenderListRelationFilter = {
+    every?: DomainSenderWhereInput
+    some?: DomainSenderWhereInput
+    none?: DomainSenderWhereInput
+  }
+
   export type ApiKeyListRelationFilter = {
     every?: ApiKeyWhereInput
     some?: ApiKeyWhereInput
@@ -13298,6 +18495,18 @@ export namespace Prisma {
     none?: AuditLogWhereInput
   }
 
+  export type CompanyListRelationFilter = {
+    every?: CompanyWhereInput
+    some?: CompanyWhereInput
+    none?: CompanyWhereInput
+  }
+
+  export type DomainListRelationFilter = {
+    every?: DomainWhereInput
+    some?: DomainWhereInput
+    none?: DomainWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -13308,6 +18517,10 @@ export namespace Prisma {
   }
 
   export type SmtpAccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DomainSenderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -13324,6 +18537,14 @@ export namespace Prisma {
   }
 
   export type AuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CompanyOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DomainOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -13472,6 +18693,11 @@ export namespace Prisma {
     isNot?: TenantWhereInput
   }
 
+  export type CompanyNullableScalarRelationFilter = {
+    is?: CompanyWhereInput | null
+    isNot?: CompanyWhereInput | null
+  }
+
   export type UserTenantIdEmailCompoundUniqueInput = {
     tenantId: string
     email: string
@@ -13556,6 +18782,154 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumDomainStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DomainStatus | EnumDomainStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDomainStatusFilter<$PrismaModel> | $Enums.DomainStatus
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type DomainUserIdDomainCompoundUniqueInput = {
+    userId: string
+    domain: string
+  }
+
+  export type DomainCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    domain?: SortOrder
+    status?: SortOrder
+    verificationToken?: SortOrder
+    txtHost?: SortOrder
+    txtValue?: SortOrder
+    spfHost?: SortOrder
+    spfValue?: SortOrder
+    cnameHost?: SortOrder
+    cnameValue?: SortOrder
+    mxHost?: SortOrder
+    mxPriority?: SortOrder
+    smtpHost?: SortOrder
+    smtpPort?: SortOrder
+    smtpSecure?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DomainAvgOrderByAggregateInput = {
+    mxPriority?: SortOrder
+    smtpPort?: SortOrder
+  }
+
+  export type DomainMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    domain?: SortOrder
+    status?: SortOrder
+    verificationToken?: SortOrder
+    txtHost?: SortOrder
+    txtValue?: SortOrder
+    spfHost?: SortOrder
+    spfValue?: SortOrder
+    cnameHost?: SortOrder
+    cnameValue?: SortOrder
+    mxHost?: SortOrder
+    mxPriority?: SortOrder
+    smtpHost?: SortOrder
+    smtpPort?: SortOrder
+    smtpSecure?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DomainMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    domain?: SortOrder
+    status?: SortOrder
+    verificationToken?: SortOrder
+    txtHost?: SortOrder
+    txtValue?: SortOrder
+    spfHost?: SortOrder
+    spfValue?: SortOrder
+    cnameHost?: SortOrder
+    cnameValue?: SortOrder
+    mxHost?: SortOrder
+    mxPriority?: SortOrder
+    smtpHost?: SortOrder
+    smtpPort?: SortOrder
+    smtpSecure?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DomainSumOrderByAggregateInput = {
+    mxPriority?: SortOrder
+    smtpPort?: SortOrder
+  }
+
+  export type EnumDomainStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DomainStatus | EnumDomainStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDomainStatusWithAggregatesFilter<$PrismaModel> | $Enums.DomainStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDomainStatusFilter<$PrismaModel>
+    _max?: NestedEnumDomainStatusFilter<$PrismaModel>
+  }
+
+  export type CompanyCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    service?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    website?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    service?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    website?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    service?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    website?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type EnumSenderStatusFilter<$PrismaModel = never> = {
@@ -13670,6 +19044,99 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSenderStatusFilter<$PrismaModel>
     _max?: NestedEnumSenderStatusFilter<$PrismaModel>
+  }
+
+  export type DomainScalarRelationFilter = {
+    is?: DomainWhereInput
+    isNot?: DomainWhereInput
+  }
+
+  export type DomainSenderTenantIdEmailAddressCompoundUniqueInput = {
+    tenantId: string
+    emailAddress: string
+  }
+
+  export type DomainSenderCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    domainId?: SortOrder
+    label?: SortOrder
+    emailAddress?: SortOrder
+    username?: SortOrder
+    encryptedPassword?: SortOrder
+    iv?: SortOrder
+    authTag?: SortOrder
+    keyVersion?: SortOrder
+    status?: SortOrder
+    perDayLimit?: SortOrder
+    sentTodayCount?: SortOrder
+    sentTodayResetAt?: SortOrder
+    lastSuccessAt?: SortOrder
+    lastErrorAt?: SortOrder
+    errorStreak?: SortOrder
+    healthScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DomainSenderAvgOrderByAggregateInput = {
+    perDayLimit?: SortOrder
+    sentTodayCount?: SortOrder
+    errorStreak?: SortOrder
+    healthScore?: SortOrder
+  }
+
+  export type DomainSenderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    domainId?: SortOrder
+    label?: SortOrder
+    emailAddress?: SortOrder
+    username?: SortOrder
+    encryptedPassword?: SortOrder
+    iv?: SortOrder
+    authTag?: SortOrder
+    keyVersion?: SortOrder
+    status?: SortOrder
+    perDayLimit?: SortOrder
+    sentTodayCount?: SortOrder
+    sentTodayResetAt?: SortOrder
+    lastSuccessAt?: SortOrder
+    lastErrorAt?: SortOrder
+    errorStreak?: SortOrder
+    healthScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DomainSenderMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    domainId?: SortOrder
+    label?: SortOrder
+    emailAddress?: SortOrder
+    username?: SortOrder
+    encryptedPassword?: SortOrder
+    iv?: SortOrder
+    authTag?: SortOrder
+    keyVersion?: SortOrder
+    status?: SortOrder
+    perDayLimit?: SortOrder
+    sentTodayCount?: SortOrder
+    sentTodayResetAt?: SortOrder
+    lastSuccessAt?: SortOrder
+    lastErrorAt?: SortOrder
+    errorStreak?: SortOrder
+    healthScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DomainSenderSumOrderByAggregateInput = {
+    perDayLimit?: SortOrder
+    sentTodayCount?: SortOrder
+    errorStreak?: SortOrder
+    healthScore?: SortOrder
   }
 
   export type EnumApiKeyStatusFilter<$PrismaModel = never> = {
@@ -14076,6 +19543,13 @@ export namespace Prisma {
     connect?: SmtpAccountWhereUniqueInput | SmtpAccountWhereUniqueInput[]
   }
 
+  export type DomainSenderCreateNestedManyWithoutTenantInput = {
+    create?: XOR<DomainSenderCreateWithoutTenantInput, DomainSenderUncheckedCreateWithoutTenantInput> | DomainSenderCreateWithoutTenantInput[] | DomainSenderUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutTenantInput | DomainSenderCreateOrConnectWithoutTenantInput[]
+    createMany?: DomainSenderCreateManyTenantInputEnvelope
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+  }
+
   export type ApiKeyCreateNestedManyWithoutTenantInput = {
     create?: XOR<ApiKeyCreateWithoutTenantInput, ApiKeyUncheckedCreateWithoutTenantInput> | ApiKeyCreateWithoutTenantInput[] | ApiKeyUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: ApiKeyCreateOrConnectWithoutTenantInput | ApiKeyCreateOrConnectWithoutTenantInput[]
@@ -14104,6 +19578,20 @@ export namespace Prisma {
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
+  export type CompanyCreateNestedManyWithoutTenantInput = {
+    create?: XOR<CompanyCreateWithoutTenantInput, CompanyUncheckedCreateWithoutTenantInput> | CompanyCreateWithoutTenantInput[] | CompanyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CompanyCreateOrConnectWithoutTenantInput | CompanyCreateOrConnectWithoutTenantInput[]
+    createMany?: CompanyCreateManyTenantInputEnvelope
+    connect?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+  }
+
+  export type DomainCreateNestedManyWithoutTenantInput = {
+    create?: XOR<DomainCreateWithoutTenantInput, DomainUncheckedCreateWithoutTenantInput> | DomainCreateWithoutTenantInput[] | DomainUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutTenantInput | DomainCreateOrConnectWithoutTenantInput[]
+    createMany?: DomainCreateManyTenantInputEnvelope
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -14116,6 +19604,13 @@ export namespace Prisma {
     connectOrCreate?: SmtpAccountCreateOrConnectWithoutTenantInput | SmtpAccountCreateOrConnectWithoutTenantInput[]
     createMany?: SmtpAccountCreateManyTenantInputEnvelope
     connect?: SmtpAccountWhereUniqueInput | SmtpAccountWhereUniqueInput[]
+  }
+
+  export type DomainSenderUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<DomainSenderCreateWithoutTenantInput, DomainSenderUncheckedCreateWithoutTenantInput> | DomainSenderCreateWithoutTenantInput[] | DomainSenderUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutTenantInput | DomainSenderCreateOrConnectWithoutTenantInput[]
+    createMany?: DomainSenderCreateManyTenantInputEnvelope
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
   }
 
   export type ApiKeyUncheckedCreateNestedManyWithoutTenantInput = {
@@ -14144,6 +19639,20 @@ export namespace Prisma {
     connectOrCreate?: AuditLogCreateOrConnectWithoutTenantInput | AuditLogCreateOrConnectWithoutTenantInput[]
     createMany?: AuditLogCreateManyTenantInputEnvelope
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
+  export type CompanyUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<CompanyCreateWithoutTenantInput, CompanyUncheckedCreateWithoutTenantInput> | CompanyCreateWithoutTenantInput[] | CompanyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CompanyCreateOrConnectWithoutTenantInput | CompanyCreateOrConnectWithoutTenantInput[]
+    createMany?: CompanyCreateManyTenantInputEnvelope
+    connect?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+  }
+
+  export type DomainUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<DomainCreateWithoutTenantInput, DomainUncheckedCreateWithoutTenantInput> | DomainCreateWithoutTenantInput[] | DomainUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutTenantInput | DomainCreateOrConnectWithoutTenantInput[]
+    createMany?: DomainCreateManyTenantInputEnvelope
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -14196,6 +19705,20 @@ export namespace Prisma {
     update?: SmtpAccountUpdateWithWhereUniqueWithoutTenantInput | SmtpAccountUpdateWithWhereUniqueWithoutTenantInput[]
     updateMany?: SmtpAccountUpdateManyWithWhereWithoutTenantInput | SmtpAccountUpdateManyWithWhereWithoutTenantInput[]
     deleteMany?: SmtpAccountScalarWhereInput | SmtpAccountScalarWhereInput[]
+  }
+
+  export type DomainSenderUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<DomainSenderCreateWithoutTenantInput, DomainSenderUncheckedCreateWithoutTenantInput> | DomainSenderCreateWithoutTenantInput[] | DomainSenderUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutTenantInput | DomainSenderCreateOrConnectWithoutTenantInput[]
+    upsert?: DomainSenderUpsertWithWhereUniqueWithoutTenantInput | DomainSenderUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: DomainSenderCreateManyTenantInputEnvelope
+    set?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    disconnect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    delete?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    update?: DomainSenderUpdateWithWhereUniqueWithoutTenantInput | DomainSenderUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: DomainSenderUpdateManyWithWhereWithoutTenantInput | DomainSenderUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: DomainSenderScalarWhereInput | DomainSenderScalarWhereInput[]
   }
 
   export type ApiKeyUpdateManyWithoutTenantNestedInput = {
@@ -14254,6 +19777,34 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
+  export type CompanyUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<CompanyCreateWithoutTenantInput, CompanyUncheckedCreateWithoutTenantInput> | CompanyCreateWithoutTenantInput[] | CompanyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CompanyCreateOrConnectWithoutTenantInput | CompanyCreateOrConnectWithoutTenantInput[]
+    upsert?: CompanyUpsertWithWhereUniqueWithoutTenantInput | CompanyUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: CompanyCreateManyTenantInputEnvelope
+    set?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    disconnect?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    delete?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    connect?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    update?: CompanyUpdateWithWhereUniqueWithoutTenantInput | CompanyUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: CompanyUpdateManyWithWhereWithoutTenantInput | CompanyUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: CompanyScalarWhereInput | CompanyScalarWhereInput[]
+  }
+
+  export type DomainUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<DomainCreateWithoutTenantInput, DomainUncheckedCreateWithoutTenantInput> | DomainCreateWithoutTenantInput[] | DomainUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutTenantInput | DomainCreateOrConnectWithoutTenantInput[]
+    upsert?: DomainUpsertWithWhereUniqueWithoutTenantInput | DomainUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: DomainCreateManyTenantInputEnvelope
+    set?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    disconnect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    delete?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    update?: DomainUpdateWithWhereUniqueWithoutTenantInput | DomainUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: DomainUpdateManyWithWhereWithoutTenantInput | DomainUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -14280,6 +19831,20 @@ export namespace Prisma {
     update?: SmtpAccountUpdateWithWhereUniqueWithoutTenantInput | SmtpAccountUpdateWithWhereUniqueWithoutTenantInput[]
     updateMany?: SmtpAccountUpdateManyWithWhereWithoutTenantInput | SmtpAccountUpdateManyWithWhereWithoutTenantInput[]
     deleteMany?: SmtpAccountScalarWhereInput | SmtpAccountScalarWhereInput[]
+  }
+
+  export type DomainSenderUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<DomainSenderCreateWithoutTenantInput, DomainSenderUncheckedCreateWithoutTenantInput> | DomainSenderCreateWithoutTenantInput[] | DomainSenderUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutTenantInput | DomainSenderCreateOrConnectWithoutTenantInput[]
+    upsert?: DomainSenderUpsertWithWhereUniqueWithoutTenantInput | DomainSenderUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: DomainSenderCreateManyTenantInputEnvelope
+    set?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    disconnect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    delete?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    update?: DomainSenderUpdateWithWhereUniqueWithoutTenantInput | DomainSenderUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: DomainSenderUpdateManyWithWhereWithoutTenantInput | DomainSenderUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: DomainSenderScalarWhereInput | DomainSenderScalarWhereInput[]
   }
 
   export type ApiKeyUncheckedUpdateManyWithoutTenantNestedInput = {
@@ -14338,10 +19903,64 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
+  export type CompanyUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<CompanyCreateWithoutTenantInput, CompanyUncheckedCreateWithoutTenantInput> | CompanyCreateWithoutTenantInput[] | CompanyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CompanyCreateOrConnectWithoutTenantInput | CompanyCreateOrConnectWithoutTenantInput[]
+    upsert?: CompanyUpsertWithWhereUniqueWithoutTenantInput | CompanyUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: CompanyCreateManyTenantInputEnvelope
+    set?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    disconnect?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    delete?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    connect?: CompanyWhereUniqueInput | CompanyWhereUniqueInput[]
+    update?: CompanyUpdateWithWhereUniqueWithoutTenantInput | CompanyUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: CompanyUpdateManyWithWhereWithoutTenantInput | CompanyUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: CompanyScalarWhereInput | CompanyScalarWhereInput[]
+  }
+
+  export type DomainUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<DomainCreateWithoutTenantInput, DomainUncheckedCreateWithoutTenantInput> | DomainCreateWithoutTenantInput[] | DomainUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutTenantInput | DomainCreateOrConnectWithoutTenantInput[]
+    upsert?: DomainUpsertWithWhereUniqueWithoutTenantInput | DomainUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: DomainCreateManyTenantInputEnvelope
+    set?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    disconnect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    delete?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    update?: DomainUpdateWithWhereUniqueWithoutTenantInput | DomainUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: DomainUpdateManyWithWhereWithoutTenantInput | DomainUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
+  }
+
   export type TenantCreateNestedOneWithoutUsersInput = {
     create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
     connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
     connect?: TenantWhereUniqueInput
+  }
+
+  export type CompanyCreateNestedOneWithoutUserInput = {
+    create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
+    connect?: CompanyWhereUniqueInput
+  }
+
+  export type DomainCreateNestedManyWithoutUserInput = {
+    create?: XOR<DomainCreateWithoutUserInput, DomainUncheckedCreateWithoutUserInput> | DomainCreateWithoutUserInput[] | DomainUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutUserInput | DomainCreateOrConnectWithoutUserInput[]
+    createMany?: DomainCreateManyUserInputEnvelope
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+  }
+
+  export type CompanyUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
+    connect?: CompanyWhereUniqueInput
+  }
+
+  export type DomainUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<DomainCreateWithoutUserInput, DomainUncheckedCreateWithoutUserInput> | DomainCreateWithoutUserInput[] | DomainUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutUserInput | DomainCreateOrConnectWithoutUserInput[]
+    createMany?: DomainCreateManyUserInputEnvelope
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
   }
 
   export type EnumUserRoleFieldUpdateOperationsInput = {
@@ -14362,6 +19981,156 @@ export namespace Prisma {
     upsert?: TenantUpsertWithoutUsersInput
     connect?: TenantWhereUniqueInput
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutUsersInput, TenantUpdateWithoutUsersInput>, TenantUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type CompanyUpdateOneWithoutUserNestedInput = {
+    create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
+    upsert?: CompanyUpsertWithoutUserInput
+    disconnect?: CompanyWhereInput | boolean
+    delete?: CompanyWhereInput | boolean
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutUserInput, CompanyUpdateWithoutUserInput>, CompanyUncheckedUpdateWithoutUserInput>
+  }
+
+  export type DomainUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DomainCreateWithoutUserInput, DomainUncheckedCreateWithoutUserInput> | DomainCreateWithoutUserInput[] | DomainUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutUserInput | DomainCreateOrConnectWithoutUserInput[]
+    upsert?: DomainUpsertWithWhereUniqueWithoutUserInput | DomainUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DomainCreateManyUserInputEnvelope
+    set?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    disconnect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    delete?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    update?: DomainUpdateWithWhereUniqueWithoutUserInput | DomainUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DomainUpdateManyWithWhereWithoutUserInput | DomainUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
+  }
+
+  export type CompanyUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
+    upsert?: CompanyUpsertWithoutUserInput
+    disconnect?: CompanyWhereInput | boolean
+    delete?: CompanyWhereInput | boolean
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutUserInput, CompanyUpdateWithoutUserInput>, CompanyUncheckedUpdateWithoutUserInput>
+  }
+
+  export type DomainUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DomainCreateWithoutUserInput, DomainUncheckedCreateWithoutUserInput> | DomainCreateWithoutUserInput[] | DomainUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DomainCreateOrConnectWithoutUserInput | DomainCreateOrConnectWithoutUserInput[]
+    upsert?: DomainUpsertWithWhereUniqueWithoutUserInput | DomainUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DomainCreateManyUserInputEnvelope
+    set?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    disconnect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    delete?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+    update?: DomainUpdateWithWhereUniqueWithoutUserInput | DomainUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DomainUpdateManyWithWhereWithoutUserInput | DomainUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
+  }
+
+  export type TenantCreateNestedOneWithoutDomainsInput = {
+    create?: XOR<TenantCreateWithoutDomainsInput, TenantUncheckedCreateWithoutDomainsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutDomainsInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutDomainsInput = {
+    create?: XOR<UserCreateWithoutDomainsInput, UserUncheckedCreateWithoutDomainsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDomainsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type DomainSenderCreateNestedManyWithoutDomainInput = {
+    create?: XOR<DomainSenderCreateWithoutDomainInput, DomainSenderUncheckedCreateWithoutDomainInput> | DomainSenderCreateWithoutDomainInput[] | DomainSenderUncheckedCreateWithoutDomainInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutDomainInput | DomainSenderCreateOrConnectWithoutDomainInput[]
+    createMany?: DomainSenderCreateManyDomainInputEnvelope
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+  }
+
+  export type DomainSenderUncheckedCreateNestedManyWithoutDomainInput = {
+    create?: XOR<DomainSenderCreateWithoutDomainInput, DomainSenderUncheckedCreateWithoutDomainInput> | DomainSenderCreateWithoutDomainInput[] | DomainSenderUncheckedCreateWithoutDomainInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutDomainInput | DomainSenderCreateOrConnectWithoutDomainInput[]
+    createMany?: DomainSenderCreateManyDomainInputEnvelope
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+  }
+
+  export type EnumDomainStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DomainStatus
+  }
+
+  export type TenantUpdateOneRequiredWithoutDomainsNestedInput = {
+    create?: XOR<TenantCreateWithoutDomainsInput, TenantUncheckedCreateWithoutDomainsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutDomainsInput
+    upsert?: TenantUpsertWithoutDomainsInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutDomainsInput, TenantUpdateWithoutDomainsInput>, TenantUncheckedUpdateWithoutDomainsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutDomainsNestedInput = {
+    create?: XOR<UserCreateWithoutDomainsInput, UserUncheckedCreateWithoutDomainsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDomainsInput
+    upsert?: UserUpsertWithoutDomainsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDomainsInput, UserUpdateWithoutDomainsInput>, UserUncheckedUpdateWithoutDomainsInput>
+  }
+
+  export type DomainSenderUpdateManyWithoutDomainNestedInput = {
+    create?: XOR<DomainSenderCreateWithoutDomainInput, DomainSenderUncheckedCreateWithoutDomainInput> | DomainSenderCreateWithoutDomainInput[] | DomainSenderUncheckedCreateWithoutDomainInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutDomainInput | DomainSenderCreateOrConnectWithoutDomainInput[]
+    upsert?: DomainSenderUpsertWithWhereUniqueWithoutDomainInput | DomainSenderUpsertWithWhereUniqueWithoutDomainInput[]
+    createMany?: DomainSenderCreateManyDomainInputEnvelope
+    set?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    disconnect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    delete?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    update?: DomainSenderUpdateWithWhereUniqueWithoutDomainInput | DomainSenderUpdateWithWhereUniqueWithoutDomainInput[]
+    updateMany?: DomainSenderUpdateManyWithWhereWithoutDomainInput | DomainSenderUpdateManyWithWhereWithoutDomainInput[]
+    deleteMany?: DomainSenderScalarWhereInput | DomainSenderScalarWhereInput[]
+  }
+
+  export type DomainSenderUncheckedUpdateManyWithoutDomainNestedInput = {
+    create?: XOR<DomainSenderCreateWithoutDomainInput, DomainSenderUncheckedCreateWithoutDomainInput> | DomainSenderCreateWithoutDomainInput[] | DomainSenderUncheckedCreateWithoutDomainInput[]
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutDomainInput | DomainSenderCreateOrConnectWithoutDomainInput[]
+    upsert?: DomainSenderUpsertWithWhereUniqueWithoutDomainInput | DomainSenderUpsertWithWhereUniqueWithoutDomainInput[]
+    createMany?: DomainSenderCreateManyDomainInputEnvelope
+    set?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    disconnect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    delete?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    connect?: DomainSenderWhereUniqueInput | DomainSenderWhereUniqueInput[]
+    update?: DomainSenderUpdateWithWhereUniqueWithoutDomainInput | DomainSenderUpdateWithWhereUniqueWithoutDomainInput[]
+    updateMany?: DomainSenderUpdateManyWithWhereWithoutDomainInput | DomainSenderUpdateManyWithWhereWithoutDomainInput[]
+    deleteMany?: DomainSenderScalarWhereInput | DomainSenderScalarWhereInput[]
+  }
+
+  export type TenantCreateNestedOneWithoutCompaniesInput = {
+    create?: XOR<TenantCreateWithoutCompaniesInput, TenantUncheckedCreateWithoutCompaniesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutCompaniesInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCompanyInput = {
+    create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TenantUpdateOneRequiredWithoutCompaniesNestedInput = {
+    create?: XOR<TenantCreateWithoutCompaniesInput, TenantUncheckedCreateWithoutCompaniesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutCompaniesInput
+    upsert?: TenantUpsertWithoutCompaniesInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutCompaniesInput, TenantUpdateWithoutCompaniesInput>, TenantUncheckedUpdateWithoutCompaniesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCompanyNestedInput = {
+    create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyInput
+    upsert?: UserUpsertWithoutCompanyInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCompanyInput, UserUpdateWithoutCompanyInput>, UserUncheckedUpdateWithoutCompanyInput>
   }
 
   export type TenantCreateNestedOneWithoutSmtpAccountsInput = {
@@ -14464,6 +20233,34 @@ export namespace Prisma {
     update?: MessageUpdateWithWhereUniqueWithoutSmtpAccountInput | MessageUpdateWithWhereUniqueWithoutSmtpAccountInput[]
     updateMany?: MessageUpdateManyWithWhereWithoutSmtpAccountInput | MessageUpdateManyWithWhereWithoutSmtpAccountInput[]
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
+  export type TenantCreateNestedOneWithoutDomainSendersInput = {
+    create?: XOR<TenantCreateWithoutDomainSendersInput, TenantUncheckedCreateWithoutDomainSendersInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutDomainSendersInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type DomainCreateNestedOneWithoutSendersInput = {
+    create?: XOR<DomainCreateWithoutSendersInput, DomainUncheckedCreateWithoutSendersInput>
+    connectOrCreate?: DomainCreateOrConnectWithoutSendersInput
+    connect?: DomainWhereUniqueInput
+  }
+
+  export type TenantUpdateOneRequiredWithoutDomainSendersNestedInput = {
+    create?: XOR<TenantCreateWithoutDomainSendersInput, TenantUncheckedCreateWithoutDomainSendersInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutDomainSendersInput
+    upsert?: TenantUpsertWithoutDomainSendersInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutDomainSendersInput, TenantUpdateWithoutDomainSendersInput>, TenantUncheckedUpdateWithoutDomainSendersInput>
+  }
+
+  export type DomainUpdateOneRequiredWithoutSendersNestedInput = {
+    create?: XOR<DomainCreateWithoutSendersInput, DomainUncheckedCreateWithoutSendersInput>
+    connectOrCreate?: DomainCreateOrConnectWithoutSendersInput
+    upsert?: DomainUpsertWithoutSendersInput
+    connect?: DomainWhereUniqueInput
+    update?: XOR<XOR<DomainUpdateToOneWithWhereWithoutSendersInput, DomainUpdateWithoutSendersInput>, DomainUncheckedUpdateWithoutSendersInput>
   }
 
   export type TenantCreateNestedOneWithoutApiKeysInput = {
@@ -14886,6 +20683,23 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumDomainStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DomainStatus | EnumDomainStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDomainStatusFilter<$PrismaModel> | $Enums.DomainStatus
+  }
+
+  export type NestedEnumDomainStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DomainStatus | EnumDomainStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DomainStatus[] | ListEnumDomainStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDomainStatusWithAggregatesFilter<$PrismaModel> | $Enums.DomainStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDomainStatusFilter<$PrismaModel>
+    _max?: NestedEnumDomainStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumSenderStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.SenderStatus | EnumSenderStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SenderStatus[] | ListEnumSenderStatusFieldRefInput<$PrismaModel>
@@ -15029,6 +20843,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    company?: CompanyCreateNestedOneWithoutUserInput
+    domains?: DomainCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTenantInput = {
@@ -15043,6 +20859,8 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    company?: CompanyUncheckedCreateNestedOneWithoutUserInput
+    domains?: DomainUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTenantInput = {
@@ -15108,6 +20926,60 @@ export namespace Prisma {
 
   export type SmtpAccountCreateManyTenantInputEnvelope = {
     data: SmtpAccountCreateManyTenantInput | SmtpAccountCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DomainSenderCreateWithoutTenantInput = {
+    id?: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    domain: DomainCreateNestedOneWithoutSendersInput
+  }
+
+  export type DomainSenderUncheckedCreateWithoutTenantInput = {
+    id?: string
+    domainId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainSenderCreateOrConnectWithoutTenantInput = {
+    where: DomainSenderWhereUniqueInput
+    create: XOR<DomainSenderCreateWithoutTenantInput, DomainSenderUncheckedCreateWithoutTenantInput>
+  }
+
+  export type DomainSenderCreateManyTenantInputEnvelope = {
+    data: DomainSenderCreateManyTenantInput | DomainSenderCreateManyTenantInput[]
     skipDuplicates?: boolean
   }
 
@@ -15267,6 +21139,98 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CompanyCreateWithoutTenantInput = {
+    id?: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCompanyInput
+  }
+
+  export type CompanyUncheckedCreateWithoutTenantInput = {
+    id?: string
+    userId: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CompanyCreateOrConnectWithoutTenantInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutTenantInput, CompanyUncheckedCreateWithoutTenantInput>
+  }
+
+  export type CompanyCreateManyTenantInputEnvelope = {
+    data: CompanyCreateManyTenantInput | CompanyCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DomainCreateWithoutTenantInput = {
+    id?: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutDomainsInput
+    senders?: DomainSenderCreateNestedManyWithoutDomainInput
+  }
+
+  export type DomainUncheckedCreateWithoutTenantInput = {
+    id?: string
+    userId: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    senders?: DomainSenderUncheckedCreateNestedManyWithoutDomainInput
+  }
+
+  export type DomainCreateOrConnectWithoutTenantInput = {
+    where: DomainWhereUniqueInput
+    create: XOR<DomainCreateWithoutTenantInput, DomainUncheckedCreateWithoutTenantInput>
+  }
+
+  export type DomainCreateManyTenantInputEnvelope = {
+    data: DomainCreateManyTenantInput | DomainCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithWhereUniqueWithoutTenantInput = {
     where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutTenantInput, UserUncheckedUpdateWithoutTenantInput>
@@ -15340,6 +21304,48 @@ export namespace Prisma {
     healthScore?: IntFilter<"SmtpAccount"> | number
     createdAt?: DateTimeFilter<"SmtpAccount"> | Date | string
     updatedAt?: DateTimeFilter<"SmtpAccount"> | Date | string
+  }
+
+  export type DomainSenderUpsertWithWhereUniqueWithoutTenantInput = {
+    where: DomainSenderWhereUniqueInput
+    update: XOR<DomainSenderUpdateWithoutTenantInput, DomainSenderUncheckedUpdateWithoutTenantInput>
+    create: XOR<DomainSenderCreateWithoutTenantInput, DomainSenderUncheckedCreateWithoutTenantInput>
+  }
+
+  export type DomainSenderUpdateWithWhereUniqueWithoutTenantInput = {
+    where: DomainSenderWhereUniqueInput
+    data: XOR<DomainSenderUpdateWithoutTenantInput, DomainSenderUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type DomainSenderUpdateManyWithWhereWithoutTenantInput = {
+    where: DomainSenderScalarWhereInput
+    data: XOR<DomainSenderUpdateManyMutationInput, DomainSenderUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type DomainSenderScalarWhereInput = {
+    AND?: DomainSenderScalarWhereInput | DomainSenderScalarWhereInput[]
+    OR?: DomainSenderScalarWhereInput[]
+    NOT?: DomainSenderScalarWhereInput | DomainSenderScalarWhereInput[]
+    id?: StringFilter<"DomainSender"> | string
+    tenantId?: StringFilter<"DomainSender"> | string
+    domainId?: StringFilter<"DomainSender"> | string
+    label?: StringFilter<"DomainSender"> | string
+    emailAddress?: StringFilter<"DomainSender"> | string
+    username?: StringFilter<"DomainSender"> | string
+    encryptedPassword?: StringFilter<"DomainSender"> | string
+    iv?: StringFilter<"DomainSender"> | string
+    authTag?: StringFilter<"DomainSender"> | string
+    keyVersion?: StringFilter<"DomainSender"> | string
+    status?: EnumSenderStatusFilter<"DomainSender"> | $Enums.SenderStatus
+    perDayLimit?: IntFilter<"DomainSender"> | number
+    sentTodayCount?: IntFilter<"DomainSender"> | number
+    sentTodayResetAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    lastSuccessAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    lastErrorAt?: DateTimeNullableFilter<"DomainSender"> | Date | string | null
+    errorStreak?: IntFilter<"DomainSender"> | number
+    healthScore?: IntFilter<"DomainSender"> | number
+    createdAt?: DateTimeFilter<"DomainSender"> | Date | string
+    updatedAt?: DateTimeFilter<"DomainSender"> | Date | string
   }
 
   export type ApiKeyUpsertWithWhereUniqueWithoutTenantInput = {
@@ -15478,6 +21484,81 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"AuditLog"> | Date | string
   }
 
+  export type CompanyUpsertWithWhereUniqueWithoutTenantInput = {
+    where: CompanyWhereUniqueInput
+    update: XOR<CompanyUpdateWithoutTenantInput, CompanyUncheckedUpdateWithoutTenantInput>
+    create: XOR<CompanyCreateWithoutTenantInput, CompanyUncheckedCreateWithoutTenantInput>
+  }
+
+  export type CompanyUpdateWithWhereUniqueWithoutTenantInput = {
+    where: CompanyWhereUniqueInput
+    data: XOR<CompanyUpdateWithoutTenantInput, CompanyUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type CompanyUpdateManyWithWhereWithoutTenantInput = {
+    where: CompanyScalarWhereInput
+    data: XOR<CompanyUpdateManyMutationInput, CompanyUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type CompanyScalarWhereInput = {
+    AND?: CompanyScalarWhereInput | CompanyScalarWhereInput[]
+    OR?: CompanyScalarWhereInput[]
+    NOT?: CompanyScalarWhereInput | CompanyScalarWhereInput[]
+    id?: StringFilter<"Company"> | string
+    tenantId?: StringFilter<"Company"> | string
+    userId?: StringFilter<"Company"> | string
+    name?: StringFilter<"Company"> | string
+    service?: StringFilter<"Company"> | string
+    phone?: StringFilter<"Company"> | string
+    email?: StringFilter<"Company"> | string
+    address?: StringFilter<"Company"> | string
+    website?: StringNullableFilter<"Company"> | string | null
+    createdAt?: DateTimeFilter<"Company"> | Date | string
+    updatedAt?: DateTimeFilter<"Company"> | Date | string
+  }
+
+  export type DomainUpsertWithWhereUniqueWithoutTenantInput = {
+    where: DomainWhereUniqueInput
+    update: XOR<DomainUpdateWithoutTenantInput, DomainUncheckedUpdateWithoutTenantInput>
+    create: XOR<DomainCreateWithoutTenantInput, DomainUncheckedCreateWithoutTenantInput>
+  }
+
+  export type DomainUpdateWithWhereUniqueWithoutTenantInput = {
+    where: DomainWhereUniqueInput
+    data: XOR<DomainUpdateWithoutTenantInput, DomainUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type DomainUpdateManyWithWhereWithoutTenantInput = {
+    where: DomainScalarWhereInput
+    data: XOR<DomainUpdateManyMutationInput, DomainUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type DomainScalarWhereInput = {
+    AND?: DomainScalarWhereInput | DomainScalarWhereInput[]
+    OR?: DomainScalarWhereInput[]
+    NOT?: DomainScalarWhereInput | DomainScalarWhereInput[]
+    id?: StringFilter<"Domain"> | string
+    tenantId?: StringFilter<"Domain"> | string
+    userId?: StringFilter<"Domain"> | string
+    domain?: StringFilter<"Domain"> | string
+    status?: EnumDomainStatusFilter<"Domain"> | $Enums.DomainStatus
+    verificationToken?: StringFilter<"Domain"> | string
+    txtHost?: StringFilter<"Domain"> | string
+    txtValue?: StringFilter<"Domain"> | string
+    spfHost?: StringFilter<"Domain"> | string
+    spfValue?: StringFilter<"Domain"> | string
+    cnameHost?: StringFilter<"Domain"> | string
+    cnameValue?: StringFilter<"Domain"> | string
+    mxHost?: StringFilter<"Domain"> | string
+    mxPriority?: IntFilter<"Domain"> | number
+    smtpHost?: StringNullableFilter<"Domain"> | string | null
+    smtpPort?: IntFilter<"Domain"> | number
+    smtpSecure?: BoolFilter<"Domain"> | boolean
+    verifiedAt?: DateTimeNullableFilter<"Domain"> | Date | string | null
+    createdAt?: DateTimeFilter<"Domain"> | Date | string
+    updatedAt?: DateTimeFilter<"Domain"> | Date | string
+  }
+
   export type TenantCreateWithoutUsersInput = {
     id?: string
     name: string
@@ -15488,10 +21569,13 @@ export namespace Prisma {
     dailySentCount?: number
     dailyCountResetAt?: Date | string | null
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutUsersInput = {
@@ -15504,15 +21588,105 @@ export namespace Prisma {
     dailySentCount?: number
     dailyCountResetAt?: Date | string | null
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutUsersInput = {
     where: TenantWhereUniqueInput
     create: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+  }
+
+  export type CompanyCreateWithoutUserInput = {
+    id?: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCompaniesInput
+  }
+
+  export type CompanyUncheckedCreateWithoutUserInput = {
+    id?: string
+    tenantId: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CompanyCreateOrConnectWithoutUserInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
+  }
+
+  export type DomainCreateWithoutUserInput = {
+    id?: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutDomainsInput
+    senders?: DomainSenderCreateNestedManyWithoutDomainInput
+  }
+
+  export type DomainUncheckedCreateWithoutUserInput = {
+    id?: string
+    tenantId: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    senders?: DomainSenderUncheckedCreateNestedManyWithoutDomainInput
+  }
+
+  export type DomainCreateOrConnectWithoutUserInput = {
+    where: DomainWhereUniqueInput
+    create: XOR<DomainCreateWithoutUserInput, DomainUncheckedCreateWithoutUserInput>
+  }
+
+  export type DomainCreateManyUserInputEnvelope = {
+    data: DomainCreateManyUserInput | DomainCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type TenantUpsertWithoutUsersInput = {
@@ -15536,10 +21710,13 @@ export namespace Prisma {
     dailySentCount?: IntFieldUpdateOperationsInput | number
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutUsersInput = {
@@ -15552,10 +21729,480 @@ export namespace Prisma {
     dailySentCount?: IntFieldUpdateOperationsInput | number
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CompanyUpsertWithoutUserInput = {
+    update: XOR<CompanyUpdateWithoutUserInput, CompanyUncheckedUpdateWithoutUserInput>
+    create: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
+    where?: CompanyWhereInput
+  }
+
+  export type CompanyUpdateToOneWithWhereWithoutUserInput = {
+    where?: CompanyWhereInput
+    data: XOR<CompanyUpdateWithoutUserInput, CompanyUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CompanyUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCompaniesNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainUpsertWithWhereUniqueWithoutUserInput = {
+    where: DomainWhereUniqueInput
+    update: XOR<DomainUpdateWithoutUserInput, DomainUncheckedUpdateWithoutUserInput>
+    create: XOR<DomainCreateWithoutUserInput, DomainUncheckedCreateWithoutUserInput>
+  }
+
+  export type DomainUpdateWithWhereUniqueWithoutUserInput = {
+    where: DomainWhereUniqueInput
+    data: XOR<DomainUpdateWithoutUserInput, DomainUncheckedUpdateWithoutUserInput>
+  }
+
+  export type DomainUpdateManyWithWhereWithoutUserInput = {
+    where: DomainScalarWhereInput
+    data: XOR<DomainUpdateManyMutationInput, DomainUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type TenantCreateWithoutDomainsInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
+    messages?: MessageCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutDomainsInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
+    messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutDomainsInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutDomainsInput, TenantUncheckedCreateWithoutDomainsInput>
+  }
+
+  export type UserCreateWithoutDomainsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    role?: $Enums.UserRole
+    mfaEnabled?: boolean
+    mfaSecretEnc?: string | null
+    mfaSecretIv?: string | null
+    mfaSecretTag?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutUsersInput
+    company?: CompanyCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDomainsInput = {
+    id?: string
+    tenantId: string
+    email: string
+    passwordHash: string
+    role?: $Enums.UserRole
+    mfaEnabled?: boolean
+    mfaSecretEnc?: string | null
+    mfaSecretIv?: string | null
+    mfaSecretTag?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company?: CompanyUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDomainsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDomainsInput, UserUncheckedCreateWithoutDomainsInput>
+  }
+
+  export type DomainSenderCreateWithoutDomainInput = {
+    id?: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutDomainSendersInput
+  }
+
+  export type DomainSenderUncheckedCreateWithoutDomainInput = {
+    id?: string
+    tenantId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainSenderCreateOrConnectWithoutDomainInput = {
+    where: DomainSenderWhereUniqueInput
+    create: XOR<DomainSenderCreateWithoutDomainInput, DomainSenderUncheckedCreateWithoutDomainInput>
+  }
+
+  export type DomainSenderCreateManyDomainInputEnvelope = {
+    data: DomainSenderCreateManyDomainInput | DomainSenderCreateManyDomainInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TenantUpsertWithoutDomainsInput = {
+    update: XOR<TenantUpdateWithoutDomainsInput, TenantUncheckedUpdateWithoutDomainsInput>
+    create: XOR<TenantCreateWithoutDomainsInput, TenantUncheckedCreateWithoutDomainsInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutDomainsInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutDomainsInput, TenantUncheckedUpdateWithoutDomainsInput>
+  }
+
+  export type TenantUpdateWithoutDomainsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
+    messages?: MessageUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutDomainsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type UserUpsertWithoutDomainsInput = {
+    update: XOR<UserUpdateWithoutDomainsInput, UserUncheckedUpdateWithoutDomainsInput>
+    create: XOR<UserCreateWithoutDomainsInput, UserUncheckedCreateWithoutDomainsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDomainsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDomainsInput, UserUncheckedUpdateWithoutDomainsInput>
+  }
+
+  export type UserUpdateWithoutDomainsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    mfaSecretEnc?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretIv?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretTag?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutUsersNestedInput
+    company?: CompanyUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDomainsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    mfaSecretEnc?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretIv?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretTag?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type DomainSenderUpsertWithWhereUniqueWithoutDomainInput = {
+    where: DomainSenderWhereUniqueInput
+    update: XOR<DomainSenderUpdateWithoutDomainInput, DomainSenderUncheckedUpdateWithoutDomainInput>
+    create: XOR<DomainSenderCreateWithoutDomainInput, DomainSenderUncheckedCreateWithoutDomainInput>
+  }
+
+  export type DomainSenderUpdateWithWhereUniqueWithoutDomainInput = {
+    where: DomainSenderWhereUniqueInput
+    data: XOR<DomainSenderUpdateWithoutDomainInput, DomainSenderUncheckedUpdateWithoutDomainInput>
+  }
+
+  export type DomainSenderUpdateManyWithWhereWithoutDomainInput = {
+    where: DomainSenderScalarWhereInput
+    data: XOR<DomainSenderUpdateManyMutationInput, DomainSenderUncheckedUpdateManyWithoutDomainInput>
+  }
+
+  export type TenantCreateWithoutCompaniesInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
+    messages?: MessageCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutCompaniesInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
+    messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutCompaniesInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutCompaniesInput, TenantUncheckedCreateWithoutCompaniesInput>
+  }
+
+  export type UserCreateWithoutCompanyInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    role?: $Enums.UserRole
+    mfaEnabled?: boolean
+    mfaSecretEnc?: string | null
+    mfaSecretIv?: string | null
+    mfaSecretTag?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutUsersInput
+    domains?: DomainCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCompanyInput = {
+    id?: string
+    tenantId: string
+    email: string
+    passwordHash: string
+    role?: $Enums.UserRole
+    mfaEnabled?: boolean
+    mfaSecretEnc?: string | null
+    mfaSecretIv?: string | null
+    mfaSecretTag?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    domains?: DomainUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCompanyInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type TenantUpsertWithoutCompaniesInput = {
+    update: XOR<TenantUpdateWithoutCompaniesInput, TenantUncheckedUpdateWithoutCompaniesInput>
+    create: XOR<TenantCreateWithoutCompaniesInput, TenantUncheckedCreateWithoutCompaniesInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutCompaniesInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutCompaniesInput, TenantUncheckedUpdateWithoutCompaniesInput>
+  }
+
+  export type TenantUpdateWithoutCompaniesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
+    messages?: MessageUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutCompaniesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type UserUpsertWithoutCompanyInput = {
+    update: XOR<UserUpdateWithoutCompanyInput, UserUncheckedUpdateWithoutCompanyInput>
+    create: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCompanyInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCompanyInput, UserUncheckedUpdateWithoutCompanyInput>
+  }
+
+  export type UserUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    mfaSecretEnc?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretIv?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretTag?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutUsersNestedInput
+    domains?: DomainUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    mfaSecretEnc?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretIv?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretTag?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    domains?: DomainUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TenantCreateWithoutSmtpAccountsInput = {
@@ -15568,10 +22215,13 @@ export namespace Prisma {
     dailySentCount?: number
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutSmtpAccountsInput = {
@@ -15584,10 +22234,13 @@ export namespace Prisma {
     dailySentCount?: number
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutSmtpAccountsInput = {
@@ -15688,10 +22341,13 @@ export namespace Prisma {
     dailySentCount?: IntFieldUpdateOperationsInput | number
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutSmtpAccountsInput = {
@@ -15704,10 +22360,13 @@ export namespace Prisma {
     dailySentCount?: IntFieldUpdateOperationsInput | number
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ApiKeyPermissionUpsertWithWhereUniqueWithoutSmtpAccountInput = {
@@ -15750,6 +22409,206 @@ export namespace Prisma {
     data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutSmtpAccountInput>
   }
 
+  export type TenantCreateWithoutDomainSendersInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
+    messages?: MessageCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutDomainSendersInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
+    messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutDomainSendersInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutDomainSendersInput, TenantUncheckedCreateWithoutDomainSendersInput>
+  }
+
+  export type DomainCreateWithoutSendersInput = {
+    id?: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutDomainsInput
+    user: UserCreateNestedOneWithoutDomainsInput
+  }
+
+  export type DomainUncheckedCreateWithoutSendersInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainCreateOrConnectWithoutSendersInput = {
+    where: DomainWhereUniqueInput
+    create: XOR<DomainCreateWithoutSendersInput, DomainUncheckedCreateWithoutSendersInput>
+  }
+
+  export type TenantUpsertWithoutDomainSendersInput = {
+    update: XOR<TenantUpdateWithoutDomainSendersInput, TenantUncheckedUpdateWithoutDomainSendersInput>
+    create: XOR<TenantCreateWithoutDomainSendersInput, TenantUncheckedCreateWithoutDomainSendersInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutDomainSendersInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutDomainSendersInput, TenantUncheckedUpdateWithoutDomainSendersInput>
+  }
+
+  export type TenantUpdateWithoutDomainSendersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
+    messages?: MessageUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutDomainSendersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type DomainUpsertWithoutSendersInput = {
+    update: XOR<DomainUpdateWithoutSendersInput, DomainUncheckedUpdateWithoutSendersInput>
+    create: XOR<DomainCreateWithoutSendersInput, DomainUncheckedCreateWithoutSendersInput>
+    where?: DomainWhereInput
+  }
+
+  export type DomainUpdateToOneWithWhereWithoutSendersInput = {
+    where?: DomainWhereInput
+    data: XOR<DomainUpdateWithoutSendersInput, DomainUncheckedUpdateWithoutSendersInput>
+  }
+
+  export type DomainUpdateWithoutSendersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutDomainsNestedInput
+    user?: UserUpdateOneRequiredWithoutDomainsNestedInput
+  }
+
+  export type DomainUncheckedUpdateWithoutSendersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TenantCreateWithoutApiKeysInput = {
     id?: string
     name: string
@@ -15761,9 +22620,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
     templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutApiKeysInput = {
@@ -15777,9 +22639,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
     templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutApiKeysInput = {
@@ -15881,9 +22746,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
     templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutApiKeysInput = {
@@ -15897,9 +22765,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
     templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ApiKeyPermissionUpsertWithWhereUniqueWithoutApiKeyInput = {
@@ -16125,9 +22996,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     templates?: TemplateCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutMessagesInput = {
@@ -16141,9 +23015,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutMessagesInput = {
@@ -16257,9 +23134,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     templates?: TemplateUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutMessagesInput = {
@@ -16273,9 +23153,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ApiKeyUpsertWithoutMessagesInput = {
@@ -16385,9 +23268,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutTemplatesInput = {
@@ -16401,9 +23287,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutTemplatesInput = {
@@ -16433,9 +23322,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutTemplatesInput = {
@@ -16449,9 +23341,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateWithoutAuditLogsInput = {
@@ -16465,9 +23360,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     templates?: TemplateCreateNestedManyWithoutTenantInput
     messages?: MessageCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAuditLogsInput = {
@@ -16481,9 +23379,12 @@ export namespace Prisma {
     dailyCountResetAt?: Date | string | null
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
     smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAuditLogsInput = {
@@ -16513,9 +23414,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     templates?: TemplateUpdateManyWithoutTenantNestedInput
     messages?: MessageUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAuditLogsInput = {
@@ -16529,9 +23433,12 @@ export namespace Prisma {
     dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
     smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserCreateManyTenantInput = {
@@ -16558,6 +23465,28 @@ export namespace Prisma {
     keyVersion: string
     status?: $Enums.SenderStatus
     perMinuteLimit?: number
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainSenderCreateManyTenantInput = {
+    id?: string
+    domainId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
     perDayLimit?: number
     sentTodayCount?: number
     sentTodayResetAt?: Date | string | null
@@ -16625,6 +23554,41 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type CompanyCreateManyTenantInput = {
+    id?: string
+    userId: string
+    name: string
+    service: string
+    phone: string
+    email: string
+    address: string
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainCreateManyTenantInput = {
+    id?: string
+    userId: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
@@ -16637,6 +23601,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneWithoutUserNestedInput
+    domains?: DomainUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTenantInput = {
@@ -16651,6 +23617,8 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutTenantInput = {
@@ -16723,6 +23691,72 @@ export namespace Prisma {
     keyVersion?: StringFieldUpdateOperationsInput | string
     status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
     perMinuteLimit?: IntFieldUpdateOperationsInput | number
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainSenderUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    domain?: DomainUpdateOneRequiredWithoutSendersNestedInput
+  }
+
+  export type DomainSenderUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    domainId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainSenderUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    domainId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
     perDayLimit?: IntFieldUpdateOperationsInput | number
     sentTodayCount?: IntFieldUpdateOperationsInput | number
     sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16904,6 +23938,291 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCompanyNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    service?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDomainsNestedInput
+    senders?: DomainSenderUpdateManyWithoutDomainNestedInput
+  }
+
+  export type DomainUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    senders?: DomainSenderUncheckedUpdateManyWithoutDomainNestedInput
+  }
+
+  export type DomainUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainCreateManyUserInput = {
+    id?: string
+    tenantId: string
+    domain: string
+    status?: $Enums.DomainStatus
+    verificationToken: string
+    txtHost: string
+    txtValue: string
+    spfHost: string
+    spfValue: string
+    cnameHost: string
+    cnameValue: string
+    mxHost: string
+    mxPriority?: number
+    smtpHost?: string | null
+    smtpPort?: number
+    smtpSecure?: boolean
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutDomainsNestedInput
+    senders?: DomainSenderUpdateManyWithoutDomainNestedInput
+  }
+
+  export type DomainUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    senders?: DomainSenderUncheckedUpdateManyWithoutDomainNestedInput
+  }
+
+  export type DomainUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    domain?: StringFieldUpdateOperationsInput | string
+    status?: EnumDomainStatusFieldUpdateOperationsInput | $Enums.DomainStatus
+    verificationToken?: StringFieldUpdateOperationsInput | string
+    txtHost?: StringFieldUpdateOperationsInput | string
+    txtValue?: StringFieldUpdateOperationsInput | string
+    spfHost?: StringFieldUpdateOperationsInput | string
+    spfValue?: StringFieldUpdateOperationsInput | string
+    cnameHost?: StringFieldUpdateOperationsInput | string
+    cnameValue?: StringFieldUpdateOperationsInput | string
+    mxHost?: StringFieldUpdateOperationsInput | string
+    mxPriority?: IntFieldUpdateOperationsInput | number
+    smtpHost?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpPort?: IntFieldUpdateOperationsInput | number
+    smtpSecure?: BoolFieldUpdateOperationsInput | boolean
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainSenderCreateManyDomainInput = {
+    id?: string
+    tenantId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DomainSenderUpdateWithoutDomainInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutDomainSendersNestedInput
+  }
+
+  export type DomainSenderUncheckedUpdateWithoutDomainInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DomainSenderUncheckedUpdateManyWithoutDomainInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ApiKeyPermissionCreateManySmtpAccountInput = {

@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, Fragment, useState } from "react";
-import { AddGmailSenderDialog } from "../add-gmail-sender-dialog";
+import { AddSenderDialog } from "../add-gmail-sender-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { useToast } from "../ui/toast";
 import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
@@ -9,7 +9,9 @@ import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
 export type Sender = {
   id: string;
   label: string;
-  gmailAddress: string;
+  emailAddress: string;
+  type: "gmail" | "domain";
+  domain?: string | null;
   status: "active" | "disabled" | "needs_attention";
   perDayLimit: number;
   sentTodayCount: number;
@@ -165,7 +167,7 @@ export function SendersClient({
           <div>
             <h1>Senders</h1>
             <p className="muted">
-              Add your Gmail sender account here. From address is always the configured Gmail account.
+              Add Gmail or custom domain senders. Use a verified domain for custom SMTP senders.
             </p>
           </div>
           <button
@@ -175,7 +177,7 @@ export function SendersClient({
               setDialogOpen(true);
             }}
           >
-            Add Gmail Sender
+            Add Sender
           </button>
         </div>
         {error ? (
@@ -185,7 +187,7 @@ export function SendersClient({
         ) : null}
       </section>
 
-      <AddGmailSenderDialog
+      <AddSenderDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onCreated={loadSenders}
@@ -238,7 +240,17 @@ export function SendersClient({
                         <TableRow>
                           <TableCell>
                             <div style={{ fontWeight: 600 }}>{sender.label}</div>
-                            <div className="muted">{sender.gmailAddress}</div>
+                            <div className="muted">{sender.emailAddress}</div>
+                            <div style={{ marginTop: 6 }}>
+                              <span className="badge">
+                                {sender.type === "gmail" ? "Gmail" : "Domain"}
+                              </span>
+                              {sender.domain ? (
+                                <span className="badge" style={{ marginLeft: 6 }}>
+                                  {sender.domain}
+                                </span>
+                              ) : null}
+                            </div>
                           </TableCell>
                           <TableCell>
                             {sender.sentTodayCount} / {sender.perDayLimit}

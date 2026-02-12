@@ -24,6 +24,7 @@ const envSchema = z.object({
   DEFAULT_PER_DAY_LIMIT: z.coerce.number().default(2000),
   DEFAULT_API_KEY_RATE_LIMIT: z.coerce.number().default(120),
   APP_BASE_URL: z.string().default("http://localhost:3000"),
+  APP_DOMAIN: z.string().default("mailer.example.com"),
   SKIP_SMTP_VERIFY: z.coerce.boolean().default(false)
 });
 

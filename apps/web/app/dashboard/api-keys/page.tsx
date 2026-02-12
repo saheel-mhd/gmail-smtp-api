@@ -19,7 +19,7 @@ export default async function ApiKeysPage() {
       serverApi<SenderResponse>("/admin/v1/senders", { cacheTtlMs: 8000 })
     ]);
     initialKeys = keyResponse.data;
-    initialSenders = senderResponse.data;
+    initialSenders = senderResponse.data.filter((sender) => sender.type === "gmail");
   } catch (err) {
     initialError = (err as Error).message || "Failed to load data.";
   }

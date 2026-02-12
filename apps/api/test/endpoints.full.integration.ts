@@ -114,6 +114,7 @@ async function run() {
       url: "/admin/v1/senders",
       headers: authHeaders,
       payload: {
+        type: "gmail",
         label: "Primary Sender",
         gmailAddress: `sender_${stamp}@example.com`,
         appPassword: "app-password-1234",
@@ -128,6 +129,7 @@ async function run() {
       url: "/admin/v1/senders",
       headers: authHeaders,
       payload: {
+        type: "gmail",
         label: "Secondary Sender",
         gmailAddress: `senderb_${stamp}@example.com`,
         appPassword: "app-password-5678",

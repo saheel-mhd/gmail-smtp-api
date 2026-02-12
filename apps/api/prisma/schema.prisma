@@ -34,6 +34,12 @@ enum TemplateStatus {
   disabled
 }
 
+enum DomainStatus {
+  pending
+  verified
+  failed
+}
+
 enum MessageStatus {
   queued
   sending
@@ -56,10 +62,13 @@ model Tenant {
   updatedAt          DateTime      @updatedAt
   users              User[]
   smtpAccounts       SmtpAccount[]
+  domainSenders      DomainSender[]
   apiKeys            ApiKey[]
   templates          Template[]
   messages           Message[]
   auditLogs          AuditLog[]
+  companies          Company[]
+  domains            Domain[]
   dailySentCount     Int           @default(0)
   dailyCountResetAt  DateTime?
 }
@@ -78,8 +87,59 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   tenant           Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company          Company?
+  domains          Domain[]
 
   @@unique([tenantId, email])
+}
+
+model Domain {
+  id                String       @id @default(cuid())
+  tenantId          String
+  userId            String
+  domain            String
+  status            DomainStatus @default(pending)
+  verificationToken String
+  txtHost           String
+  txtValue          String
+  spfHost           String
+  spfValue          String
+  cnameHost         String
+  cnameValue        String
+  mxHost            String
+  mxPriority        Int          @default(10)
+  smtpHost          String?
+  smtpPort          Int          @default(587)
+  smtpSecure        Boolean      @default(false)
+  verifiedAt        DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senders DomainSender[]
+
+  @@index([tenantId])
+  @@unique([userId, domain])
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String   @unique
+  name      String
+  service   String
+  phone     String
+  email     String
+  address   String
+  website   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }
 
 model SmtpAccount {
@@ -108,6 +168,35 @@ model SmtpAccount {
 
   @@index([tenantId])
   @@unique([tenantId, gmailAddress])
+}
+
+model DomainSender {
+  id               String       @id @default(cuid())
+  tenantId         String
+  domainId         String
+  label            String
+  emailAddress     String
+  username         String
+  encryptedPassword String
+  iv               String
+  authTag          String
+  keyVersion       String
+  status           SenderStatus @default(active)
+  perDayLimit       Int          @default(2000)
+  sentTodayCount    Int          @default(0)
+  sentTodayResetAt  DateTime?
+  lastSuccessAt     DateTime?
+  lastErrorAt       DateTime?
+  errorStreak       Int          @default(0)
+  healthScore       Int          @default(100)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@unique([tenantId, emailAddress])
 }
 
 model ApiKey {

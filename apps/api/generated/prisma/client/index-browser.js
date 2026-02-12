@@ -146,6 +146,43 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DomainScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  domain: 'domain',
+  status: 'status',
+  verificationToken: 'verificationToken',
+  txtHost: 'txtHost',
+  txtValue: 'txtValue',
+  spfHost: 'spfHost',
+  spfValue: 'spfValue',
+  cnameHost: 'cnameHost',
+  cnameValue: 'cnameValue',
+  mxHost: 'mxHost',
+  mxPriority: 'mxPriority',
+  smtpHost: 'smtpHost',
+  smtpPort: 'smtpPort',
+  smtpSecure: 'smtpSecure',
+  verifiedAt: 'verifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CompanyScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  service: 'service',
+  phone: 'phone',
+  email: 'email',
+  address: 'address',
+  website: 'website',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SmtpAccountScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
@@ -157,6 +194,29 @@ exports.Prisma.SmtpAccountScalarFieldEnum = {
   keyVersion: 'keyVersion',
   status: 'status',
   perMinuteLimit: 'perMinuteLimit',
+  perDayLimit: 'perDayLimit',
+  sentTodayCount: 'sentTodayCount',
+  sentTodayResetAt: 'sentTodayResetAt',
+  lastSuccessAt: 'lastSuccessAt',
+  lastErrorAt: 'lastErrorAt',
+  errorStreak: 'errorStreak',
+  healthScore: 'healthScore',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DomainSenderScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  domainId: 'domainId',
+  label: 'label',
+  emailAddress: 'emailAddress',
+  username: 'username',
+  encryptedPassword: 'encryptedPassword',
+  iv: 'iv',
+  authTag: 'authTag',
+  keyVersion: 'keyVersion',
+  status: 'status',
   perDayLimit: 'perDayLimit',
   sentTodayCount: 'sentTodayCount',
   sentTodayResetAt: 'sentTodayResetAt',
@@ -273,6 +333,12 @@ exports.UserRole = exports.$Enums.UserRole = {
   readonly: 'readonly'
 };
 
+exports.DomainStatus = exports.$Enums.DomainStatus = {
+  pending: 'pending',
+  verified: 'verified',
+  failed: 'failed'
+};
+
 exports.SenderStatus = exports.$Enums.SenderStatus = {
   active: 'active',
   disabled: 'disabled',
@@ -305,7 +371,10 @@ exports.ActorType = exports.$Enums.ActorType = {
 exports.Prisma.ModelName = {
   Tenant: 'Tenant',
   User: 'User',
+  Domain: 'Domain',
+  Company: 'Company',
   SmtpAccount: 'SmtpAccount',
+  DomainSender: 'DomainSender',
   ApiKey: 'ApiKey',
   ApiKeyPermission: 'ApiKeyPermission',
   Message: 'Message',
