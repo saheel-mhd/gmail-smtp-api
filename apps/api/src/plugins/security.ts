@@ -141,18 +141,19 @@ export function setSessionCookies(
   const sessionToken = request.server.jwt.sign(payload, { expiresIn: "12h" });
   const csrfToken = randomToken(24);
   const sameSite = env.NODE_ENV === "production" ? "none" : "lax";
-
-  reply.setCookie(env.SESSION_COOKIE_NAME, sessionToken, {
+  const cookieDomain = env.APP_COOKIE_DOMAIN?.trim();
+  const cookieBase = {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite,
-    path: "/"
-  });
+    path: "/",
+    ...(cookieDomain ? { domain: cookieDomain } : {})
+  } as const;
+
+  reply.setCookie(env.SESSION_COOKIE_NAME, sessionToken, cookieBase);
   reply.setCookie(env.CSRF_COOKIE_NAME, csrfToken, {
-    httpOnly: false,
-    secure: env.NODE_ENV === "production",
-    sameSite,
-    path: "/"
+    ...cookieBase,
+    httpOnly: false
   });
 
   return csrfToken;

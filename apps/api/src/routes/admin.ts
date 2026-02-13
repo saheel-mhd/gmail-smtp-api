@@ -224,10 +224,12 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     async (request, reply) => {
       const user = getUserContext(request);
       const sameSite = env.NODE_ENV === "production" ? "none" : "lax";
+      const cookieDomain = env.APP_COOKIE_DOMAIN?.trim();
       const cookieOptions = {
         path: "/",
         sameSite,
-        secure: env.NODE_ENV === "production"
+        secure: env.NODE_ENV === "production",
+        ...(cookieDomain ? { domain: cookieDomain } : {})
       } as const;
       reply.clearCookie(env.SESSION_COOKIE_NAME, cookieOptions);
       reply.clearCookie(env.CSRF_COOKIE_NAME, cookieOptions);
