@@ -78,7 +78,7 @@ export function TemplateDialog({
     try {
       const trimmedName = form.name.trim();
       const trimmedSubject = form.subject.trim();
-      const payload: Partial<TemplatePayload> & { text: string | null } = {
+      const payload: { name?: string; subject: string; html: string; text?: string | null } = {
         subject: trimmedSubject,
         html: form.html,
         text: form.text.trim() ? form.text : null
