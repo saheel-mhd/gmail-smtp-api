@@ -200,7 +200,7 @@ export default function DomainsPage() {
   }
 
   return (
-    <main className="container">
+    <main className="container full-bleed">
       <section className="panel">
         <h1>Domains</h1>
         <p className="muted">
@@ -410,7 +410,7 @@ export default function DomainsPage() {
 
       {activeDomain ? (
         <div className="dialog-overlay" role="dialog" aria-modal="true">
-          <div className="dialog-content">
+          <div className="dialog-content dns-dialog">
             <div className="dialog-header">
               <h2 className="dialog-title">DNS Records</h2>
               <p className="dialog-description">

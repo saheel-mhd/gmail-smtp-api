@@ -192,7 +192,7 @@ export function TemplatesClient({
                 : rows.length === 0
                 ? (
                     <TableRow>
-                      <TableCell colSpan={6}>No templates found.</TableCell>
+                      <TableCell colSpan={7}>No templates found.</TableCell>
                     </TableRow>
                   )
                 : rows.map((template) => (

@@ -76,12 +76,22 @@ export function TemplateDialog({
     if (!canSubmit) return;
     setSubmitting(true);
     try {
-      const payload = {
-        name: form.name.trim(),
-        subject: form.subject.trim(),
+      const trimmedName = form.name.trim();
+      const trimmedSubject = form.subject.trim();
+      const payload: Partial<TemplatePayload> & { text: string | null } = {
+        subject: trimmedSubject,
         html: form.html,
         text: form.text.trim() ? form.text : null
       };
+      if (initial?.id) {
+        const sameName =
+          trimmedName.toLowerCase() === initial.name.trim().toLowerCase();
+        if (!sameName) {
+          payload.name = trimmedName;
+        }
+      } else {
+        payload.name = trimmedName;
+      }
 
       if (initial?.id) {
         await browserApi(`/admin/v1/templates/${initial.id}`, {

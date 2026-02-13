@@ -33,7 +33,7 @@ export function DashboardSidebar() {
   return (
     <aside className="dashboard-sidebar">
       <div>
-        <div className="sidebar-title">Dashboard</div>
+        <div className="sidebar-title">Mailer SMTP</div>
         <div className="sidebar-subtitle">Manage senders, templates, and access.</div>
       </div>
       <nav className="sidebar-nav">

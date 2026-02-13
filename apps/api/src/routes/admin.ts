@@ -1680,6 +1680,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           status: true,
           to: true,
           subject: true,
+          lastError: true,
           createdAt: true,
           sentAt: true,
           smtpAccount: {
@@ -1713,6 +1714,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           senderLabel,
           to: recipients,
           subject: message.subject,
+          lastError: message.lastError,
           createdAt: message.createdAt,
           sentAt: message.sentAt
         };
@@ -1756,6 +1758,9 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     const apiKeyName = getString(metadata?.apiKeyName);
     const templateName = getString(metadata?.templateName);
     const status = getString(metadata?.status);
+    const reason = getString(metadata?.reason);
+    const path = getString(metadata?.path);
+    const apiKeyPrefix = getString(metadata?.apiKeyPrefix);
     const fields = Array.isArray(metadata?.fields)
       ? metadata?.fields.filter((field) => typeof field === "string")
       : null;
@@ -1789,6 +1794,12 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         return "API started by System";
       case "system.api.stopped":
         return "API stopped by System";
+      case "security.api_key.rejected": {
+        const reasonText = reason ? ` (${reason})` : "";
+        const pathText = path ? ` on ${path}` : "";
+        const prefixText = apiKeyPrefix ? ` [${apiKeyPrefix}]` : "";
+        return `API key rejected${reasonText}${pathText}${prefixText}`;
+      }
       case "admin.auth.login":
         return `${actorName} signed in`;
       case "admin.auth.logout":

@@ -119,7 +119,7 @@ export function ApiKeysClient({
   }
 
   return (
-    <main className="container">
+    <main className="container full-bleed">
       <section className="panel">
         <div
           style={{

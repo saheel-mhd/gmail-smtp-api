@@ -108,10 +108,11 @@ export function AppHeader() {
   );
 
   return (
-    <header className="app-header-wrap">
-      <div className="app-header">
-        <div className="left">
-          <div className="account-menu">
+    <>
+      <header className="app-header-wrap">
+        <div className="app-header">
+          <div className="left">
+            <div className="account-menu">
             <button
               type="button"
               className="icon-btn"
@@ -176,7 +177,9 @@ export function AppHeader() {
             </Link>
           ) : null}
         </nav>
-      </div>
-    </header>
+        </div>
+      </header>
+      <div className="app-header-spacer" aria-hidden="true" />
+    </>
   );
 }

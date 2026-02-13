@@ -4,6 +4,7 @@ import { verifyApiKey } from "../lib/api-key";
 import { redis } from "../lib/redis";
 import { env } from "../env";
 import { randomToken } from "../lib/crypto";
+import { writeAuditLog } from "./audit";
 
 const minuteWindow = 60;
 const dayWindow = 24 * 60 * 60;
@@ -20,14 +21,14 @@ export async function authenticateApiKey(
   const token = authHeader.slice("Bearer ".length).trim();
   const prefix = token.slice(0, 6);
   const candidates = await prisma.apiKey.findMany({
-    where: { prefix, status: "active" },
+    where: { prefix },
     include: {
       permissions: { select: { smtpAccountId: true } },
       domainPermissions: { select: { domainSenderId: true } }
     }
   });
 
-  for (const candidate of candidates) {
+  for (const candidate of candidates.filter((entry) => entry.status === "active")) {
     const valid = await verifyApiKey(token, candidate.keyHash);
     if (!valid) continue;
     const reqIp = request.ip;
@@ -35,6 +36,17 @@ export async function authenticateApiKey(
       ? (candidate.allowedIps as string[])
       : [];
     if (allowedIps.length > 0 && !allowedIps.includes(reqIp)) {
+      await writeAuditLog(request, {
+        tenantId: candidate.tenantId,
+        actorType: "system",
+        actorId: "system",
+        action: "security.api_key.rejected",
+        metadata: {
+          reason: "ip not allowed for this key",
+          path: request.url,
+          apiKeyPrefix: prefix
+        }
+      });
       return reply.forbidden("ip not allowed for this key");
     }
 
@@ -49,6 +61,23 @@ export async function authenticateApiKey(
       allowedIps
     };
     return;
+  }
+
+  for (const candidate of candidates.filter((entry) => entry.status === "revoked")) {
+    const valid = await verifyApiKey(token, candidate.keyHash);
+    if (!valid) continue;
+    await writeAuditLog(request, {
+      tenantId: candidate.tenantId,
+      actorType: "system",
+      actorId: "system",
+      action: "security.api_key.rejected",
+      metadata: {
+        reason: "api key revoked",
+        path: request.url,
+        apiKeyPrefix: prefix
+      }
+    });
+    return reply.unauthorized("invalid api key");
   }
 
   return reply.unauthorized("invalid api key");
