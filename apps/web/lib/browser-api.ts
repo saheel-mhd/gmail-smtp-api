@@ -1,7 +1,20 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.API_BASE_URL ||
-  "http://localhost:4000";
+const CONFIGURED_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+function resolveApiBaseUrl(): string {
+  if (!CONFIGURED_API_BASE_URL) return "";
+  if (typeof window === "undefined") return CONFIGURED_API_BASE_URL;
+  try {
+    const target = new URL(CONFIGURED_API_BASE_URL);
+    const sameOrigin = target.origin === window.location.origin;
+    const isRenderHost = window.location.hostname.endsWith(".onrender.com");
+    if (isRenderHost && !sameOrigin) {
+      return "";
+    }
+  } catch {
+    return "";
+  }
+  return CONFIGURED_API_BASE_URL;
+}
 
 type CacheEntry = {
   expiresAt: number;
@@ -44,7 +57,7 @@ export async function browserApi<T>(
     if (csrf) headers.set("x-csrf-token", csrf);
   }
   const method = (init?.method ?? "GET").toUpperCase();
-  const url = `${API_BASE_URL}${path}`;
+  const url = `${resolveApiBaseUrl()}${path}`;
   const cacheKey = getCacheKey(method, url);
   const ttl = init?.cacheTtlMs ?? DEFAULT_TTL_MS;
 
