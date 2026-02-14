@@ -3,11 +3,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
 
-for (const file of [".env", "../../.env"]) {
-  const resolved = path.resolve(process.cwd(), file);
-  if (fs.existsSync(resolved)) {
-    dotenv.config({ path: resolved });
-    break;
+if (process.env.NODE_ENV !== "production") {
+  for (const file of [".env", "../../.env"]) {
+    const resolved = path.resolve(process.cwd(), file);
+    if (fs.existsSync(resolved)) {
+      dotenv.config({ path: resolved });
+      break;
+    }
   }
 }
 

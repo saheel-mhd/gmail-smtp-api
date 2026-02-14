@@ -5,9 +5,9 @@ services:
     image: postgres:16
     container_name: gmail_smtp_postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: gmail_smtp
+      POSTGRES_USER: asset_guardian_user
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: gmailapi
     ports:
       - "5432:5432"
     volumes:

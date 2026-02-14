@@ -1,0 +1,18 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "RAILPACK",
+    "buildCommand": "npm run build -w @gmail-smtp/api",
+    "watchPatterns": [
+      "apps/api/**",
+      "packages/**",
+      "package.json",
+      "package-lock.json"
+    ]
+  },
+  "deploy": {
+    "preDeployCommand": "npm run prisma:migrate:deploy -w @gmail-smtp/api && npm run prisma:generate:prod -w @gmail-smtp/api",
+    "startCommand": "npm run start -w @gmail-smtp/api",
+    "healthcheckPath": "/health/live"
+  }
+}

@@ -91,3 +91,36 @@ npm run test:endpoints
 ```
 
 This checks route registration and auth/security gate behavior for all defined endpoints.
+
+## Railway deployment
+
+Recommended setup is web proxying to API over Railway private networking (no CORS).
+
+1. Create three services from the monorepo: `web`, `api`, `worker`.
+2. Add PostgreSQL and Redis services.
+3. Generate a public domain for the `web` service (Settings → Networking).
+4. Set env vars:
+
+API service:
+```text
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+APP_BASE_URL=https://<web-public-domain>
+JWT_SECRET=<long random string>
+ENCRYPTION_MASTER_KEY=<64 hex chars>
+```
+
+Worker service:
+```text
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+```
+
+Web service:
+```text
+API_PROXY_TARGET=http://${{api.RAILWAY_PRIVATE_DOMAIN}}:${{api.PORT}}
+```
+
+Notes:
+- The API reads `PORT` automatically if `API_PORT` isn’t set.
+- The web service should not call the API directly unless you also set CORS (`APP_BASE_URL`).
