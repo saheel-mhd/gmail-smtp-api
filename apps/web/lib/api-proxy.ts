@@ -20,6 +20,17 @@ export async function proxyRequest(
   if (!proxyTarget) {
     return new Response("API proxy target not configured", { status: 500 });
   }
+  let targetOrigin: string | null = null;
+  try {
+    targetOrigin = new URL(proxyTarget).origin;
+  } catch {
+    return new Response("API proxy target is not a valid URL", { status: 500 });
+  }
+  if (targetOrigin === request.nextUrl.origin) {
+    return new Response("API proxy target cannot match the web origin", {
+      status: 500
+    });
+  }
 
   const suffix = params.path?.join("/") ?? "";
   const search = request.nextUrl.search ?? "";
@@ -34,12 +45,18 @@ export async function proxyRequest(
   const body =
     method === "GET" || method === "HEAD" ? undefined : Buffer.from(await request.arrayBuffer());
 
-  const upstream = await fetch(url, {
-    method,
-    headers,
-    body,
-    redirect: "manual"
-  });
+  let upstream: Response;
+  try {
+    upstream = await fetch(url, {
+      method,
+      headers,
+      body,
+      redirect: "manual"
+    });
+  } catch (error) {
+    const message = (error as Error)?.message || "upstream fetch failed";
+    return new Response(`API proxy fetch failed: ${message}`, { status: 502 });
+  }
 
   const responseHeaders = new Headers();
   upstream.headers.forEach((value, key) => {

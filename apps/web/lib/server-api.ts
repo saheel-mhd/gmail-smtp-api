@@ -1,9 +1,18 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.API_BASE_URL ||
-  "http://localhost:4000";
+async function resolveApiBaseUrl() {
+  const envUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || "";
+  if (envUrl) return envUrl;
+  const headerStore = await headers();
+  const host =
+    headerStore.get("x-forwarded-host") ||
+    headerStore.get("host") ||
+    "";
+  if (!host) return "http://localhost:4000";
+  const proto = headerStore.get("x-forwarded-proto") || "http";
+  return `${proto}://${host}`;
+}
 
 type CacheEntry = {
   expiresAt: number;
@@ -21,7 +30,7 @@ export async function serverApi<T>(
   init?: RequestInit & { cacheTtlMs?: number }
 ): Promise<T> {
   const method = (init?.method ?? "GET").toUpperCase();
-  const url = `${API_BASE_URL}${path}`;
+  const url = `${await resolveApiBaseUrl()}${path}`;
 
   const cookieStore = await cookies();
   const cookieHeader = cookieStore
