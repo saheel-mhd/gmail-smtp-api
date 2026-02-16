@@ -165,9 +165,10 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
         authTag: message.smtpAccount.authTag
       });
       transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
+        host: env.GMAIL_SMTP_HOST,
+        port: env.GMAIL_SMTP_PORT,
+        secure: env.GMAIL_SMTP_SECURE,
+        requireTLS: env.GMAIL_SMTP_REQUIRE_TLS,
         auth: {
           user: message.smtpAccount.gmailAddress,
           pass: appPassword

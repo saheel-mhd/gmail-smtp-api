@@ -17,6 +17,10 @@ const envSchema = z.object({
   REDIS_URL: z.string().min(1),
   ENCRYPTION_MASTER_KEY: z.string().length(64),
   ENCRYPTION_KEY_VERSION: z.string().default("v1"),
+  GMAIL_SMTP_HOST: z.string().default("smtp.gmail.com"),
+  GMAIL_SMTP_PORT: z.coerce.number().default(587),
+  GMAIL_SMTP_SECURE: z.coerce.boolean().default(false),
+  GMAIL_SMTP_REQUIRE_TLS: z.coerce.boolean().default(true),
   WORKER_CONCURRENCY: z.coerce.number().default(10)
 });
 

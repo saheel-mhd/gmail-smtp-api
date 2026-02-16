@@ -12,7 +12,7 @@ import { authenticateUserSession, enforceCsrf, requireRole, setSessionCookies } 
 import { decryptSecret, encryptSecret } from "../lib/crypto";
 import { generateApiKey, hashApiKey } from "../lib/api-key";
 import { writeAuditLog } from "../plugins/audit";
-import { verifyGmailCredentials } from "../lib/smtp";
+import { createGmailTransport, verifyGmailCredentials } from "../lib/smtp";
 import { renderTemplate } from "../lib/template";
 import { env } from "../env";
 import { getSendQueue } from "../queue";
@@ -1170,12 +1170,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
             authTag: sender.authTag,
             keyVersion: sender.keyVersion
           });
-          const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: true,
-            auth: { user: sender.gmailAddress, pass: appPassword }
-          });
+            const transporter = createGmailTransport(sender.gmailAddress, appPassword);
 
           await transporter.sendMail({
             from: sender.gmailAddress,
