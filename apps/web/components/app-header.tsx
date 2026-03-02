@@ -100,7 +100,6 @@ export function AppHeader() {
     () => [
       { href: "/dashboard/company", label: "Company", iconPath: "M3 21h18M5 21V7l7-4 7 4v14" },
       { href: "/dashboard/domains", label: "Domains", iconPath: "M3 7h18M3 12h18M3 17h18" },
-      { href: "/dashboard/transactions", label: "Transaction Logs", iconPath: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2" },
       { href: "/dashboard/account", label: "Account", iconPath: "M20 21a8 8 0 1 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8" },
       { label: loggingOut ? "Logging out..." : "Logout", iconPath: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9", action: onLogout }
     ],

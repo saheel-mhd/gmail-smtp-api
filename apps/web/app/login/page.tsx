@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { browserApi } from "../../lib/browser-api";
+import { useToast } from "../../components/ui/toast";
 
 type LoginResponse = {
   csrfToken: string;
@@ -21,12 +22,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const { toast } = useToast();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
-    setError("");
     try {
       await browserApi<LoginResponse>("/admin/v1/auth/login", {
         method: "POST",
@@ -34,11 +34,31 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password, mfaCode: mfaCode || undefined })
       });
 
+      try {
+        sessionStorage.setItem("login_success_toast", "1");
+      } catch {
+        // Ignore storage failures (private mode, disabled storage).
+      }
+
       const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
       router.push(callbackUrl || "/dashboard");
       router.refresh();
     } catch (err) {
-      setError((err as Error).message || "Login failed");
+      const rawMessage = (err as Error)?.message || "";
+      let isUnauthorized = false;
+      if (rawMessage) {
+        try {
+          const parsed = JSON.parse(rawMessage);
+          isUnauthorized = parsed?.statusCode === 401;
+        } catch {
+          isUnauthorized = rawMessage.toLowerCase().includes("unauthorized") ||
+            rawMessage.includes("401");
+        }
+      }
+      toast({
+        variant: "error",
+        title: isUnauthorized ? "Incorrect username or password" : "Login failed"
+      });
     } finally {
       setLoading(false);
     }
@@ -84,7 +104,6 @@ export default function LoginPage() {
             </Link>
           </div>
         </form>
-        {error ? <p style={{ color: "#9f1a1a", marginTop: 12 }}>{error}</p> : null}
       </div>
     </main>
   );

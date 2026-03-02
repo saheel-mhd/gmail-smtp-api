@@ -222,9 +222,7 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
             data: {
               lastSuccessAt: new Date(),
               errorStreak: 0,
-              healthScore: {
-                set: Math.min((sender.healthScore ?? 100) + 3, 100)
-              }
+              healthScore: { set: 100 }
             }
           })
         : prisma.domainSender.update({
@@ -232,9 +230,7 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
             data: {
               lastSuccessAt: new Date(),
               errorStreak: 0,
-              healthScore: {
-                set: Math.min((sender.healthScore ?? 100) + 3, 100)
-              }
+              healthScore: { set: 100 }
             }
           })
     ]);

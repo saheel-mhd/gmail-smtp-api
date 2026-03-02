@@ -448,6 +448,19 @@
     transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   }
 
+  .sidebar-link-left {
+    @apply flex items-center gap-2;
+  }
+
+  .sidebar-link-icon {
+    @apply flex items-center justify-center;
+    color: var(--muted);
+  }
+
+  .sidebar-link-arrow {
+    color: var(--muted);
+  }
+
   .sidebar-link:hover {
     background: var(--sidebar-pill);
     border-color: var(--line);
@@ -458,6 +471,13 @@
     background: var(--sidebar-pill);
     border-color: rgba(10, 127, 81, 0.35);
     box-shadow: 0 12px 24px rgba(10, 127, 81, 0.14);
+  }
+
+  .sidebar-link.active .sidebar-link-icon,
+  .sidebar-link:hover .sidebar-link-icon,
+  .sidebar-link.active .sidebar-link-arrow,
+  .sidebar-link:hover .sidebar-link-arrow {
+    color: var(--brand-strong);
   }
 
   .dashboard-content {
@@ -572,7 +592,7 @@
 
   .docs-toc {
     position: sticky;
-    top: 92px;
+    top: calc(var(--app-header-height) + 12px);
     align-self: start;
     padding: 16px;
   }
@@ -673,6 +693,26 @@
 
   .doc-reveal {
     animation: doc-reveal 0.35s ease-out;
+  }
+
+  .feature-tile {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 8px 18px rgba(12, 34, 56, 0.04);
+  }
+
+  .feature-tile:hover {
+    transform: translateY(-2px);
+    border-color: rgba(10, 127, 81, 0.35);
+    box-shadow: 0 14px 26px rgba(12, 34, 56, 0.12);
+  }
+
+  .feature-tile-icon {
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .feature-tile:hover .feature-tile-icon {
+    transform: scale(1.06);
+    background: rgba(10, 127, 81, 0.16);
   }
 
   .sender-toggle {

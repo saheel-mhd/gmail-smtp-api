@@ -29,6 +29,8 @@ type Domain = {
   verifiedAt: string | null;
 };
 
+type DomainPayload = Omit<Domain, "senders" | "sentCount">;
+
 type VerifyResult = {
   checks: {
     txtOk: boolean;
@@ -91,6 +93,30 @@ export default function DomainsPage() {
   const [editingForm, setEditingForm] = useState(DEFAULT_SMTP_FORM);
   const [savingId, setSavingId] = useState<string | null>(null);
 
+  function mergeDomain(data: DomainPayload, existing?: Domain): Domain {
+    return {
+      ...(existing ?? {}),
+      ...data,
+      senders: existing?.senders ?? [],
+      sentCount: existing?.sentCount ?? 0
+    };
+  }
+
+  function upsertDomain(data: DomainPayload) {
+    setDomains((prev) => {
+      const index = prev.findIndex((item) => item.id === data.id);
+      if (index === -1) {
+        return [mergeDomain(data), ...prev];
+      }
+      const next = [...prev];
+      next[index] = mergeDomain(data, prev[index]);
+      return next;
+    });
+    if (activeDomain?.id === data.id) {
+      setActiveDomain((prev) => (prev ? mergeDomain(data, prev) : prev));
+    }
+  }
+
   function isRecordOk(domain: Domain, key: keyof VerifyResult["checks"]): boolean {
     const checks = verifyResult[domain.id];
     if (checks) return Boolean(checks[key]);
@@ -130,7 +156,7 @@ export default function DomainsPage() {
         setSubmitting(false);
         return;
       }
-      await browserApi<{ data: Domain }>("/admin/v1/domains", {
+      const res = await browserApi<{ data: DomainPayload }>("/admin/v1/domains", {
         method: "POST",
         csrf: true,
         headers: { "content-type": "application/json" },
@@ -141,9 +167,9 @@ export default function DomainsPage() {
           smtpSecure: smtpForm.smtpSecure
         })
       });
+      upsertDomain(res.data);
       setDomainInput("");
       setSmtpForm({ ...DEFAULT_SMTP_FORM });
-      await loadDomains();
     } catch (err) {
       setError((err as Error).message || "Failed to add domain.");
     } finally {
@@ -155,16 +181,12 @@ export default function DomainsPage() {
     setError("");
     setVerifyingId(domainId);
     try {
-      const res = await browserApi<{ data: Domain; checks: VerifyResult["checks"] }>(
+      const res = await browserApi<{ data: DomainPayload; checks: VerifyResult["checks"] }>(
         `/admin/v1/domains/${domainId}/verify`,
         { method: "POST", csrf: true }
       );
       setVerifyResult((prev) => ({ ...prev, [domainId]: res.checks }));
-      const updated = await loadDomains();
-      if (activeDomain?.id === domainId) {
-        const fresh = updated.find((item) => item.id === domainId) ?? null;
-        setActiveDomain(fresh);
-      }
+      upsertDomain(res.data);
     } catch (err) {
       setError((err as Error).message || "Verification failed.");
     } finally {
@@ -180,7 +202,7 @@ export default function DomainsPage() {
     setError("");
     setSavingId(domain.id);
     try {
-      await browserApi<{ data: Domain }>(`/admin/v1/domains/${domain.id}`, {
+      const res = await browserApi<{ data: DomainPayload }>(`/admin/v1/domains/${domain.id}`, {
         method: "PATCH",
         csrf: true,
         headers: { "content-type": "application/json" },
@@ -190,8 +212,8 @@ export default function DomainsPage() {
           smtpSecure: editingForm.smtpSecure
         })
       });
+      upsertDomain(res.data);
       setEditingId(null);
-      await loadDomains();
     } catch (err) {
       setError((err as Error).message || "Failed to update domain.");
     } finally {

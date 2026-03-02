@@ -2,6 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { TemplateDialog } from "../template-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "../ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { useToast } from "../ui/toast";
 import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
@@ -30,6 +38,9 @@ export function TemplatesClient({
   const [editing, setEditing] = useState<TemplateRow | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [copyingId, setCopyingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<TemplateRow | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const { toast } = useToast();
 
   async function loadTemplates() {
@@ -108,6 +119,42 @@ export function TemplatesClient({
     }
   }
 
+  async function deleteTemplate(template: TemplateRow) {
+    setDeletingId(template.id);
+    try {
+      await browserApi(`/admin/v1/templates/${template.id}`, {
+        method: "DELETE",
+        csrf: true
+      });
+      invalidateBrowserCache("/admin/v1/templates");
+      toast({
+        variant: "success",
+        title: "Template deleted"
+      });
+      await loadTemplates();
+    } catch (err) {
+      toast({
+        variant: "error",
+        title: "Template delete unsuccessful",
+        description: (err as Error).message || "Failed to delete template"
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  function openDeleteConfirm(template: TemplateRow) {
+    setDeleteTarget(template);
+    setConfirmOpen(true);
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    await deleteTemplate(deleteTarget);
+    setConfirmOpen(false);
+    setDeleteTarget(null);
+  }
+
   return (
     <main className="container">
       <section className="panel">
@@ -150,6 +197,41 @@ export function TemplatesClient({
         initial={editing}
         onSaved={loadTemplates}
       />
+
+      <Dialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete template</DialogTitle>
+            <DialogDescription>
+              This will permanently delete the template. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              className="btn small ghost"
+              type="button"
+              onClick={() => setConfirmOpen(false)}
+              disabled={!!(deleteTarget && deletingId === deleteTarget.id)}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn small danger"
+              type="button"
+              onClick={() => void confirmDelete()}
+              disabled={!deleteTarget || deletingId === deleteTarget.id}
+            >
+              {deleteTarget && deletingId === deleteTarget.id ? "Deleting..." : "Delete"}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <section className="panel" style={{ marginTop: 16 }}>
         <h2>Template Overview</h2>
@@ -263,6 +345,40 @@ export function TemplatesClient({
                               : template.status === "active"
                               ? "Deactivate"
                               : "Activate"}
+                          </button>
+                          <button
+                            className="btn small danger"
+                            type="button"
+                            onClick={() => openDeleteConfirm(template)}
+                            disabled={deletingId === template.id}
+                            title="Delete template"
+                            aria-label="Delete template"
+                            style={{
+                              width: 34,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              paddingLeft: 0,
+                              paddingRight: 0
+                            }}
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <path d="M3 6h18" />
+                              <path d="M8 6V4h8v2" />
+                              <path d="M6 6l1 14h10l1-14" />
+                              <path d="M10 11v6" />
+                              <path d="M14 11v6" />
+                            </svg>
                           </button>
                         </div>
                       </TableCell>

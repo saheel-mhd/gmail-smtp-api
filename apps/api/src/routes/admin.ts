@@ -1084,26 +1084,31 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     async (request, reply) => {
       const user = getUserContext(request);
       const params = request.params as { id: string };
-      const updated = await prisma.smtpAccount.updateMany({
+      const smtpSender = await prisma.smtpAccount.findFirst({
         where: { id: params.id, tenantId: user.tenantId },
-        data: { status: "disabled" }
+        select: { id: true, label: true, gmailAddress: true }
       });
-      if (updated.count) {
-        const disabledSender = await prisma.smtpAccount.findFirst({
-          where: { id: params.id, tenantId: user.tenantId },
-          select: { label: true, gmailAddress: true }
+      if (smtpSender) {
+        const messageCount = await prisma.message.count({
+          where: { tenantId: user.tenantId, smtpAccountId: smtpSender.id }
+        });
+        if (messageCount > 0) {
+          return reply.conflict("sender has messages and cannot be deleted");
+        }
+
+        await prisma.smtpAccount.deleteMany({
+          where: { id: params.id, tenantId: user.tenantId }
         });
 
         await writeAuditLog(request, {
           tenantId: user.tenantId,
           actorType: "user",
           actorId: user.actorId,
-          action: "admin.sender.disable",
+          action: "admin.sender.delete",
           metadata: {
             senderId: params.id,
-            senderLabel: disabledSender?.label,
-            gmailAddress: disabledSender?.gmailAddress,
-            status: "disabled",
+            senderLabel: smtpSender.label,
+            gmailAddress: smtpSender.gmailAddress,
             type: "gmail"
           }
         });
@@ -1111,35 +1116,40 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         return reply.send({ ok: true });
       }
 
-      const updatedDomain = await prisma.domainSender.updateMany({
+      const domainSender = await prisma.domainSender.findFirst({
         where: {
           id: params.id,
           tenantId: user.tenantId,
           domain: { userId: user.actorId }
         },
-        data: { status: "disabled" }
+        select: { id: true, label: true, emailAddress: true }
       });
-      if (!updatedDomain.count) return reply.notFound("sender not found");
+      if (!domainSender) return reply.notFound("sender not found");
 
-      const disabledDomainSender = await prisma.domainSender.findFirst({
+      const domainMessageCount = await prisma.message.count({
+        where: { tenantId: user.tenantId, domainSenderId: domainSender.id }
+      });
+      if (domainMessageCount > 0) {
+        return reply.conflict("sender has messages and cannot be deleted");
+      }
+
+      await prisma.domainSender.deleteMany({
         where: {
           id: params.id,
           tenantId: user.tenantId,
           domain: { userId: user.actorId }
-        },
-        select: { label: true, emailAddress: true }
+        }
       });
 
       await writeAuditLog(request, {
         tenantId: user.tenantId,
         actorType: "user",
         actorId: user.actorId,
-        action: "admin.sender.disable",
+        action: "admin.sender.delete",
         metadata: {
           senderId: params.id,
-          senderLabel: disabledDomainSender?.label,
-          emailAddress: disabledDomainSender?.emailAddress,
-          status: "disabled",
+          senderLabel: domainSender.label,
+          emailAddress: domainSender.emailAddress,
           type: "domain"
         }
       });
@@ -1383,23 +1393,22 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     async (request, reply) => {
       const user = getUserContext(request);
       const params = request.params as { id: string };
-      const updated = await prisma.template.updateMany({
-        where: { id: params.id, tenantId: user.tenantId },
-        data: { status: "disabled" }
-      });
-      if (!updated.count) return reply.notFound("template not found");
-
-      const latest = await prisma.template.findFirst({
+      const existing = await prisma.template.findFirst({
         where: { id: params.id, tenantId: user.tenantId },
         select: { name: true }
+      });
+      if (!existing) return reply.notFound("template not found");
+
+      await prisma.template.deleteMany({
+        where: { id: params.id, tenantId: user.tenantId }
       });
 
       await writeAuditLog(request, {
         tenantId: user.tenantId,
         actorType: "user",
         actorId: user.actorId,
-        action: "admin.template.disable",
-        metadata: { templateName: latest?.name, status: "disabled" }
+        action: "admin.template.delete",
+        metadata: { templateName: existing.name }
       });
 
       return reply.send({ ok: true });

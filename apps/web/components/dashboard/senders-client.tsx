@@ -3,6 +3,7 @@
 import { FormEvent, Fragment, useState } from "react";
 import { AddSenderDialog } from "../add-gmail-sender-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Switch } from "../ui/switch";
 import { useToast } from "../ui/toast";
 import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
 
@@ -50,6 +51,7 @@ export function SendersClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(initialError ?? "");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [hideDisabled, setHideDisabled] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<UpdateSenderPayload>(DEFAULT_EDIT_FORM);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -170,6 +172,7 @@ export function SendersClient({
     }
   }
 
+
   function startEditing(sender: Sender) {
     setEditingId(sender.id);
     setEditForm({
@@ -219,8 +222,24 @@ export function SendersClient({
         onCreated={loadSenders}
       />
 
+
       <section className="panel" style={{ marginTop: 16 }}>
-        <h2>Sender Overview</h2>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap"
+          }}
+        >
+          <h2>Sender Overview</h2>
+          <Switch
+            checked={hideDisabled}
+            onChange={(event) => setHideDisabled(event.target.checked)}
+            label="Exclude deactivated"
+          />
+        </div>
         <div className="table-wrap">
           <Table>
             <TableHeader>
@@ -260,7 +279,9 @@ export function SendersClient({
                       <TableCell colSpan={5}>No senders found yet.</TableCell>
                     </TableRow>
                   )
-                : senders.map((sender) => {
+                : senders
+                    .filter((sender) => (hideDisabled ? sender.status !== "disabled" : true))
+                    .map((sender) => {
                     return (
                       <Fragment key={sender.id}>
                         <TableRow>
