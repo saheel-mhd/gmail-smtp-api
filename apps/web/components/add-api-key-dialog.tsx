@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { browserApi, invalidateBrowserCache } from "../lib/browser-api";
+import { parseApiError } from "../lib/api-errors";
 import {
   Dialog,
   DialogContent,
@@ -103,10 +104,11 @@ export function AddApiKeyDialog({
       });
       onOpenChange(false);
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "API key creation unsuccessful",
-        description: (err as Error).message || "Failed to create API key"
+        title: isAuth ? "Session expired" : "API key creation unsuccessful",
+        description: message
       });
     } finally {
       setSubmitting(false);

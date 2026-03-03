@@ -257,6 +257,7 @@ exports.Prisma.MessageScalarFieldEnum = {
   apiKeyId: 'apiKeyId',
   smtpAccountId: 'smtpAccountId',
   domainSenderId: 'domainSenderId',
+  campaignRecipientId: 'campaignRecipientId',
   idempotencyKey: 'idempotencyKey',
   to: 'to',
   cc: 'cc',
@@ -283,6 +284,67 @@ exports.Prisma.TemplateScalarFieldEnum = {
   html: 'html',
   text: 'text',
   status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CampaignScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  name: 'name',
+  status: 'status',
+  senderType: 'senderType',
+  smtpAccountId: 'smtpAccountId',
+  domainSenderId: 'domainSenderId',
+  templateId: 'templateId',
+  subject: 'subject',
+  html: 'html',
+  text: 'text',
+  fromName: 'fromName',
+  replyTo: 'replyTo',
+  headers: 'headers',
+  perMinuteLimit: 'perMinuteLimit',
+  warmupEnabled: 'warmupEnabled',
+  warmupStartPerMinute: 'warmupStartPerMinute',
+  warmupStep: 'warmupStep',
+  warmupIntervalMinutes: 'warmupIntervalMinutes',
+  warmupMaxPerMinute: 'warmupMaxPerMinute',
+  trackOpens: 'trackOpens',
+  trackClicks: 'trackClicks',
+  trackReplies: 'trackReplies',
+  totalRecipients: 'totalRecipients',
+  queuedCount: 'queuedCount',
+  sentCount: 'sentCount',
+  failedCount: 'failedCount',
+  openedCount: 'openedCount',
+  clickedCount: 'clickedCount',
+  repliedCount: 'repliedCount',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CampaignRecipientScalarFieldEnum = {
+  id: 'id',
+  campaignId: 'campaignId',
+  email: 'email',
+  name: 'name',
+  status: 'status',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  sentAt: 'sentAt',
+  openedAt: 'openedAt',
+  openCount: 'openCount',
+  clickedAt: 'clickedAt',
+  clickCount: 'clickCount',
+  clickedUrl: 'clickedUrl',
+  repliedAt: 'repliedAt',
+  replyCount: 'replyCount',
+  messageId: 'messageId',
+  variables: 'variables',
+  trackingToken: 'trackingToken',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -368,6 +430,29 @@ exports.TemplateStatus = exports.$Enums.TemplateStatus = {
   disabled: 'disabled'
 };
 
+exports.CampaignStatus = exports.$Enums.CampaignStatus = {
+  draft: 'draft',
+  running: 'running',
+  paused: 'paused',
+  completed: 'completed',
+  failed: 'failed',
+  cancelled: 'cancelled'
+};
+
+exports.CampaignSenderType = exports.$Enums.CampaignSenderType = {
+  gmail: 'gmail',
+  domain: 'domain'
+};
+
+exports.CampaignRecipientStatus = exports.$Enums.CampaignRecipientStatus = {
+  pending: 'pending',
+  queued: 'queued',
+  sending: 'sending',
+  sent: 'sent',
+  failed: 'failed',
+  skipped: 'skipped'
+};
+
 exports.ActorType = exports.$Enums.ActorType = {
   user: 'user',
   api_key: 'api_key',
@@ -386,6 +471,8 @@ exports.Prisma.ModelName = {
   ApiKeyDomainPermission: 'ApiKeyDomainPermission',
   Message: 'Message',
   Template: 'Template',
+  Campaign: 'Campaign',
+  CampaignRecipient: 'CampaignRecipient',
   AuditLog: 'AuditLog'
 };
 

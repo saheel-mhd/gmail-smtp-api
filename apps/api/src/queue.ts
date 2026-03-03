@@ -2,12 +2,17 @@ import { Queue } from "bullmq";
 import { redis } from "./lib/redis";
 
 export const SEND_QUEUE_NAME = "send_email_jobs";
+export const CAMPAIGN_QUEUE_NAME = "campaign_dispatch_jobs";
 
 export type SendEmailJob = {
   messageId: string;
 };
 
 let queue: Queue<SendEmailJob> | null = null;
+export type CampaignDispatchJob = {
+  campaignId: string;
+};
+let campaignQueue: Queue<CampaignDispatchJob> | null = null;
 
 export function getSendQueue(): Queue<SendEmailJob> {
   if (queue) return queue;
@@ -21,6 +26,19 @@ export function getSendQueue(): Queue<SendEmailJob> {
     }
   });
   return queue;
+}
+
+export function getCampaignQueue(): Queue<CampaignDispatchJob> {
+  if (campaignQueue) return campaignQueue;
+  campaignQueue = new Queue<CampaignDispatchJob>(CAMPAIGN_QUEUE_NAME, {
+    connection: redis,
+    defaultJobOptions: {
+      attempts: 1,
+      removeOnComplete: 1000,
+      removeOnFail: 1000
+    }
+  });
+  return campaignQueue;
 }
 
 export async function closeSendQueue(): Promise<void> {

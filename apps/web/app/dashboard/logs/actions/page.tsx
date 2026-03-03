@@ -3,6 +3,7 @@ import {
   type AuditRow
 } from "../../../../components/dashboard/action-logs-client";
 import { serverApi } from "../../../../lib/server-api";
+import { parseApiError } from "../../../../lib/api-errors";
 
 type LogsResponse = { data: AuditRow[] };
 
@@ -15,7 +16,8 @@ export default async function ActionLogsPage() {
     });
     initialLogs = data.data;
   } catch (err) {
-    initialError = (err as Error).message || "Failed to load logs.";
+    const parsed = parseApiError(err);
+    initialError = parsed.message;
   }
 
   return <ActionLogsClient initialLogs={initialLogs} initialError={initialError} />;

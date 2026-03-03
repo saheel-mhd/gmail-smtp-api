@@ -5,6 +5,7 @@ import {
   type TemplateRow
 } from "../../../components/dashboard/test-api-client";
 import { serverApi } from "../../../lib/server-api";
+import { parseApiError } from "../../../lib/api-errors";
 
 type SenderResponse = { data: Sender[] };
 type ApiKeyResponse = { data: ApiKeyRow[] };
@@ -26,7 +27,8 @@ export default async function TestApiPage() {
     initialApiKeys = keyRes.data.filter((key) => key.status === "active");
     initialTemplates = templateRes.data.filter((template) => template.status === "active");
   } catch (err) {
-    initialError = (err as Error).message || "Failed to load test data.";
+    const parsed = parseApiError(err);
+    initialError = parsed.message;
   }
 
   return (

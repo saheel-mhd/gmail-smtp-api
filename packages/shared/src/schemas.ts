@@ -113,6 +113,57 @@ export const createApiKeySchema = z
     { message: "exactly one sender must be selected" }
   );
 
+export const createCampaignSchema = z
+  .object({
+    name: z.string().min(1).max(120),
+    senderType: z.enum(["gmail", "domain"]),
+    senderId: z.string().min(1),
+    templateId: z.string().min(1).optional(),
+    subject: z.string().min(1).max(250).optional(),
+    html: z.string().max(100000).optional(),
+    text: z.string().max(100000).optional(),
+    fromName: z.string().max(120).optional(),
+    replyTo: recipientSchema.optional(),
+    headers: headersSchema,
+    perMinuteLimit: z.number().int().positive().max(10000).optional(),
+    warmupEnabled: z.boolean().optional(),
+    warmupStartPerMinute: z.number().int().positive().max(10000).optional(),
+    warmupStep: z.number().int().positive().max(10000).optional(),
+    warmupIntervalMinutes: z.number().int().positive().max(1440).optional(),
+    warmupMaxPerMinute: z.number().int().positive().max(10000).optional(),
+    trackOpens: z.boolean().optional(),
+    trackClicks: z.boolean().optional(),
+    trackReplies: z.boolean().optional()
+  })
+  .refine(
+    (data) => {
+      if (data.templateId) {
+        return !data.subject && !data.text && !data.html;
+      }
+      return Boolean(data.subject) && Boolean(data.text || data.html);
+    },
+    {
+      message:
+        "When templateId is provided, omit subject/text/html. Otherwise subject and one of text or html are required."
+    }
+  );
+
+export const campaignRecipientsSchema = z.object({
+  recipients: z
+    .array(
+      z.object({
+        email: recipientSchema,
+        name: z.string().max(120).optional(),
+        variables: z
+          .record(z.string().min(1), z.union([z.string(), z.number(), z.boolean()]))
+          .optional()
+          .default({})
+      })
+    )
+    .min(1)
+    .max(5000)
+});
+
 export type SendRequest = z.infer<typeof sendRequestSchema>;
 export type TemplateSendRequest = z.infer<typeof templateSendSchema>;
 export type CreateSenderInput = z.infer<typeof createSenderSchema>;
@@ -120,3 +171,5 @@ export type PatchSenderInput = z.infer<typeof patchSenderSchema>;
 export type CreateApiKeyInput = z.infer<typeof createApiKeySchema>;
 export type CreateTemplateInput = z.infer<typeof createTemplateSchema>;
 export type PatchTemplateInput = z.infer<typeof patchTemplateSchema>;
+export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
+export type CampaignRecipientsInput = z.infer<typeof campaignRecipientsSchema>;

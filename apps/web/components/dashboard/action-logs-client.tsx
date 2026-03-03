@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { browserApi } from "../../lib/browser-api";
 import { Pagination } from "../ui/pagination";
+import { useToast } from "../ui/toast";
+import { parseApiError } from "../../lib/api-errors";
 
 export type AuditRow = {
   id: string;
@@ -19,10 +21,17 @@ export function ActionLogsClient({
   initialError?: string;
 }) {
   const pageSize = 8;
+  const initialParsed = useMemo(
+    () => (initialError ? parseApiError(initialError) : null),
+    [initialError]
+  );
   const [logs, setLogs] = useState<AuditRow[]>(initialLogs);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(initialError ?? "");
+  const [error, setError] = useState(
+    initialParsed && !initialParsed.isAuth ? initialParsed.message : ""
+  );
   const [page, setPage] = useState(1);
+  const { toast } = useToast();
 
   const totalPages = Math.max(1, Math.ceil(logs.length / pageSize));
   useEffect(() => {
@@ -30,6 +39,16 @@ export function ActionLogsClient({
       setPage(totalPages);
     }
   }, [page, totalPages]);
+
+  useEffect(() => {
+    if (initialParsed?.isAuth) {
+      toast({
+        variant: "error",
+        title: "Session expired",
+        description: initialParsed.message
+      });
+    }
+  }, [initialParsed, toast]);
 
   const pagedLogs = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -43,7 +62,13 @@ export function ActionLogsClient({
       const data = await browserApi<{ data: AuditRow[] }>("/admin/v1/logs?limit=100");
       setLogs(data.data);
     } catch (err) {
-      setError((err as Error).message || "Failed to load logs");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "Logs load unsuccessful",
+        description: message
+      });
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { browserApi } from "../../../lib/browser-api";
+import { useToast } from "../../../components/ui/toast";
+import { parseApiError } from "../../../lib/api-errors";
 
 type Domain = {
   id: string;
@@ -92,6 +94,7 @@ export default function DomainsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingForm, setEditingForm] = useState(DEFAULT_SMTP_FORM);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const { toast } = useToast();
 
   function mergeDomain(data: DomainPayload, existing?: Domain): Domain {
     return {
@@ -135,7 +138,13 @@ export default function DomainsPage() {
       setDomains(res.data);
       return res.data;
     } catch (err) {
-      setError((err as Error).message || "Failed to load domains.");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "Domains load unsuccessful",
+        description: message
+      });
       return [];
     } finally {
       setLoading(false);
@@ -171,7 +180,13 @@ export default function DomainsPage() {
       setDomainInput("");
       setSmtpForm({ ...DEFAULT_SMTP_FORM });
     } catch (err) {
-      setError((err as Error).message || "Failed to add domain.");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "Domain create unsuccessful",
+        description: message
+      });
     } finally {
       setSubmitting(false);
     }
@@ -188,7 +203,13 @@ export default function DomainsPage() {
       setVerifyResult((prev) => ({ ...prev, [domainId]: res.checks }));
       upsertDomain(res.data);
     } catch (err) {
-      setError((err as Error).message || "Verification failed.");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "Domain verification unsuccessful",
+        description: message
+      });
     } finally {
       setVerifyingId((current) => (current === domainId ? null : current));
     }
@@ -215,7 +236,13 @@ export default function DomainsPage() {
       upsertDomain(res.data);
       setEditingId(null);
     } catch (err) {
-      setError((err as Error).message || "Failed to update domain.");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "Domain update unsuccessful",
+        description: message
+      });
     } finally {
       setSavingId((current) => (current === domain.id ? null : current));
     }

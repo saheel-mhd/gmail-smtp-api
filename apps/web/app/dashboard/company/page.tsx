@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { browserApi } from "../../../lib/browser-api";
+import { useToast } from "../../../components/ui/toast";
+import { parseApiError } from "../../../lib/api-errors";
 
 type CompanyProfile = {
   name: string;
@@ -38,6 +40,7 @@ export default function CompanyPage() {
     address: "",
     website: ""
   });
+  const { toast } = useToast();
 
   useEffect(() => {
     let isMounted = true;
@@ -101,7 +104,17 @@ export default function CompanyPage() {
       setCompany(res.data);
       setShowForm(false);
     } catch (err) {
-      setError((err as Error).message || "Failed to save company.");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) {
+        setError(message || "Failed to save company.");
+      } else {
+        setError("");
+      }
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "Company save unsuccessful",
+        description: message
+      });
     }
   }
 

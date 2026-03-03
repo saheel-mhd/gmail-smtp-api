@@ -3,6 +3,7 @@ import {
   type TemplateRow
 } from "../../../components/dashboard/templates-client";
 import { serverApi } from "../../../lib/server-api";
+import { parseApiError } from "../../../lib/api-errors";
 
 type TemplateResponse = { data: TemplateRow[] };
 
@@ -13,7 +14,8 @@ export default async function DashboardTemplatesPage() {
     const res = await serverApi<TemplateResponse>("/admin/v1/templates", { cacheTtlMs: 8000 });
     initialTemplates = res.data;
   } catch (err) {
-    initialError = (err as Error).message || "Failed to load templates.";
+    const parsed = parseApiError(err);
+    initialError = parsed.message;
   }
 
   return (

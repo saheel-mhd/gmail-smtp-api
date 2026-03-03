@@ -11,6 +11,15 @@ for (const file of [".env", "../../.env"]) {
   }
 }
 
+const boolFromEnv = z.preprocess((value) => {
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["true", "1", "yes", "y"].includes(normalized)) return true;
+    if (["false", "0", "no", "n", ""].includes(normalized)) return false;
+  }
+  return value;
+}, z.boolean());
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   API_PORT: z.coerce.number().default(4000),
@@ -23,14 +32,15 @@ const envSchema = z.object({
   ENCRYPTION_KEY_VERSION: z.string().default("v1"),
   GMAIL_SMTP_HOST: z.string().default("smtp.gmail.com"),
   GMAIL_SMTP_PORT: z.coerce.number().default(587),
-  GMAIL_SMTP_SECURE: z.coerce.boolean().default(false),
-  GMAIL_SMTP_REQUIRE_TLS: z.coerce.boolean().default(true),
+  GMAIL_SMTP_SECURE: boolFromEnv.default(false),
+  GMAIL_SMTP_REQUIRE_TLS: boolFromEnv.default(true),
   DEFAULT_PER_DAY_LIMIT: z.coerce.number().default(2000),
   DEFAULT_API_KEY_RATE_LIMIT: z.coerce.number().default(120),
   APP_BASE_URL: z.string().default("http://localhost:3000"),
   APP_DOMAIN: z.string().default("mailer.example.com"),
   APP_COOKIE_DOMAIN: z.string().optional().default(""),
-  SKIP_SMTP_VERIFY: z.coerce.boolean().default(false)
+  REPLY_TRACKING_SECRET: z.string().optional(),
+  SKIP_SMTP_VERIFY: boolFromEnv.default(false)
 });
 
 export const env = envSchema.parse(process.env);

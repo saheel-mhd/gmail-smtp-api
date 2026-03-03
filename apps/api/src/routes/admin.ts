@@ -6,7 +6,15 @@ import bcrypt from "bcryptjs";
 import { authenticator } from "otplib";
 import nodemailer from "nodemailer";
 import { z } from "zod";
-import { createApiKeySchema, createSenderSchema, createTemplateSchema, patchSenderSchema, patchTemplateSchema } from "@gmail-smtp/shared";
+import {
+  campaignRecipientsSchema,
+  createApiKeySchema,
+  createCampaignSchema,
+  createSenderSchema,
+  createTemplateSchema,
+  patchSenderSchema,
+  patchTemplateSchema
+} from "@gmail-smtp/shared";
 import { prisma } from "../lib/prisma";
 import { authenticateUserSession, enforceCsrf, requireRole, setSessionCookies } from "../plugins/security";
 import { decryptSecret, encryptSecret } from "../lib/crypto";
@@ -14,8 +22,9 @@ import { generateApiKey, hashApiKey } from "../lib/api-key";
 import { writeAuditLog } from "../plugins/audit";
 import { createGmailTransport, verifyGmailCredentials } from "../lib/smtp";
 import { renderTemplate } from "../lib/template";
+import { assertSafeHeaders } from "../lib/validation";
 import { env } from "../env";
-import { getSendQueue } from "../queue";
+import { getCampaignQueue, getSendQueue } from "../queue";
 
 const mutatingPreHandlers = [
   authenticateUserSession,
@@ -65,6 +74,12 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     smtpPort: z.number().int().min(1).max(65535),
     smtpSecure: z.boolean()
   });
+  const createCampaignBulkSchema = createCampaignSchema.and(
+    z.object({
+      recipients: campaignRecipientsSchema.shape.recipients,
+      start: z.boolean().optional()
+    })
+  );
 
   const normalizeTxt = (rows: string[][]) =>
     rows.map((parts) => parts.join("")).map((value) => value.trim());
@@ -100,6 +115,51 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     email: z.string().email(),
     password: z.string().min(8).max(128)
   });
+
+  async function resolveCampaignSender({
+    tenantId,
+    userId,
+    senderType,
+    senderId
+  }: {
+    tenantId: string;
+    userId: string;
+    senderType: "gmail" | "domain";
+    senderId: string;
+  }) {
+    if (senderType === "gmail") {
+      const sender = await prisma.smtpAccount.findFirst({
+        where: { id: senderId, tenantId, status: "active" },
+        select: { id: true, label: true, gmailAddress: true }
+      });
+      if (!sender) return null;
+      return {
+        senderType,
+        smtpAccountId: sender.id,
+        domainSenderId: null,
+        senderLabel: sender.label,
+        senderEmail: sender.gmailAddress
+      };
+    }
+
+    const sender = await prisma.domainSender.findFirst({
+      where: {
+        id: senderId,
+        tenantId,
+        status: "active",
+        domain: { userId }
+      },
+      select: { id: true, label: true, emailAddress: true }
+    });
+    if (!sender) return null;
+    return {
+      senderType,
+      smtpAccountId: null,
+      domainSenderId: sender.id,
+      senderLabel: sender.label,
+      senderEmail: sender.emailAddress
+    };
+  }
 
   app.post("/admin/v1/auth/login", async (request, reply) => {
     const body = request.body as {
@@ -569,6 +629,502 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     }
   );
 
+  app.get(
+    "/admin/v1/campaigns",
+    { preHandler: [authenticateUserSession] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const campaigns = await prisma.campaign.findMany({
+        where: { tenantId: user.tenantId, userId: user.actorId },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          senderType: true,
+          totalRecipients: true,
+          queuedCount: true,
+          sentCount: true,
+          failedCount: true,
+          createdAt: true,
+          startedAt: true,
+          completedAt: true,
+          smtpAccount: { select: { label: true, gmailAddress: true } },
+          domainSender: { select: { label: true, emailAddress: true } }
+        }
+      });
+
+      const data = campaigns.map((campaign) => {
+        const senderLabel =
+          campaign.smtpAccount?.label ||
+          campaign.smtpAccount?.gmailAddress ||
+          campaign.domainSender?.label ||
+          campaign.domainSender?.emailAddress ||
+          "Sender";
+
+        return {
+          id: campaign.id,
+          name: campaign.name,
+          status: campaign.status,
+          senderType: campaign.senderType,
+          senderLabel,
+          totalRecipients: campaign.totalRecipients,
+          queuedCount: campaign.queuedCount,
+          sentCount: campaign.sentCount,
+          failedCount: campaign.failedCount,
+          createdAt: campaign.createdAt,
+          startedAt: campaign.startedAt,
+          completedAt: campaign.completedAt
+        };
+      });
+
+      return reply.send({ data });
+    }
+  );
+
+  app.get(
+    "/admin/v1/campaigns/:id",
+    { preHandler: [authenticateUserSession] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const query = request.query as { limit?: string; cursor?: string };
+      const limit = Math.min(Number(query.limit ?? 200), 500);
+
+      const campaign = await prisma.campaign.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          senderType: true,
+          fromName: true,
+          replyTo: true,
+          perMinuteLimit: true,
+          warmupEnabled: true,
+          warmupStartPerMinute: true,
+          warmupStep: true,
+          warmupIntervalMinutes: true,
+          warmupMaxPerMinute: true,
+          trackOpens: true,
+          trackClicks: true,
+          trackReplies: true,
+          totalRecipients: true,
+          queuedCount: true,
+          sentCount: true,
+          failedCount: true,
+          openedCount: true,
+          clickedCount: true,
+          repliedCount: true,
+          createdAt: true,
+          startedAt: true,
+          completedAt: true,
+          smtpAccount: { select: { label: true, gmailAddress: true } },
+          domainSender: { select: { label: true, emailAddress: true } },
+          template: { select: { id: true, name: true } }
+        }
+      });
+      if (!campaign) return reply.notFound("campaign not found");
+
+      const recipients = await prisma.campaignRecipient.findMany({
+        where: { campaignId: campaign.id },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        ...(query.cursor
+          ? {
+              skip: 1,
+              cursor: { id: query.cursor }
+            }
+          : {})
+      });
+
+      const nextCursor =
+        recipients.length === limit ? recipients[recipients.length - 1]?.id ?? null : null;
+
+      const senderLabel =
+        campaign.smtpAccount?.label ||
+        campaign.smtpAccount?.gmailAddress ||
+        campaign.domainSender?.label ||
+        campaign.domainSender?.emailAddress ||
+        "Sender";
+
+      return reply.send({
+        data: {
+          id: campaign.id,
+          name: campaign.name,
+          status: campaign.status,
+          senderType: campaign.senderType,
+          senderLabel,
+          fromName: campaign.fromName,
+          replyTo: campaign.replyTo,
+          template: campaign.template,
+          perMinuteLimit: campaign.perMinuteLimit,
+          warmupEnabled: campaign.warmupEnabled,
+          warmupStartPerMinute: campaign.warmupStartPerMinute,
+          warmupStep: campaign.warmupStep,
+          warmupIntervalMinutes: campaign.warmupIntervalMinutes,
+          warmupMaxPerMinute: campaign.warmupMaxPerMinute,
+          trackOpens: campaign.trackOpens,
+          trackClicks: campaign.trackClicks,
+          trackReplies: campaign.trackReplies,
+          totalRecipients: campaign.totalRecipients,
+          queuedCount: campaign.queuedCount,
+          sentCount: campaign.sentCount,
+          failedCount: campaign.failedCount,
+          openedCount: campaign.openedCount,
+          clickedCount: campaign.clickedCount,
+          repliedCount: campaign.repliedCount,
+          createdAt: campaign.createdAt,
+          startedAt: campaign.startedAt,
+          completedAt: campaign.completedAt
+        },
+        recipients,
+        nextCursor
+      });
+    }
+  );
+
+  app.post(
+    "/admin/v1/campaigns",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = createCampaignSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      assertSafeHeaders(parsed.data.headers ?? {});
+
+      const sender = await resolveCampaignSender({
+        tenantId: user.tenantId,
+        userId: user.actorId,
+        senderType: parsed.data.senderType,
+        senderId: parsed.data.senderId
+      });
+      if (!sender) return reply.badRequest("sender not found or inactive");
+
+      if (parsed.data.templateId) {
+        const template = await prisma.template.findFirst({
+          where: {
+            id: parsed.data.templateId,
+            tenantId: user.tenantId,
+            status: "active"
+          },
+          select: { id: true }
+        });
+        if (!template) return reply.badRequest("template not found or inactive");
+      }
+
+      const campaign = await prisma.campaign.create({
+        data: {
+          tenantId: user.tenantId,
+          userId: user.actorId,
+          name: parsed.data.name.trim(),
+          status: "draft",
+          senderType: parsed.data.senderType,
+          smtpAccountId: sender.smtpAccountId,
+          domainSenderId: sender.domainSenderId,
+          templateId: parsed.data.templateId,
+          subject: parsed.data.subject,
+          html: parsed.data.html,
+          text: parsed.data.text,
+          fromName: parsed.data.fromName,
+          replyTo: parsed.data.replyTo,
+          headers: parsed.data.headers ?? {},
+          perMinuteLimit: parsed.data.perMinuteLimit ?? env.DEFAULT_API_KEY_RATE_LIMIT,
+          warmupEnabled: parsed.data.warmupEnabled ?? false,
+          warmupStartPerMinute: parsed.data.warmupStartPerMinute ?? 20,
+          warmupStep: parsed.data.warmupStep ?? 10,
+          warmupIntervalMinutes: parsed.data.warmupIntervalMinutes ?? 60,
+          warmupMaxPerMinute: parsed.data.warmupMaxPerMinute ?? 200,
+          trackOpens: parsed.data.trackOpens ?? true,
+          trackClicks: parsed.data.trackClicks ?? true,
+          trackReplies: parsed.data.trackReplies ?? false
+        }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.campaign.create",
+        metadata: { campaignId: campaign.id, name: campaign.name }
+      });
+
+      return reply.code(201).send({ data: campaign });
+    }
+  );
+
+  app.post(
+    "/admin/v1/campaigns/bulk",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = createCampaignBulkSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      assertSafeHeaders(parsed.data.headers ?? {});
+
+      const sender = await resolveCampaignSender({
+        tenantId: user.tenantId,
+        userId: user.actorId,
+        senderType: parsed.data.senderType,
+        senderId: parsed.data.senderId
+      });
+      if (!sender) return reply.badRequest("sender not found or inactive");
+
+      if (parsed.data.templateId) {
+        const template = await prisma.template.findFirst({
+          where: {
+            id: parsed.data.templateId,
+            tenantId: user.tenantId,
+            status: "active"
+          },
+          select: { id: true }
+        });
+        if (!template) return reply.badRequest("template not found or inactive");
+      }
+
+      const campaign = await prisma.campaign.create({
+        data: {
+          tenantId: user.tenantId,
+          userId: user.actorId,
+          name: parsed.data.name.trim(),
+          status: "draft",
+          senderType: parsed.data.senderType,
+          smtpAccountId: sender.smtpAccountId,
+          domainSenderId: sender.domainSenderId,
+          templateId: parsed.data.templateId,
+          subject: parsed.data.subject,
+          html: parsed.data.html,
+          text: parsed.data.text,
+          fromName: parsed.data.fromName,
+          replyTo: parsed.data.replyTo,
+          headers: parsed.data.headers ?? {},
+          perMinuteLimit: parsed.data.perMinuteLimit ?? env.DEFAULT_API_KEY_RATE_LIMIT,
+          warmupEnabled: parsed.data.warmupEnabled ?? false,
+          warmupStartPerMinute: parsed.data.warmupStartPerMinute ?? 20,
+          warmupStep: parsed.data.warmupStep ?? 10,
+          warmupIntervalMinutes: parsed.data.warmupIntervalMinutes ?? 60,
+          warmupMaxPerMinute: parsed.data.warmupMaxPerMinute ?? 200,
+          trackOpens: parsed.data.trackOpens ?? true,
+          trackClicks: parsed.data.trackClicks ?? true,
+          trackReplies: parsed.data.trackReplies ?? false
+        }
+      });
+
+      const recipientData = parsed.data.recipients.map((recipient) => ({
+        campaignId: campaign.id,
+        email: recipient.email.toLowerCase(),
+        name: recipient.name?.trim() || null,
+        variables: recipient.variables ?? {},
+        trackingToken: randomUUID().replace(/-/g, "")
+      }));
+
+      const inserted = await prisma.campaignRecipient.createMany({
+        data: recipientData,
+        skipDuplicates: true
+      });
+
+      if (inserted.count) {
+        await prisma.campaign.update({
+          where: { id: campaign.id },
+          data: {
+            totalRecipients: { increment: inserted.count }
+          }
+        });
+      }
+
+      if (parsed.data.start) {
+        const previousStatus = campaign.status;
+        const previousStartedAt = campaign.startedAt;
+        await prisma.campaign.update({
+          where: { id: campaign.id },
+          data: {
+            status: "running",
+            startedAt: new Date()
+          }
+        });
+        const jobId = `campaign-dispatch-${campaign.id}`;
+        try {
+          const queue = getCampaignQueue();
+          await queue.waitUntilReady();
+          const existing = await queue.getJob(jobId);
+          if (!existing) {
+            await queue.add("campaign-dispatch", { campaignId: campaign.id }, { jobId });
+          }
+        } catch (error) {
+          await prisma.campaign.update({
+            where: { id: campaign.id },
+            data: {
+              status: previousStatus,
+              startedAt: previousStartedAt
+            }
+          });
+          request.log.error({ err: error }, "failed to enqueue campaign dispatch");
+          return reply.code(503).send({
+            error: "queue_unavailable",
+            message: "Redis queue is unavailable. Start Redis and worker, then retry.",
+            detail: (error as Error).message || String(error)
+          });
+        }
+      }
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.campaign.bulk_create",
+        metadata: { campaignId: campaign.id, added: inserted.count }
+      });
+
+      return reply.code(201).send({
+        data: campaign,
+        recipientsAdded: inserted.count
+      });
+    }
+  );
+
+  app.post(
+    "/admin/v1/campaigns/:id/recipients",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const parsed = campaignRecipientsSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const campaign = await prisma.campaign.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId }
+      });
+      if (!campaign) return reply.notFound("campaign not found");
+      if (campaign.status === "running") {
+        return reply.badRequest("pause the campaign before adding recipients");
+      }
+      if (campaign.status === "completed" || campaign.status === "cancelled") {
+        return reply.badRequest("campaign is completed");
+      }
+
+      const data = parsed.data.recipients.map((recipient) => ({
+        campaignId: campaign.id,
+        email: recipient.email.toLowerCase(),
+        name: recipient.name?.trim() || null,
+        variables: recipient.variables ?? {},
+        trackingToken: randomUUID().replace(/-/g, "")
+      }));
+
+      const inserted = await prisma.campaignRecipient.createMany({
+        data,
+        skipDuplicates: true
+      });
+
+      if (inserted.count) {
+        await prisma.campaign.update({
+          where: { id: campaign.id },
+          data: {
+            totalRecipients: { increment: inserted.count }
+          }
+        });
+      }
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.campaign.recipients.added",
+        metadata: { campaignId: campaign.id, added: inserted.count }
+      });
+
+      return reply.send({ data: { added: inserted.count } });
+    }
+  );
+
+  app.post(
+    "/admin/v1/campaigns/:id/start",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const campaign = await prisma.campaign.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId }
+      });
+      if (!campaign) return reply.notFound("campaign not found");
+      if (!campaign.totalRecipients) return reply.badRequest("add recipients first");
+      if (campaign.status === "completed") return reply.badRequest("campaign is completed");
+
+      const previousStatus = campaign.status;
+      const previousStartedAt = campaign.startedAt;
+      const updated = await prisma.campaign.update({
+        where: { id: campaign.id },
+        data: {
+          status: "running",
+          startedAt: campaign.startedAt ?? new Date()
+        }
+      });
+
+      const jobId = `campaign-dispatch-${campaign.id}`;
+      try {
+        const queue = getCampaignQueue();
+        await queue.waitUntilReady();
+        const existing = await queue.getJob(jobId);
+        if (!existing) {
+          await queue.add("campaign-dispatch", { campaignId: campaign.id }, { jobId });
+        }
+      } catch (error) {
+        await prisma.campaign.update({
+          where: { id: campaign.id },
+          data: {
+            status: previousStatus,
+            startedAt: previousStartedAt
+          }
+        });
+        request.log.error({ err: error }, "failed to enqueue campaign dispatch");
+        return reply.code(503).send({
+          error: "queue_unavailable",
+          message: "Redis queue is unavailable. Start Redis and worker, then retry.",
+          detail: (error as Error).message || String(error)
+        });
+      }
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.campaign.started",
+        metadata: { campaignId: campaign.id }
+      });
+
+      return reply.send({ data: updated });
+    }
+  );
+
+  app.post(
+    "/admin/v1/campaigns/:id/pause",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const campaign = await prisma.campaign.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId }
+      });
+      if (!campaign) return reply.notFound("campaign not found");
+
+      const updated = await prisma.campaign.update({
+        where: { id: campaign.id },
+        data: { status: "paused" }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.campaign.paused",
+        metadata: { campaignId: campaign.id }
+      });
+
+      return reply.send({ data: updated });
+    }
+  );
+
   app.post(
     "/admin/v1/test-api/send",
     { preHandler: [...mutatingPreHandlers] },
@@ -1013,9 +1569,16 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       const parsed = patchSenderSchema.safeParse(request.body);
       if (!parsed.success) return reply.badRequest(parsed.error.message);
 
+      const resetOnActivate =
+        parsed.data.status === "active"
+          ? { errorStreak: 0, lastErrorAt: null, healthScore: 100 }
+          : {};
       const sender = await prisma.smtpAccount.updateMany({
         where: { id: params.id, tenantId: user.tenantId },
-        data: parsed.data
+        data: {
+          ...parsed.data,
+          ...resetOnActivate
+        }
       });
       if (sender.count) {
         const updatedSender = await prisma.smtpAccount.findFirst({
@@ -1046,7 +1609,10 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           tenantId: user.tenantId,
           domain: { userId: user.actorId }
         },
-        data: parsed.data
+        data: {
+          ...parsed.data,
+          ...resetOnActivate
+        }
       });
       if (!domainSender.count) return reply.notFound("sender not found");
 

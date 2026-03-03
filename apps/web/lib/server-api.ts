@@ -58,7 +58,11 @@ export async function serverApi<T>(
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `HTTP ${response.status}`);
+    const error = new Error(text || `HTTP ${response.status}`) as Error & {
+      status?: number;
+    };
+    error.status = response.status;
+    throw error;
   }
 
   const data = (await response.json()) as T;

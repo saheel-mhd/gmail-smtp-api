@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useToast } from "../ui/toast";
 import { browserApi } from "../../lib/browser-api";
+import { parseApiError } from "../../lib/api-errors";
 
 export type Sender = {
   id: string;
@@ -37,12 +38,18 @@ export function TestApiClient({
   initialTemplates: TemplateRow[];
   initialError?: string;
 }) {
+  const initialParsed = useMemo(
+    () => (initialError ? parseApiError(initialError) : null),
+    [initialError]
+  );
   const [senders, setSenders] = useState<Sender[]>(initialSenders);
   const [apiKeys, setApiKeys] = useState<ApiKeyRow[]>(initialApiKeys);
   const [templates, setTemplates] = useState<TemplateRow[]>(initialTemplates);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(initialError ?? "");
+  const [error, setError] = useState(
+    initialParsed && !initialParsed.isAuth ? initialParsed.message : ""
+  );
   const { toast } = useToast();
 
   const [apiToTest, setApiToTest] = useState("POST /v1/send");
@@ -50,6 +57,16 @@ export function TestApiClient({
   const [toEmail, setToEmail] = useState("");
   const [subject, setSubject] = useState("Test Email from Gmail SMTP API");
   const [templateName, setTemplateName] = useState(initialTemplates[0]?.name ?? "");
+
+  useEffect(() => {
+    if (initialParsed?.isAuth) {
+      toast({
+        variant: "error",
+        title: "Session expired",
+        description: initialParsed.message
+      });
+    }
+  }, [initialParsed, toast]);
 
   async function loadData() {
     setLoading(true);
@@ -69,11 +86,11 @@ export function TestApiClient({
       if (!apiKeyId && activeKeys[0]) setApiKeyId(activeKeys[0].id);
       if (!templateName && activeTemplates[0]) setTemplateName(activeTemplates[0].name);
     } catch (err) {
-      const message = (err as Error).message || "Failed to load test data";
-      setError(message);
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
       toast({
         variant: "error",
-        title: "Test data load unsuccessful",
+        title: isAuth ? "Session expired" : "Test data load unsuccessful",
         description: message
       });
     } finally {
@@ -139,10 +156,11 @@ export function TestApiClient({
         description: `${res.testedApi} queued message ${res.messageId}.`
       });
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "Email send unsuccessful",
-        description: (err as Error).message || "API test failed"
+        title: isAuth ? "Session expired" : "Email send unsuccessful",
+        description: message
       });
     } finally {
       setSubmitting(false);
