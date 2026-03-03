@@ -1,5 +1,6 @@
 import { SendersClient, type Sender } from "../../../components/dashboard/senders-client";
 import { serverApi } from "../../../lib/server-api";
+import { parseApiError } from "../../../lib/api-errors";
 
 type SenderResponse = { data: Sender[] };
 
@@ -12,7 +13,8 @@ export default async function SendersPage() {
     });
     initialSenders = response.data;
   } catch (err) {
-    initialError = (err as Error).message || "Failed to load senders.";
+    const parsed = parseApiError(err);
+    initialError = parsed.message;
   }
 
   return <SendersClient initialSenders={initialSenders} initialError={initialError} />;

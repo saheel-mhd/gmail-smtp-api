@@ -700,6 +700,12 @@
     box-shadow: 0 8px 18px rgba(12, 34, 56, 0.04);
   }
 
+  .feature-tile-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+  }
+
   .feature-tile:hover {
     transform: translateY(-2px);
     border-color: rgba(10, 127, 81, 0.35);

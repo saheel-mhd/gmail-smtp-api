@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { browserApi } from "../../lib/browser-api";
+import { parseApiError } from "../../lib/api-errors";
 
 type RegisterResponse = {
   csrfToken: string;
@@ -44,7 +45,8 @@ export default function RegisterPage() {
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError((err as Error).message || "Registration failed");
+      const { message } = parseApiError(err);
+      setError(message || "Registration failed");
     } finally {
       setLoading(false);
     }

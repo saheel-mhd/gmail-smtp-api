@@ -69,6 +69,16 @@ export type Message = $Result.DefaultSelection<Prisma.$MessagePayload>
  */
 export type Template = $Result.DefaultSelection<Prisma.$TemplatePayload>
 /**
+ * Model Campaign
+ * 
+ */
+export type Campaign = $Result.DefaultSelection<Prisma.$CampaignPayload>
+/**
+ * Model CampaignRecipient
+ * 
+ */
+export type CampaignRecipient = $Result.DefaultSelection<Prisma.$CampaignRecipientPayload>
+/**
  * Model AuditLog
  * 
  */
@@ -147,6 +157,38 @@ export const ActorType: {
 
 export type ActorType = (typeof ActorType)[keyof typeof ActorType]
 
+
+export const CampaignStatus: {
+  draft: 'draft',
+  running: 'running',
+  paused: 'paused',
+  completed: 'completed',
+  failed: 'failed',
+  cancelled: 'cancelled'
+};
+
+export type CampaignStatus = (typeof CampaignStatus)[keyof typeof CampaignStatus]
+
+
+export const CampaignRecipientStatus: {
+  pending: 'pending',
+  queued: 'queued',
+  sending: 'sending',
+  sent: 'sent',
+  failed: 'failed',
+  skipped: 'skipped'
+};
+
+export type CampaignRecipientStatus = (typeof CampaignRecipientStatus)[keyof typeof CampaignRecipientStatus]
+
+
+export const CampaignSenderType: {
+  gmail: 'gmail',
+  domain: 'domain'
+};
+
+export type CampaignSenderType = (typeof CampaignSenderType)[keyof typeof CampaignSenderType]
+
 }
 
 export type TenantStatus = $Enums.TenantStatus
@@ -180,6 +222,18 @@ export const MessageStatus: typeof $Enums.MessageStatus
 export type ActorType = $Enums.ActorType
 
 export const ActorType: typeof $Enums.ActorType
+
+export type CampaignStatus = $Enums.CampaignStatus
+
+export const CampaignStatus: typeof $Enums.CampaignStatus
+
+export type CampaignRecipientStatus = $Enums.CampaignRecipientStatus
+
+export const CampaignRecipientStatus: typeof $Enums.CampaignRecipientStatus
+
+export type CampaignSenderType = $Enums.CampaignSenderType
+
+export const CampaignSenderType: typeof $Enums.CampaignSenderType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -407,6 +461,26 @@ export class PrismaClient<
     * ```
     */
   get template(): Prisma.TemplateDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.campaign`: Exposes CRUD operations for the **Campaign** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Campaigns
+    * const campaigns = await prisma.campaign.findMany()
+    * ```
+    */
+  get campaign(): Prisma.CampaignDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.campaignRecipient`: Exposes CRUD operations for the **CampaignRecipient** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CampaignRecipients
+    * const campaignRecipients = await prisma.campaignRecipient.findMany()
+    * ```
+    */
+  get campaignRecipient(): Prisma.CampaignRecipientDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.auditLog`: Exposes CRUD operations for the **AuditLog** model.
@@ -862,6 +936,8 @@ export namespace Prisma {
     ApiKeyDomainPermission: 'ApiKeyDomainPermission',
     Message: 'Message',
     Template: 'Template',
+    Campaign: 'Campaign',
+    CampaignRecipient: 'CampaignRecipient',
     AuditLog: 'AuditLog'
   };
 
@@ -878,7 +954,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "tenant" | "user" | "domain" | "company" | "smtpAccount" | "domainSender" | "apiKey" | "apiKeyPermission" | "apiKeyDomainPermission" | "message" | "template" | "auditLog"
+      modelProps: "tenant" | "user" | "domain" | "company" | "smtpAccount" | "domainSender" | "apiKey" | "apiKeyPermission" | "apiKeyDomainPermission" | "message" | "template" | "campaign" | "campaignRecipient" | "auditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1696,6 +1772,154 @@ export namespace Prisma {
           }
         }
       }
+      Campaign: {
+        payload: Prisma.$CampaignPayload<ExtArgs>
+        fields: Prisma.CampaignFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CampaignFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CampaignFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>
+          }
+          findFirst: {
+            args: Prisma.CampaignFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CampaignFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>
+          }
+          findMany: {
+            args: Prisma.CampaignFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>[]
+          }
+          create: {
+            args: Prisma.CampaignCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>
+          }
+          createMany: {
+            args: Prisma.CampaignCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CampaignCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>[]
+          }
+          delete: {
+            args: Prisma.CampaignDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>
+          }
+          update: {
+            args: Prisma.CampaignUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>
+          }
+          deleteMany: {
+            args: Prisma.CampaignDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CampaignUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CampaignUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>[]
+          }
+          upsert: {
+            args: Prisma.CampaignUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignPayload>
+          }
+          aggregate: {
+            args: Prisma.CampaignAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCampaign>
+          }
+          groupBy: {
+            args: Prisma.CampaignGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CampaignGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CampaignCountArgs<ExtArgs>
+            result: $Utils.Optional<CampaignCountAggregateOutputType> | number
+          }
+        }
+      }
+      CampaignRecipient: {
+        payload: Prisma.$CampaignRecipientPayload<ExtArgs>
+        fields: Prisma.CampaignRecipientFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CampaignRecipientFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CampaignRecipientFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>
+          }
+          findFirst: {
+            args: Prisma.CampaignRecipientFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CampaignRecipientFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>
+          }
+          findMany: {
+            args: Prisma.CampaignRecipientFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>[]
+          }
+          create: {
+            args: Prisma.CampaignRecipientCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>
+          }
+          createMany: {
+            args: Prisma.CampaignRecipientCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CampaignRecipientCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>[]
+          }
+          delete: {
+            args: Prisma.CampaignRecipientDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>
+          }
+          update: {
+            args: Prisma.CampaignRecipientUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>
+          }
+          deleteMany: {
+            args: Prisma.CampaignRecipientDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CampaignRecipientUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CampaignRecipientUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>[]
+          }
+          upsert: {
+            args: Prisma.CampaignRecipientUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CampaignRecipientPayload>
+          }
+          aggregate: {
+            args: Prisma.CampaignRecipientAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCampaignRecipient>
+          }
+          groupBy: {
+            args: Prisma.CampaignRecipientGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CampaignRecipientGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CampaignRecipientCountArgs<ExtArgs>
+            result: $Utils.Optional<CampaignRecipientCountAggregateOutputType> | number
+          }
+        }
+      }
       AuditLog: {
         payload: Prisma.$AuditLogPayload<ExtArgs>
         fields: Prisma.AuditLogFieldRefs
@@ -1889,6 +2113,8 @@ export namespace Prisma {
     apiKeyDomainPermission?: ApiKeyDomainPermissionOmit
     message?: MessageOmit
     template?: TemplateOmit
+    campaign?: CampaignOmit
+    campaignRecipient?: CampaignRecipientOmit
     auditLog?: AuditLogOmit
   }
 
@@ -1979,6 +2205,7 @@ export namespace Prisma {
     auditLogs: number
     companies: number
     domains: number
+    campaigns: number
   }
 
   export type TenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1991,6 +2218,7 @@ export namespace Prisma {
     auditLogs?: boolean | TenantCountOutputTypeCountAuditLogsArgs
     companies?: boolean | TenantCountOutputTypeCountCompaniesArgs
     domains?: boolean | TenantCountOutputTypeCountDomainsArgs
+    campaigns?: boolean | TenantCountOutputTypeCountCampaignsArgs
   }
 
   // Custom InputTypes
@@ -2067,6 +2295,13 @@ export namespace Prisma {
     where?: DomainWhereInput
   }
 
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountCampaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignWhereInput
+  }
+
 
   /**
    * Count Type UserCountOutputType
@@ -2074,10 +2309,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     domains: number
+    campaigns: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     domains?: boolean | UserCountOutputTypeCountDomainsArgs
+    campaigns?: boolean | UserCountOutputTypeCountCampaignsArgs
   }
 
   // Custom InputTypes
@@ -2096,6 +2333,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountDomainsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DomainWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCampaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignWhereInput
   }
 
 
@@ -2137,11 +2381,13 @@ export namespace Prisma {
   export type SmtpAccountCountOutputType = {
     permissions: number
     messages: number
+    campaigns: number
   }
 
   export type SmtpAccountCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     permissions?: boolean | SmtpAccountCountOutputTypeCountPermissionsArgs
     messages?: boolean | SmtpAccountCountOutputTypeCountMessagesArgs
+    campaigns?: boolean | SmtpAccountCountOutputTypeCountCampaignsArgs
   }
 
   // Custom InputTypes
@@ -2169,6 +2415,13 @@ export namespace Prisma {
     where?: MessageWhereInput
   }
 
+  /**
+   * SmtpAccountCountOutputType without action
+   */
+  export type SmtpAccountCountOutputTypeCountCampaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignWhereInput
+  }
+
 
   /**
    * Count Type DomainSenderCountOutputType
@@ -2177,11 +2430,13 @@ export namespace Prisma {
   export type DomainSenderCountOutputType = {
     messages: number
     permissions: number
+    campaigns: number
   }
 
   export type DomainSenderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | DomainSenderCountOutputTypeCountMessagesArgs
     permissions?: boolean | DomainSenderCountOutputTypeCountPermissionsArgs
+    campaigns?: boolean | DomainSenderCountOutputTypeCountCampaignsArgs
   }
 
   // Custom InputTypes
@@ -2207,6 +2462,13 @@ export namespace Prisma {
    */
   export type DomainSenderCountOutputTypeCountPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ApiKeyDomainPermissionWhereInput
+  }
+
+  /**
+   * DomainSenderCountOutputType without action
+   */
+  export type DomainSenderCountOutputTypeCountCampaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignWhereInput
   }
 
 
@@ -2255,6 +2517,99 @@ export namespace Prisma {
    * ApiKeyCountOutputType without action
    */
   export type ApiKeyCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MessageWhereInput
+  }
+
+
+  /**
+   * Count Type TemplateCountOutputType
+   */
+
+  export type TemplateCountOutputType = {
+    campaigns: number
+  }
+
+  export type TemplateCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    campaigns?: boolean | TemplateCountOutputTypeCountCampaignsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TemplateCountOutputType without action
+   */
+  export type TemplateCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TemplateCountOutputType
+     */
+    select?: TemplateCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TemplateCountOutputType without action
+   */
+  export type TemplateCountOutputTypeCountCampaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignWhereInput
+  }
+
+
+  /**
+   * Count Type CampaignCountOutputType
+   */
+
+  export type CampaignCountOutputType = {
+    recipients: number
+  }
+
+  export type CampaignCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    recipients?: boolean | CampaignCountOutputTypeCountRecipientsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CampaignCountOutputType without action
+   */
+  export type CampaignCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignCountOutputType
+     */
+    select?: CampaignCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CampaignCountOutputType without action
+   */
+  export type CampaignCountOutputTypeCountRecipientsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignRecipientWhereInput
+  }
+
+
+  /**
+   * Count Type CampaignRecipientCountOutputType
+   */
+
+  export type CampaignRecipientCountOutputType = {
+    messages: number
+  }
+
+  export type CampaignRecipientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    messages?: boolean | CampaignRecipientCountOutputTypeCountMessagesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CampaignRecipientCountOutputType without action
+   */
+  export type CampaignRecipientCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipientCountOutputType
+     */
+    select?: CampaignRecipientCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CampaignRecipientCountOutputType without action
+   */
+  export type CampaignRecipientCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MessageWhereInput
   }
 
@@ -2494,6 +2849,7 @@ export namespace Prisma {
     auditLogs?: boolean | Tenant$auditLogsArgs<ExtArgs>
     companies?: boolean | Tenant$companiesArgs<ExtArgs>
     domains?: boolean | Tenant$domainsArgs<ExtArgs>
+    campaigns?: boolean | Tenant$campaignsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenant"]>
 
@@ -2541,6 +2897,7 @@ export namespace Prisma {
     auditLogs?: boolean | Tenant$auditLogsArgs<ExtArgs>
     companies?: boolean | Tenant$companiesArgs<ExtArgs>
     domains?: boolean | Tenant$domainsArgs<ExtArgs>
+    campaigns?: boolean | Tenant$campaignsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2558,6 +2915,7 @@ export namespace Prisma {
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
       companies: Prisma.$CompanyPayload<ExtArgs>[]
       domains: Prisma.$DomainPayload<ExtArgs>[]
+      campaigns: Prisma.$CampaignPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2971,6 +3329,7 @@ export namespace Prisma {
     auditLogs<T extends Tenant$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     companies<T extends Tenant$companiesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     domains<T extends Tenant$domainsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$domainsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    campaigns<T extends Tenant$campaignsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$campaignsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3612,6 +3971,30 @@ export namespace Prisma {
   }
 
   /**
+   * Tenant.campaigns
+   */
+  export type Tenant$campaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    where?: CampaignWhereInput
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    cursor?: CampaignWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
+  }
+
+  /**
    * Tenant without action
    */
   export type TenantDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3853,6 +4236,7 @@ export namespace Prisma {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     company?: boolean | User$companyArgs<ExtArgs>
     domains?: boolean | User$domainsArgs<ExtArgs>
+    campaigns?: boolean | User$campaignsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3908,6 +4292,7 @@ export namespace Prisma {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     company?: boolean | User$companyArgs<ExtArgs>
     domains?: boolean | User$domainsArgs<ExtArgs>
+    campaigns?: boolean | User$campaignsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3923,6 +4308,7 @@ export namespace Prisma {
       tenant: Prisma.$TenantPayload<ExtArgs>
       company: Prisma.$CompanyPayload<ExtArgs> | null
       domains: Prisma.$DomainPayload<ExtArgs>[]
+      campaigns: Prisma.$CampaignPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4334,6 +4720,7 @@ export namespace Prisma {
     tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     company<T extends User$companyArgs<ExtArgs> = {}>(args?: Subset<T, User$companyArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     domains<T extends User$domainsArgs<ExtArgs> = {}>(args?: Subset<T, User$domainsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    campaigns<T extends User$campaignsArgs<ExtArgs> = {}>(args?: Subset<T, User$campaignsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4811,6 +5198,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DomainScalarFieldEnum | DomainScalarFieldEnum[]
+  }
+
+  /**
+   * User.campaigns
+   */
+  export type User$campaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    where?: CampaignWhereInput
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    cursor?: CampaignWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
   }
 
   /**
@@ -7634,6 +8045,7 @@ export namespace Prisma {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     permissions?: boolean | SmtpAccount$permissionsArgs<ExtArgs>
     messages?: boolean | SmtpAccount$messagesArgs<ExtArgs>
+    campaigns?: boolean | SmtpAccount$campaignsArgs<ExtArgs>
     _count?: boolean | SmtpAccountCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["smtpAccount"]>
 
@@ -7710,6 +8122,7 @@ export namespace Prisma {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     permissions?: boolean | SmtpAccount$permissionsArgs<ExtArgs>
     messages?: boolean | SmtpAccount$messagesArgs<ExtArgs>
+    campaigns?: boolean | SmtpAccount$campaignsArgs<ExtArgs>
     _count?: boolean | SmtpAccountCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SmtpAccountIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7725,6 +8138,7 @@ export namespace Prisma {
       tenant: Prisma.$TenantPayload<ExtArgs>
       permissions: Prisma.$ApiKeyPermissionPayload<ExtArgs>[]
       messages: Prisma.$MessagePayload<ExtArgs>[]
+      campaigns: Prisma.$CampaignPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8143,6 +8557,7 @@ export namespace Prisma {
     tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     permissions<T extends SmtpAccount$permissionsArgs<ExtArgs> = {}>(args?: Subset<T, SmtpAccount$permissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     messages<T extends SmtpAccount$messagesArgs<ExtArgs> = {}>(args?: Subset<T, SmtpAccount$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    campaigns<T extends SmtpAccount$campaignsArgs<ExtArgs> = {}>(args?: Subset<T, SmtpAccount$campaignsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8635,6 +9050,30 @@ export namespace Prisma {
   }
 
   /**
+   * SmtpAccount.campaigns
+   */
+  export type SmtpAccount$campaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    where?: CampaignWhereInput
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    cursor?: CampaignWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
+  }
+
+  /**
    * SmtpAccount without action
    */
   export type SmtpAccountDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8987,6 +9426,7 @@ export namespace Prisma {
     domain?: boolean | DomainDefaultArgs<ExtArgs>
     messages?: boolean | DomainSender$messagesArgs<ExtArgs>
     permissions?: boolean | DomainSender$permissionsArgs<ExtArgs>
+    campaigns?: boolean | DomainSender$campaignsArgs<ExtArgs>
     _count?: boolean | DomainSenderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["domainSender"]>
 
@@ -9069,6 +9509,7 @@ export namespace Prisma {
     domain?: boolean | DomainDefaultArgs<ExtArgs>
     messages?: boolean | DomainSender$messagesArgs<ExtArgs>
     permissions?: boolean | DomainSender$permissionsArgs<ExtArgs>
+    campaigns?: boolean | DomainSender$campaignsArgs<ExtArgs>
     _count?: boolean | DomainSenderCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DomainSenderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9087,6 +9528,7 @@ export namespace Prisma {
       domain: Prisma.$DomainPayload<ExtArgs>
       messages: Prisma.$MessagePayload<ExtArgs>[]
       permissions: Prisma.$ApiKeyDomainPermissionPayload<ExtArgs>[]
+      campaigns: Prisma.$CampaignPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9507,6 +9949,7 @@ export namespace Prisma {
     domain<T extends DomainDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DomainDefaultArgs<ExtArgs>>): Prisma__DomainClient<$Result.GetResult<Prisma.$DomainPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     messages<T extends DomainSender$messagesArgs<ExtArgs> = {}>(args?: Subset<T, DomainSender$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     permissions<T extends DomainSender$permissionsArgs<ExtArgs> = {}>(args?: Subset<T, DomainSender$permissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyDomainPermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    campaigns<T extends DomainSender$campaignsArgs<ExtArgs> = {}>(args?: Subset<T, DomainSender$campaignsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9997,6 +10440,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ApiKeyDomainPermissionScalarFieldEnum | ApiKeyDomainPermissionScalarFieldEnum[]
+  }
+
+  /**
+   * DomainSender.campaigns
+   */
+  export type DomainSender$campaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    where?: CampaignWhereInput
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    cursor?: CampaignWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
   }
 
   /**
@@ -13337,6 +13804,7 @@ export namespace Prisma {
     apiKeyId: string | null
     smtpAccountId: string | null
     domainSenderId: string | null
+    campaignRecipientId: string | null
     idempotencyKey: string | null
     subject: string | null
     text: string | null
@@ -13357,6 +13825,7 @@ export namespace Prisma {
     apiKeyId: string | null
     smtpAccountId: string | null
     domainSenderId: string | null
+    campaignRecipientId: string | null
     idempotencyKey: string | null
     subject: string | null
     text: string | null
@@ -13377,6 +13846,7 @@ export namespace Prisma {
     apiKeyId: number
     smtpAccountId: number
     domainSenderId: number
+    campaignRecipientId: number
     idempotencyKey: number
     to: number
     cc: number
@@ -13411,6 +13881,7 @@ export namespace Prisma {
     apiKeyId?: true
     smtpAccountId?: true
     domainSenderId?: true
+    campaignRecipientId?: true
     idempotencyKey?: true
     subject?: true
     text?: true
@@ -13431,6 +13902,7 @@ export namespace Prisma {
     apiKeyId?: true
     smtpAccountId?: true
     domainSenderId?: true
+    campaignRecipientId?: true
     idempotencyKey?: true
     subject?: true
     text?: true
@@ -13451,6 +13923,7 @@ export namespace Prisma {
     apiKeyId?: true
     smtpAccountId?: true
     domainSenderId?: true
+    campaignRecipientId?: true
     idempotencyKey?: true
     to?: true
     cc?: true
@@ -13559,9 +14032,10 @@ export namespace Prisma {
   export type MessageGroupByOutputType = {
     id: string
     tenantId: string
-    apiKeyId: string
+    apiKeyId: string | null
     smtpAccountId: string | null
     domainSenderId: string | null
+    campaignRecipientId: string | null
     idempotencyKey: string
     to: JsonValue
     cc: JsonValue
@@ -13605,6 +14079,7 @@ export namespace Prisma {
     apiKeyId?: boolean
     smtpAccountId?: boolean
     domainSenderId?: boolean
+    campaignRecipientId?: boolean
     idempotencyKey?: boolean
     to?: boolean
     cc?: boolean
@@ -13622,9 +14097,10 @@ export namespace Prisma {
     queuedAt?: boolean
     sentAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    apiKey?: boolean | ApiKeyDefaultArgs<ExtArgs>
+    apiKey?: boolean | Message$apiKeyArgs<ExtArgs>
     smtpAccount?: boolean | Message$smtpAccountArgs<ExtArgs>
     domainSender?: boolean | Message$domainSenderArgs<ExtArgs>
+    campaignRecipient?: boolean | Message$campaignRecipientArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13633,6 +14109,7 @@ export namespace Prisma {
     apiKeyId?: boolean
     smtpAccountId?: boolean
     domainSenderId?: boolean
+    campaignRecipientId?: boolean
     idempotencyKey?: boolean
     to?: boolean
     cc?: boolean
@@ -13650,9 +14127,10 @@ export namespace Prisma {
     queuedAt?: boolean
     sentAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    apiKey?: boolean | ApiKeyDefaultArgs<ExtArgs>
+    apiKey?: boolean | Message$apiKeyArgs<ExtArgs>
     smtpAccount?: boolean | Message$smtpAccountArgs<ExtArgs>
     domainSender?: boolean | Message$domainSenderArgs<ExtArgs>
+    campaignRecipient?: boolean | Message$campaignRecipientArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13661,6 +14139,7 @@ export namespace Prisma {
     apiKeyId?: boolean
     smtpAccountId?: boolean
     domainSenderId?: boolean
+    campaignRecipientId?: boolean
     idempotencyKey?: boolean
     to?: boolean
     cc?: boolean
@@ -13678,9 +14157,10 @@ export namespace Prisma {
     queuedAt?: boolean
     sentAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    apiKey?: boolean | ApiKeyDefaultArgs<ExtArgs>
+    apiKey?: boolean | Message$apiKeyArgs<ExtArgs>
     smtpAccount?: boolean | Message$smtpAccountArgs<ExtArgs>
     domainSender?: boolean | Message$domainSenderArgs<ExtArgs>
+    campaignRecipient?: boolean | Message$campaignRecipientArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectScalar = {
@@ -13689,6 +14169,7 @@ export namespace Prisma {
     apiKeyId?: boolean
     smtpAccountId?: boolean
     domainSenderId?: boolean
+    campaignRecipientId?: boolean
     idempotencyKey?: boolean
     to?: boolean
     cc?: boolean
@@ -13707,40 +14188,45 @@ export namespace Prisma {
     sentAt?: boolean
   }
 
-  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "apiKeyId" | "smtpAccountId" | "domainSenderId" | "idempotencyKey" | "to" | "cc" | "bcc" | "subject" | "text" | "html" | "fromName" | "replyTo" | "headers" | "status" | "attempts" | "lastError" | "createdAt" | "queuedAt" | "sentAt", ExtArgs["result"]["message"]>
+  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "apiKeyId" | "smtpAccountId" | "domainSenderId" | "campaignRecipientId" | "idempotencyKey" | "to" | "cc" | "bcc" | "subject" | "text" | "html" | "fromName" | "replyTo" | "headers" | "status" | "attempts" | "lastError" | "createdAt" | "queuedAt" | "sentAt", ExtArgs["result"]["message"]>
   export type MessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    apiKey?: boolean | ApiKeyDefaultArgs<ExtArgs>
+    apiKey?: boolean | Message$apiKeyArgs<ExtArgs>
     smtpAccount?: boolean | Message$smtpAccountArgs<ExtArgs>
     domainSender?: boolean | Message$domainSenderArgs<ExtArgs>
+    campaignRecipient?: boolean | Message$campaignRecipientArgs<ExtArgs>
   }
   export type MessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    apiKey?: boolean | ApiKeyDefaultArgs<ExtArgs>
+    apiKey?: boolean | Message$apiKeyArgs<ExtArgs>
     smtpAccount?: boolean | Message$smtpAccountArgs<ExtArgs>
     domainSender?: boolean | Message$domainSenderArgs<ExtArgs>
+    campaignRecipient?: boolean | Message$campaignRecipientArgs<ExtArgs>
   }
   export type MessageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    apiKey?: boolean | ApiKeyDefaultArgs<ExtArgs>
+    apiKey?: boolean | Message$apiKeyArgs<ExtArgs>
     smtpAccount?: boolean | Message$smtpAccountArgs<ExtArgs>
     domainSender?: boolean | Message$domainSenderArgs<ExtArgs>
+    campaignRecipient?: boolean | Message$campaignRecipientArgs<ExtArgs>
   }
 
   export type $MessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Message"
     objects: {
       tenant: Prisma.$TenantPayload<ExtArgs>
-      apiKey: Prisma.$ApiKeyPayload<ExtArgs>
+      apiKey: Prisma.$ApiKeyPayload<ExtArgs> | null
       smtpAccount: Prisma.$SmtpAccountPayload<ExtArgs> | null
       domainSender: Prisma.$DomainSenderPayload<ExtArgs> | null
+      campaignRecipient: Prisma.$CampaignRecipientPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       tenantId: string
-      apiKeyId: string
+      apiKeyId: string | null
       smtpAccountId: string | null
       domainSenderId: string | null
+      campaignRecipientId: string | null
       idempotencyKey: string
       to: Prisma.JsonValue
       cc: Prisma.JsonValue
@@ -14152,9 +14638,10 @@ export namespace Prisma {
   export interface Prisma__MessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    apiKey<T extends ApiKeyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ApiKeyDefaultArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    apiKey<T extends Message$apiKeyArgs<ExtArgs> = {}>(args?: Subset<T, Message$apiKeyArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     smtpAccount<T extends Message$smtpAccountArgs<ExtArgs> = {}>(args?: Subset<T, Message$smtpAccountArgs<ExtArgs>>): Prisma__SmtpAccountClient<$Result.GetResult<Prisma.$SmtpAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     domainSender<T extends Message$domainSenderArgs<ExtArgs> = {}>(args?: Subset<T, Message$domainSenderArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    campaignRecipient<T extends Message$campaignRecipientArgs<ExtArgs> = {}>(args?: Subset<T, Message$campaignRecipientArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14189,6 +14676,7 @@ export namespace Prisma {
     readonly apiKeyId: FieldRef<"Message", 'String'>
     readonly smtpAccountId: FieldRef<"Message", 'String'>
     readonly domainSenderId: FieldRef<"Message", 'String'>
+    readonly campaignRecipientId: FieldRef<"Message", 'String'>
     readonly idempotencyKey: FieldRef<"Message", 'String'>
     readonly to: FieldRef<"Message", 'Json'>
     readonly cc: FieldRef<"Message", 'Json'>
@@ -14601,6 +15089,25 @@ export namespace Prisma {
   }
 
   /**
+   * Message.apiKey
+   */
+  export type Message$apiKeyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    where?: ApiKeyWhereInput
+  }
+
+  /**
    * Message.smtpAccount
    */
   export type Message$smtpAccountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14636,6 +15143,25 @@ export namespace Prisma {
      */
     include?: DomainSenderInclude<ExtArgs> | null
     where?: DomainSenderWhereInput
+  }
+
+  /**
+   * Message.campaignRecipient
+   */
+  export type Message$campaignRecipientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    where?: CampaignRecipientWhereInput
   }
 
   /**
@@ -14854,6 +15380,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    campaigns?: boolean | Template$campaignsArgs<ExtArgs>
+    _count?: boolean | TemplateCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["template"]>
 
   export type TemplateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14897,6 +15425,8 @@ export namespace Prisma {
   export type TemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "name" | "subject" | "html" | "text" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["template"]>
   export type TemplateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    campaigns?: boolean | Template$campaignsArgs<ExtArgs>
+    _count?: boolean | TemplateCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TemplateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -14909,6 +15439,7 @@ export namespace Prisma {
     name: "Template"
     objects: {
       tenant: Prisma.$TenantPayload<ExtArgs>
+      campaigns: Prisma.$CampaignPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -15315,6 +15846,7 @@ export namespace Prisma {
   export interface Prisma__TemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    campaigns<T extends Template$campaignsArgs<ExtArgs> = {}>(args?: Subset<T, Template$campaignsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15749,6 +16281,30 @@ export namespace Prisma {
   }
 
   /**
+   * Template.campaigns
+   */
+  export type Template$campaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    where?: CampaignWhereInput
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    cursor?: CampaignWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
+  }
+
+  /**
    * Template without action
    */
   export type TemplateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15764,6 +16320,2972 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TemplateInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Campaign
+   */
+
+  export type AggregateCampaign = {
+    _count: CampaignCountAggregateOutputType | null
+    _avg: CampaignAvgAggregateOutputType | null
+    _sum: CampaignSumAggregateOutputType | null
+    _min: CampaignMinAggregateOutputType | null
+    _max: CampaignMaxAggregateOutputType | null
+  }
+
+  export type CampaignAvgAggregateOutputType = {
+    perMinuteLimit: number | null
+    warmupStartPerMinute: number | null
+    warmupStep: number | null
+    warmupIntervalMinutes: number | null
+    warmupMaxPerMinute: number | null
+    totalRecipients: number | null
+    queuedCount: number | null
+    sentCount: number | null
+    failedCount: number | null
+    openedCount: number | null
+    clickedCount: number | null
+    repliedCount: number | null
+  }
+
+  export type CampaignSumAggregateOutputType = {
+    perMinuteLimit: number | null
+    warmupStartPerMinute: number | null
+    warmupStep: number | null
+    warmupIntervalMinutes: number | null
+    warmupMaxPerMinute: number | null
+    totalRecipients: number | null
+    queuedCount: number | null
+    sentCount: number | null
+    failedCount: number | null
+    openedCount: number | null
+    clickedCount: number | null
+    repliedCount: number | null
+  }
+
+  export type CampaignMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    name: string | null
+    status: $Enums.CampaignStatus | null
+    senderType: $Enums.CampaignSenderType | null
+    smtpAccountId: string | null
+    domainSenderId: string | null
+    templateId: string | null
+    subject: string | null
+    html: string | null
+    text: string | null
+    fromName: string | null
+    replyTo: string | null
+    perMinuteLimit: number | null
+    warmupEnabled: boolean | null
+    warmupStartPerMinute: number | null
+    warmupStep: number | null
+    warmupIntervalMinutes: number | null
+    warmupMaxPerMinute: number | null
+    trackOpens: boolean | null
+    trackClicks: boolean | null
+    trackReplies: boolean | null
+    totalRecipients: number | null
+    queuedCount: number | null
+    sentCount: number | null
+    failedCount: number | null
+    openedCount: number | null
+    clickedCount: number | null
+    repliedCount: number | null
+    startedAt: Date | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CampaignMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    userId: string | null
+    name: string | null
+    status: $Enums.CampaignStatus | null
+    senderType: $Enums.CampaignSenderType | null
+    smtpAccountId: string | null
+    domainSenderId: string | null
+    templateId: string | null
+    subject: string | null
+    html: string | null
+    text: string | null
+    fromName: string | null
+    replyTo: string | null
+    perMinuteLimit: number | null
+    warmupEnabled: boolean | null
+    warmupStartPerMinute: number | null
+    warmupStep: number | null
+    warmupIntervalMinutes: number | null
+    warmupMaxPerMinute: number | null
+    trackOpens: boolean | null
+    trackClicks: boolean | null
+    trackReplies: boolean | null
+    totalRecipients: number | null
+    queuedCount: number | null
+    sentCount: number | null
+    failedCount: number | null
+    openedCount: number | null
+    clickedCount: number | null
+    repliedCount: number | null
+    startedAt: Date | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CampaignCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    userId: number
+    name: number
+    status: number
+    senderType: number
+    smtpAccountId: number
+    domainSenderId: number
+    templateId: number
+    subject: number
+    html: number
+    text: number
+    fromName: number
+    replyTo: number
+    headers: number
+    perMinuteLimit: number
+    warmupEnabled: number
+    warmupStartPerMinute: number
+    warmupStep: number
+    warmupIntervalMinutes: number
+    warmupMaxPerMinute: number
+    trackOpens: number
+    trackClicks: number
+    trackReplies: number
+    totalRecipients: number
+    queuedCount: number
+    sentCount: number
+    failedCount: number
+    openedCount: number
+    clickedCount: number
+    repliedCount: number
+    startedAt: number
+    completedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CampaignAvgAggregateInputType = {
+    perMinuteLimit?: true
+    warmupStartPerMinute?: true
+    warmupStep?: true
+    warmupIntervalMinutes?: true
+    warmupMaxPerMinute?: true
+    totalRecipients?: true
+    queuedCount?: true
+    sentCount?: true
+    failedCount?: true
+    openedCount?: true
+    clickedCount?: true
+    repliedCount?: true
+  }
+
+  export type CampaignSumAggregateInputType = {
+    perMinuteLimit?: true
+    warmupStartPerMinute?: true
+    warmupStep?: true
+    warmupIntervalMinutes?: true
+    warmupMaxPerMinute?: true
+    totalRecipients?: true
+    queuedCount?: true
+    sentCount?: true
+    failedCount?: true
+    openedCount?: true
+    clickedCount?: true
+    repliedCount?: true
+  }
+
+  export type CampaignMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    name?: true
+    status?: true
+    senderType?: true
+    smtpAccountId?: true
+    domainSenderId?: true
+    templateId?: true
+    subject?: true
+    html?: true
+    text?: true
+    fromName?: true
+    replyTo?: true
+    perMinuteLimit?: true
+    warmupEnabled?: true
+    warmupStartPerMinute?: true
+    warmupStep?: true
+    warmupIntervalMinutes?: true
+    warmupMaxPerMinute?: true
+    trackOpens?: true
+    trackClicks?: true
+    trackReplies?: true
+    totalRecipients?: true
+    queuedCount?: true
+    sentCount?: true
+    failedCount?: true
+    openedCount?: true
+    clickedCount?: true
+    repliedCount?: true
+    startedAt?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CampaignMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    name?: true
+    status?: true
+    senderType?: true
+    smtpAccountId?: true
+    domainSenderId?: true
+    templateId?: true
+    subject?: true
+    html?: true
+    text?: true
+    fromName?: true
+    replyTo?: true
+    perMinuteLimit?: true
+    warmupEnabled?: true
+    warmupStartPerMinute?: true
+    warmupStep?: true
+    warmupIntervalMinutes?: true
+    warmupMaxPerMinute?: true
+    trackOpens?: true
+    trackClicks?: true
+    trackReplies?: true
+    totalRecipients?: true
+    queuedCount?: true
+    sentCount?: true
+    failedCount?: true
+    openedCount?: true
+    clickedCount?: true
+    repliedCount?: true
+    startedAt?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CampaignCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    userId?: true
+    name?: true
+    status?: true
+    senderType?: true
+    smtpAccountId?: true
+    domainSenderId?: true
+    templateId?: true
+    subject?: true
+    html?: true
+    text?: true
+    fromName?: true
+    replyTo?: true
+    headers?: true
+    perMinuteLimit?: true
+    warmupEnabled?: true
+    warmupStartPerMinute?: true
+    warmupStep?: true
+    warmupIntervalMinutes?: true
+    warmupMaxPerMinute?: true
+    trackOpens?: true
+    trackClicks?: true
+    trackReplies?: true
+    totalRecipients?: true
+    queuedCount?: true
+    sentCount?: true
+    failedCount?: true
+    openedCount?: true
+    clickedCount?: true
+    repliedCount?: true
+    startedAt?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CampaignAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Campaign to aggregate.
+     */
+    where?: CampaignWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Campaigns to fetch.
+     */
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CampaignWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Campaigns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Campaigns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Campaigns
+    **/
+    _count?: true | CampaignCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CampaignAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CampaignSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CampaignMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CampaignMaxAggregateInputType
+  }
+
+  export type GetCampaignAggregateType<T extends CampaignAggregateArgs> = {
+        [P in keyof T & keyof AggregateCampaign]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCampaign[P]>
+      : GetScalarType<T[P], AggregateCampaign[P]>
+  }
+
+
+
+
+  export type CampaignGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignWhereInput
+    orderBy?: CampaignOrderByWithAggregationInput | CampaignOrderByWithAggregationInput[]
+    by: CampaignScalarFieldEnum[] | CampaignScalarFieldEnum
+    having?: CampaignScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CampaignCountAggregateInputType | true
+    _avg?: CampaignAvgAggregateInputType
+    _sum?: CampaignSumAggregateInputType
+    _min?: CampaignMinAggregateInputType
+    _max?: CampaignMaxAggregateInputType
+  }
+
+  export type CampaignGroupByOutputType = {
+    id: string
+    tenantId: string
+    userId: string
+    name: string
+    status: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId: string | null
+    domainSenderId: string | null
+    templateId: string | null
+    subject: string | null
+    html: string | null
+    text: string | null
+    fromName: string | null
+    replyTo: string | null
+    headers: JsonValue | null
+    perMinuteLimit: number | null
+    warmupEnabled: boolean
+    warmupStartPerMinute: number
+    warmupStep: number
+    warmupIntervalMinutes: number
+    warmupMaxPerMinute: number
+    trackOpens: boolean
+    trackClicks: boolean
+    trackReplies: boolean
+    totalRecipients: number
+    queuedCount: number
+    sentCount: number
+    failedCount: number
+    openedCount: number
+    clickedCount: number
+    repliedCount: number
+    startedAt: Date | null
+    completedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: CampaignCountAggregateOutputType | null
+    _avg: CampaignAvgAggregateOutputType | null
+    _sum: CampaignSumAggregateOutputType | null
+    _min: CampaignMinAggregateOutputType | null
+    _max: CampaignMaxAggregateOutputType | null
+  }
+
+  type GetCampaignGroupByPayload<T extends CampaignGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CampaignGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CampaignGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CampaignGroupByOutputType[P]>
+            : GetScalarType<T[P], CampaignGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CampaignSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    status?: boolean
+    senderType?: boolean
+    smtpAccountId?: boolean
+    domainSenderId?: boolean
+    templateId?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    fromName?: boolean
+    replyTo?: boolean
+    headers?: boolean
+    perMinuteLimit?: boolean
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: boolean
+    warmupStep?: boolean
+    warmupIntervalMinutes?: boolean
+    warmupMaxPerMinute?: boolean
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: boolean
+    queuedCount?: boolean
+    sentCount?: boolean
+    failedCount?: boolean
+    openedCount?: boolean
+    clickedCount?: boolean
+    repliedCount?: boolean
+    startedAt?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    smtpAccount?: boolean | Campaign$smtpAccountArgs<ExtArgs>
+    domainSender?: boolean | Campaign$domainSenderArgs<ExtArgs>
+    template?: boolean | Campaign$templateArgs<ExtArgs>
+    recipients?: boolean | Campaign$recipientsArgs<ExtArgs>
+    _count?: boolean | CampaignCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["campaign"]>
+
+  export type CampaignSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    status?: boolean
+    senderType?: boolean
+    smtpAccountId?: boolean
+    domainSenderId?: boolean
+    templateId?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    fromName?: boolean
+    replyTo?: boolean
+    headers?: boolean
+    perMinuteLimit?: boolean
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: boolean
+    warmupStep?: boolean
+    warmupIntervalMinutes?: boolean
+    warmupMaxPerMinute?: boolean
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: boolean
+    queuedCount?: boolean
+    sentCount?: boolean
+    failedCount?: boolean
+    openedCount?: boolean
+    clickedCount?: boolean
+    repliedCount?: boolean
+    startedAt?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    smtpAccount?: boolean | Campaign$smtpAccountArgs<ExtArgs>
+    domainSender?: boolean | Campaign$domainSenderArgs<ExtArgs>
+    template?: boolean | Campaign$templateArgs<ExtArgs>
+  }, ExtArgs["result"]["campaign"]>
+
+  export type CampaignSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    status?: boolean
+    senderType?: boolean
+    smtpAccountId?: boolean
+    domainSenderId?: boolean
+    templateId?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    fromName?: boolean
+    replyTo?: boolean
+    headers?: boolean
+    perMinuteLimit?: boolean
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: boolean
+    warmupStep?: boolean
+    warmupIntervalMinutes?: boolean
+    warmupMaxPerMinute?: boolean
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: boolean
+    queuedCount?: boolean
+    sentCount?: boolean
+    failedCount?: boolean
+    openedCount?: boolean
+    clickedCount?: boolean
+    repliedCount?: boolean
+    startedAt?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    smtpAccount?: boolean | Campaign$smtpAccountArgs<ExtArgs>
+    domainSender?: boolean | Campaign$domainSenderArgs<ExtArgs>
+    template?: boolean | Campaign$templateArgs<ExtArgs>
+  }, ExtArgs["result"]["campaign"]>
+
+  export type CampaignSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    userId?: boolean
+    name?: boolean
+    status?: boolean
+    senderType?: boolean
+    smtpAccountId?: boolean
+    domainSenderId?: boolean
+    templateId?: boolean
+    subject?: boolean
+    html?: boolean
+    text?: boolean
+    fromName?: boolean
+    replyTo?: boolean
+    headers?: boolean
+    perMinuteLimit?: boolean
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: boolean
+    warmupStep?: boolean
+    warmupIntervalMinutes?: boolean
+    warmupMaxPerMinute?: boolean
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: boolean
+    queuedCount?: boolean
+    sentCount?: boolean
+    failedCount?: boolean
+    openedCount?: boolean
+    clickedCount?: boolean
+    repliedCount?: boolean
+    startedAt?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CampaignOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "name" | "status" | "senderType" | "smtpAccountId" | "domainSenderId" | "templateId" | "subject" | "html" | "text" | "fromName" | "replyTo" | "headers" | "perMinuteLimit" | "warmupEnabled" | "warmupStartPerMinute" | "warmupStep" | "warmupIntervalMinutes" | "warmupMaxPerMinute" | "trackOpens" | "trackClicks" | "trackReplies" | "totalRecipients" | "queuedCount" | "sentCount" | "failedCount" | "openedCount" | "clickedCount" | "repliedCount" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
+  export type CampaignInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    smtpAccount?: boolean | Campaign$smtpAccountArgs<ExtArgs>
+    domainSender?: boolean | Campaign$domainSenderArgs<ExtArgs>
+    template?: boolean | Campaign$templateArgs<ExtArgs>
+    recipients?: boolean | Campaign$recipientsArgs<ExtArgs>
+    _count?: boolean | CampaignCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CampaignIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    smtpAccount?: boolean | Campaign$smtpAccountArgs<ExtArgs>
+    domainSender?: boolean | Campaign$domainSenderArgs<ExtArgs>
+    template?: boolean | Campaign$templateArgs<ExtArgs>
+  }
+  export type CampaignIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    smtpAccount?: boolean | Campaign$smtpAccountArgs<ExtArgs>
+    domainSender?: boolean | Campaign$domainSenderArgs<ExtArgs>
+    template?: boolean | Campaign$templateArgs<ExtArgs>
+  }
+
+  export type $CampaignPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Campaign"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      smtpAccount: Prisma.$SmtpAccountPayload<ExtArgs> | null
+      domainSender: Prisma.$DomainSenderPayload<ExtArgs> | null
+      template: Prisma.$TemplatePayload<ExtArgs> | null
+      recipients: Prisma.$CampaignRecipientPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      userId: string
+      name: string
+      status: $Enums.CampaignStatus
+      senderType: $Enums.CampaignSenderType
+      smtpAccountId: string | null
+      domainSenderId: string | null
+      templateId: string | null
+      subject: string | null
+      html: string | null
+      text: string | null
+      fromName: string | null
+      replyTo: string | null
+      headers: Prisma.JsonValue | null
+      perMinuteLimit: number | null
+      warmupEnabled: boolean
+      warmupStartPerMinute: number
+      warmupStep: number
+      warmupIntervalMinutes: number
+      warmupMaxPerMinute: number
+      trackOpens: boolean
+      trackClicks: boolean
+      trackReplies: boolean
+      totalRecipients: number
+      queuedCount: number
+      sentCount: number
+      failedCount: number
+      openedCount: number
+      clickedCount: number
+      repliedCount: number
+      startedAt: Date | null
+      completedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["campaign"]>
+    composites: {}
+  }
+
+  type CampaignGetPayload<S extends boolean | null | undefined | CampaignDefaultArgs> = $Result.GetResult<Prisma.$CampaignPayload, S>
+
+  type CampaignCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CampaignFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CampaignCountAggregateInputType | true
+    }
+
+  export interface CampaignDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Campaign'], meta: { name: 'Campaign' } }
+    /**
+     * Find zero or one Campaign that matches the filter.
+     * @param {CampaignFindUniqueArgs} args - Arguments to find a Campaign
+     * @example
+     * // Get one Campaign
+     * const campaign = await prisma.campaign.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CampaignFindUniqueArgs>(args: SelectSubset<T, CampaignFindUniqueArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Campaign that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CampaignFindUniqueOrThrowArgs} args - Arguments to find a Campaign
+     * @example
+     * // Get one Campaign
+     * const campaign = await prisma.campaign.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CampaignFindUniqueOrThrowArgs>(args: SelectSubset<T, CampaignFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Campaign that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignFindFirstArgs} args - Arguments to find a Campaign
+     * @example
+     * // Get one Campaign
+     * const campaign = await prisma.campaign.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CampaignFindFirstArgs>(args?: SelectSubset<T, CampaignFindFirstArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Campaign that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignFindFirstOrThrowArgs} args - Arguments to find a Campaign
+     * @example
+     * // Get one Campaign
+     * const campaign = await prisma.campaign.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CampaignFindFirstOrThrowArgs>(args?: SelectSubset<T, CampaignFindFirstOrThrowArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Campaigns that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Campaigns
+     * const campaigns = await prisma.campaign.findMany()
+     * 
+     * // Get first 10 Campaigns
+     * const campaigns = await prisma.campaign.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const campaignWithIdOnly = await prisma.campaign.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CampaignFindManyArgs>(args?: SelectSubset<T, CampaignFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Campaign.
+     * @param {CampaignCreateArgs} args - Arguments to create a Campaign.
+     * @example
+     * // Create one Campaign
+     * const Campaign = await prisma.campaign.create({
+     *   data: {
+     *     // ... data to create a Campaign
+     *   }
+     * })
+     * 
+     */
+    create<T extends CampaignCreateArgs>(args: SelectSubset<T, CampaignCreateArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Campaigns.
+     * @param {CampaignCreateManyArgs} args - Arguments to create many Campaigns.
+     * @example
+     * // Create many Campaigns
+     * const campaign = await prisma.campaign.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CampaignCreateManyArgs>(args?: SelectSubset<T, CampaignCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Campaigns and returns the data saved in the database.
+     * @param {CampaignCreateManyAndReturnArgs} args - Arguments to create many Campaigns.
+     * @example
+     * // Create many Campaigns
+     * const campaign = await prisma.campaign.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Campaigns and only return the `id`
+     * const campaignWithIdOnly = await prisma.campaign.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CampaignCreateManyAndReturnArgs>(args?: SelectSubset<T, CampaignCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Campaign.
+     * @param {CampaignDeleteArgs} args - Arguments to delete one Campaign.
+     * @example
+     * // Delete one Campaign
+     * const Campaign = await prisma.campaign.delete({
+     *   where: {
+     *     // ... filter to delete one Campaign
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CampaignDeleteArgs>(args: SelectSubset<T, CampaignDeleteArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Campaign.
+     * @param {CampaignUpdateArgs} args - Arguments to update one Campaign.
+     * @example
+     * // Update one Campaign
+     * const campaign = await prisma.campaign.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CampaignUpdateArgs>(args: SelectSubset<T, CampaignUpdateArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Campaigns.
+     * @param {CampaignDeleteManyArgs} args - Arguments to filter Campaigns to delete.
+     * @example
+     * // Delete a few Campaigns
+     * const { count } = await prisma.campaign.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CampaignDeleteManyArgs>(args?: SelectSubset<T, CampaignDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Campaigns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Campaigns
+     * const campaign = await prisma.campaign.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CampaignUpdateManyArgs>(args: SelectSubset<T, CampaignUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Campaigns and returns the data updated in the database.
+     * @param {CampaignUpdateManyAndReturnArgs} args - Arguments to update many Campaigns.
+     * @example
+     * // Update many Campaigns
+     * const campaign = await prisma.campaign.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Campaigns and only return the `id`
+     * const campaignWithIdOnly = await prisma.campaign.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CampaignUpdateManyAndReturnArgs>(args: SelectSubset<T, CampaignUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Campaign.
+     * @param {CampaignUpsertArgs} args - Arguments to update or create a Campaign.
+     * @example
+     * // Update or create a Campaign
+     * const campaign = await prisma.campaign.upsert({
+     *   create: {
+     *     // ... data to create a Campaign
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Campaign we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CampaignUpsertArgs>(args: SelectSubset<T, CampaignUpsertArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Campaigns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignCountArgs} args - Arguments to filter Campaigns to count.
+     * @example
+     * // Count the number of Campaigns
+     * const count = await prisma.campaign.count({
+     *   where: {
+     *     // ... the filter for the Campaigns we want to count
+     *   }
+     * })
+    **/
+    count<T extends CampaignCountArgs>(
+      args?: Subset<T, CampaignCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CampaignCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Campaign.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CampaignAggregateArgs>(args: Subset<T, CampaignAggregateArgs>): Prisma.PrismaPromise<GetCampaignAggregateType<T>>
+
+    /**
+     * Group by Campaign.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CampaignGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CampaignGroupByArgs['orderBy'] }
+        : { orderBy?: CampaignGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CampaignGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCampaignGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Campaign model
+   */
+  readonly fields: CampaignFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Campaign.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CampaignClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    smtpAccount<T extends Campaign$smtpAccountArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$smtpAccountArgs<ExtArgs>>): Prisma__SmtpAccountClient<$Result.GetResult<Prisma.$SmtpAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    domainSender<T extends Campaign$domainSenderArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$domainSenderArgs<ExtArgs>>): Prisma__DomainSenderClient<$Result.GetResult<Prisma.$DomainSenderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    template<T extends Campaign$templateArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$templateArgs<ExtArgs>>): Prisma__TemplateClient<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    recipients<T extends Campaign$recipientsArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$recipientsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Campaign model
+   */
+  interface CampaignFieldRefs {
+    readonly id: FieldRef<"Campaign", 'String'>
+    readonly tenantId: FieldRef<"Campaign", 'String'>
+    readonly userId: FieldRef<"Campaign", 'String'>
+    readonly name: FieldRef<"Campaign", 'String'>
+    readonly status: FieldRef<"Campaign", 'CampaignStatus'>
+    readonly senderType: FieldRef<"Campaign", 'CampaignSenderType'>
+    readonly smtpAccountId: FieldRef<"Campaign", 'String'>
+    readonly domainSenderId: FieldRef<"Campaign", 'String'>
+    readonly templateId: FieldRef<"Campaign", 'String'>
+    readonly subject: FieldRef<"Campaign", 'String'>
+    readonly html: FieldRef<"Campaign", 'String'>
+    readonly text: FieldRef<"Campaign", 'String'>
+    readonly fromName: FieldRef<"Campaign", 'String'>
+    readonly replyTo: FieldRef<"Campaign", 'String'>
+    readonly headers: FieldRef<"Campaign", 'Json'>
+    readonly perMinuteLimit: FieldRef<"Campaign", 'Int'>
+    readonly warmupEnabled: FieldRef<"Campaign", 'Boolean'>
+    readonly warmupStartPerMinute: FieldRef<"Campaign", 'Int'>
+    readonly warmupStep: FieldRef<"Campaign", 'Int'>
+    readonly warmupIntervalMinutes: FieldRef<"Campaign", 'Int'>
+    readonly warmupMaxPerMinute: FieldRef<"Campaign", 'Int'>
+    readonly trackOpens: FieldRef<"Campaign", 'Boolean'>
+    readonly trackClicks: FieldRef<"Campaign", 'Boolean'>
+    readonly trackReplies: FieldRef<"Campaign", 'Boolean'>
+    readonly totalRecipients: FieldRef<"Campaign", 'Int'>
+    readonly queuedCount: FieldRef<"Campaign", 'Int'>
+    readonly sentCount: FieldRef<"Campaign", 'Int'>
+    readonly failedCount: FieldRef<"Campaign", 'Int'>
+    readonly openedCount: FieldRef<"Campaign", 'Int'>
+    readonly clickedCount: FieldRef<"Campaign", 'Int'>
+    readonly repliedCount: FieldRef<"Campaign", 'Int'>
+    readonly startedAt: FieldRef<"Campaign", 'DateTime'>
+    readonly completedAt: FieldRef<"Campaign", 'DateTime'>
+    readonly createdAt: FieldRef<"Campaign", 'DateTime'>
+    readonly updatedAt: FieldRef<"Campaign", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Campaign findUnique
+   */
+  export type CampaignFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * Filter, which Campaign to fetch.
+     */
+    where: CampaignWhereUniqueInput
+  }
+
+  /**
+   * Campaign findUniqueOrThrow
+   */
+  export type CampaignFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * Filter, which Campaign to fetch.
+     */
+    where: CampaignWhereUniqueInput
+  }
+
+  /**
+   * Campaign findFirst
+   */
+  export type CampaignFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * Filter, which Campaign to fetch.
+     */
+    where?: CampaignWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Campaigns to fetch.
+     */
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Campaigns.
+     */
+    cursor?: CampaignWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Campaigns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Campaigns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Campaigns.
+     */
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
+  }
+
+  /**
+   * Campaign findFirstOrThrow
+   */
+  export type CampaignFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * Filter, which Campaign to fetch.
+     */
+    where?: CampaignWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Campaigns to fetch.
+     */
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Campaigns.
+     */
+    cursor?: CampaignWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Campaigns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Campaigns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Campaigns.
+     */
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
+  }
+
+  /**
+   * Campaign findMany
+   */
+  export type CampaignFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * Filter, which Campaigns to fetch.
+     */
+    where?: CampaignWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Campaigns to fetch.
+     */
+    orderBy?: CampaignOrderByWithRelationInput | CampaignOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Campaigns.
+     */
+    cursor?: CampaignWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Campaigns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Campaigns.
+     */
+    skip?: number
+    distinct?: CampaignScalarFieldEnum | CampaignScalarFieldEnum[]
+  }
+
+  /**
+   * Campaign create
+   */
+  export type CampaignCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Campaign.
+     */
+    data: XOR<CampaignCreateInput, CampaignUncheckedCreateInput>
+  }
+
+  /**
+   * Campaign createMany
+   */
+  export type CampaignCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Campaigns.
+     */
+    data: CampaignCreateManyInput | CampaignCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Campaign createManyAndReturn
+   */
+  export type CampaignCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * The data used to create many Campaigns.
+     */
+    data: CampaignCreateManyInput | CampaignCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Campaign update
+   */
+  export type CampaignUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Campaign.
+     */
+    data: XOR<CampaignUpdateInput, CampaignUncheckedUpdateInput>
+    /**
+     * Choose, which Campaign to update.
+     */
+    where: CampaignWhereUniqueInput
+  }
+
+  /**
+   * Campaign updateMany
+   */
+  export type CampaignUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Campaigns.
+     */
+    data: XOR<CampaignUpdateManyMutationInput, CampaignUncheckedUpdateManyInput>
+    /**
+     * Filter which Campaigns to update
+     */
+    where?: CampaignWhereInput
+    /**
+     * Limit how many Campaigns to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Campaign updateManyAndReturn
+   */
+  export type CampaignUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * The data used to update Campaigns.
+     */
+    data: XOR<CampaignUpdateManyMutationInput, CampaignUncheckedUpdateManyInput>
+    /**
+     * Filter which Campaigns to update
+     */
+    where?: CampaignWhereInput
+    /**
+     * Limit how many Campaigns to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Campaign upsert
+   */
+  export type CampaignUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Campaign to update in case it exists.
+     */
+    where: CampaignWhereUniqueInput
+    /**
+     * In case the Campaign found by the `where` argument doesn't exist, create a new Campaign with this data.
+     */
+    create: XOR<CampaignCreateInput, CampaignUncheckedCreateInput>
+    /**
+     * In case the Campaign was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CampaignUpdateInput, CampaignUncheckedUpdateInput>
+  }
+
+  /**
+   * Campaign delete
+   */
+  export type CampaignDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    /**
+     * Filter which Campaign to delete.
+     */
+    where: CampaignWhereUniqueInput
+  }
+
+  /**
+   * Campaign deleteMany
+   */
+  export type CampaignDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Campaigns to delete
+     */
+    where?: CampaignWhereInput
+    /**
+     * Limit how many Campaigns to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Campaign.smtpAccount
+   */
+  export type Campaign$smtpAccountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmtpAccount
+     */
+    select?: SmtpAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SmtpAccount
+     */
+    omit?: SmtpAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SmtpAccountInclude<ExtArgs> | null
+    where?: SmtpAccountWhereInput
+  }
+
+  /**
+   * Campaign.domainSender
+   */
+  export type Campaign$domainSenderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DomainSender
+     */
+    select?: DomainSenderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DomainSender
+     */
+    omit?: DomainSenderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DomainSenderInclude<ExtArgs> | null
+    where?: DomainSenderWhereInput
+  }
+
+  /**
+   * Campaign.template
+   */
+  export type Campaign$templateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Template
+     */
+    select?: TemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Template
+     */
+    omit?: TemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TemplateInclude<ExtArgs> | null
+    where?: TemplateWhereInput
+  }
+
+  /**
+   * Campaign.recipients
+   */
+  export type Campaign$recipientsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    where?: CampaignRecipientWhereInput
+    orderBy?: CampaignRecipientOrderByWithRelationInput | CampaignRecipientOrderByWithRelationInput[]
+    cursor?: CampaignRecipientWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CampaignRecipientScalarFieldEnum | CampaignRecipientScalarFieldEnum[]
+  }
+
+  /**
+   * Campaign without action
+   */
+  export type CampaignDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CampaignRecipient
+   */
+
+  export type AggregateCampaignRecipient = {
+    _count: CampaignRecipientCountAggregateOutputType | null
+    _avg: CampaignRecipientAvgAggregateOutputType | null
+    _sum: CampaignRecipientSumAggregateOutputType | null
+    _min: CampaignRecipientMinAggregateOutputType | null
+    _max: CampaignRecipientMaxAggregateOutputType | null
+  }
+
+  export type CampaignRecipientAvgAggregateOutputType = {
+    attempts: number | null
+    openCount: number | null
+    clickCount: number | null
+    replyCount: number | null
+  }
+
+  export type CampaignRecipientSumAggregateOutputType = {
+    attempts: number | null
+    openCount: number | null
+    clickCount: number | null
+    replyCount: number | null
+  }
+
+  export type CampaignRecipientMinAggregateOutputType = {
+    id: string | null
+    campaignId: string | null
+    email: string | null
+    name: string | null
+    status: $Enums.CampaignRecipientStatus | null
+    attempts: number | null
+    lastError: string | null
+    sentAt: Date | null
+    openedAt: Date | null
+    openCount: number | null
+    clickedAt: Date | null
+    clickCount: number | null
+    clickedUrl: string | null
+    repliedAt: Date | null
+    replyCount: number | null
+    messageId: string | null
+    trackingToken: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CampaignRecipientMaxAggregateOutputType = {
+    id: string | null
+    campaignId: string | null
+    email: string | null
+    name: string | null
+    status: $Enums.CampaignRecipientStatus | null
+    attempts: number | null
+    lastError: string | null
+    sentAt: Date | null
+    openedAt: Date | null
+    openCount: number | null
+    clickedAt: Date | null
+    clickCount: number | null
+    clickedUrl: string | null
+    repliedAt: Date | null
+    replyCount: number | null
+    messageId: string | null
+    trackingToken: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CampaignRecipientCountAggregateOutputType = {
+    id: number
+    campaignId: number
+    email: number
+    name: number
+    status: number
+    attempts: number
+    lastError: number
+    sentAt: number
+    openedAt: number
+    openCount: number
+    clickedAt: number
+    clickCount: number
+    clickedUrl: number
+    repliedAt: number
+    replyCount: number
+    messageId: number
+    variables: number
+    trackingToken: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CampaignRecipientAvgAggregateInputType = {
+    attempts?: true
+    openCount?: true
+    clickCount?: true
+    replyCount?: true
+  }
+
+  export type CampaignRecipientSumAggregateInputType = {
+    attempts?: true
+    openCount?: true
+    clickCount?: true
+    replyCount?: true
+  }
+
+  export type CampaignRecipientMinAggregateInputType = {
+    id?: true
+    campaignId?: true
+    email?: true
+    name?: true
+    status?: true
+    attempts?: true
+    lastError?: true
+    sentAt?: true
+    openedAt?: true
+    openCount?: true
+    clickedAt?: true
+    clickCount?: true
+    clickedUrl?: true
+    repliedAt?: true
+    replyCount?: true
+    messageId?: true
+    trackingToken?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CampaignRecipientMaxAggregateInputType = {
+    id?: true
+    campaignId?: true
+    email?: true
+    name?: true
+    status?: true
+    attempts?: true
+    lastError?: true
+    sentAt?: true
+    openedAt?: true
+    openCount?: true
+    clickedAt?: true
+    clickCount?: true
+    clickedUrl?: true
+    repliedAt?: true
+    replyCount?: true
+    messageId?: true
+    trackingToken?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CampaignRecipientCountAggregateInputType = {
+    id?: true
+    campaignId?: true
+    email?: true
+    name?: true
+    status?: true
+    attempts?: true
+    lastError?: true
+    sentAt?: true
+    openedAt?: true
+    openCount?: true
+    clickedAt?: true
+    clickCount?: true
+    clickedUrl?: true
+    repliedAt?: true
+    replyCount?: true
+    messageId?: true
+    variables?: true
+    trackingToken?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CampaignRecipientAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CampaignRecipient to aggregate.
+     */
+    where?: CampaignRecipientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CampaignRecipients to fetch.
+     */
+    orderBy?: CampaignRecipientOrderByWithRelationInput | CampaignRecipientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CampaignRecipientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CampaignRecipients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CampaignRecipients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CampaignRecipients
+    **/
+    _count?: true | CampaignRecipientCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CampaignRecipientAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CampaignRecipientSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CampaignRecipientMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CampaignRecipientMaxAggregateInputType
+  }
+
+  export type GetCampaignRecipientAggregateType<T extends CampaignRecipientAggregateArgs> = {
+        [P in keyof T & keyof AggregateCampaignRecipient]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCampaignRecipient[P]>
+      : GetScalarType<T[P], AggregateCampaignRecipient[P]>
+  }
+
+
+
+
+  export type CampaignRecipientGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CampaignRecipientWhereInput
+    orderBy?: CampaignRecipientOrderByWithAggregationInput | CampaignRecipientOrderByWithAggregationInput[]
+    by: CampaignRecipientScalarFieldEnum[] | CampaignRecipientScalarFieldEnum
+    having?: CampaignRecipientScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CampaignRecipientCountAggregateInputType | true
+    _avg?: CampaignRecipientAvgAggregateInputType
+    _sum?: CampaignRecipientSumAggregateInputType
+    _min?: CampaignRecipientMinAggregateInputType
+    _max?: CampaignRecipientMaxAggregateInputType
+  }
+
+  export type CampaignRecipientGroupByOutputType = {
+    id: string
+    campaignId: string
+    email: string
+    name: string | null
+    status: $Enums.CampaignRecipientStatus
+    attempts: number
+    lastError: string | null
+    sentAt: Date | null
+    openedAt: Date | null
+    openCount: number
+    clickedAt: Date | null
+    clickCount: number
+    clickedUrl: string | null
+    repliedAt: Date | null
+    replyCount: number
+    messageId: string | null
+    variables: JsonValue | null
+    trackingToken: string
+    createdAt: Date
+    updatedAt: Date
+    _count: CampaignRecipientCountAggregateOutputType | null
+    _avg: CampaignRecipientAvgAggregateOutputType | null
+    _sum: CampaignRecipientSumAggregateOutputType | null
+    _min: CampaignRecipientMinAggregateOutputType | null
+    _max: CampaignRecipientMaxAggregateOutputType | null
+  }
+
+  type GetCampaignRecipientGroupByPayload<T extends CampaignRecipientGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CampaignRecipientGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CampaignRecipientGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CampaignRecipientGroupByOutputType[P]>
+            : GetScalarType<T[P], CampaignRecipientGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CampaignRecipientSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    campaignId?: boolean
+    email?: boolean
+    name?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    sentAt?: boolean
+    openedAt?: boolean
+    openCount?: boolean
+    clickedAt?: boolean
+    clickCount?: boolean
+    clickedUrl?: boolean
+    repliedAt?: boolean
+    replyCount?: boolean
+    messageId?: boolean
+    variables?: boolean
+    trackingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    campaign?: boolean | CampaignDefaultArgs<ExtArgs>
+    messages?: boolean | CampaignRecipient$messagesArgs<ExtArgs>
+    _count?: boolean | CampaignRecipientCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["campaignRecipient"]>
+
+  export type CampaignRecipientSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    campaignId?: boolean
+    email?: boolean
+    name?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    sentAt?: boolean
+    openedAt?: boolean
+    openCount?: boolean
+    clickedAt?: boolean
+    clickCount?: boolean
+    clickedUrl?: boolean
+    repliedAt?: boolean
+    replyCount?: boolean
+    messageId?: boolean
+    variables?: boolean
+    trackingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    campaign?: boolean | CampaignDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["campaignRecipient"]>
+
+  export type CampaignRecipientSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    campaignId?: boolean
+    email?: boolean
+    name?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    sentAt?: boolean
+    openedAt?: boolean
+    openCount?: boolean
+    clickedAt?: boolean
+    clickCount?: boolean
+    clickedUrl?: boolean
+    repliedAt?: boolean
+    replyCount?: boolean
+    messageId?: boolean
+    variables?: boolean
+    trackingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    campaign?: boolean | CampaignDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["campaignRecipient"]>
+
+  export type CampaignRecipientSelectScalar = {
+    id?: boolean
+    campaignId?: boolean
+    email?: boolean
+    name?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    sentAt?: boolean
+    openedAt?: boolean
+    openCount?: boolean
+    clickedAt?: boolean
+    clickCount?: boolean
+    clickedUrl?: boolean
+    repliedAt?: boolean
+    replyCount?: boolean
+    messageId?: boolean
+    variables?: boolean
+    trackingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CampaignRecipientOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "campaignId" | "email" | "name" | "status" | "attempts" | "lastError" | "sentAt" | "openedAt" | "openCount" | "clickedAt" | "clickCount" | "clickedUrl" | "repliedAt" | "replyCount" | "messageId" | "variables" | "trackingToken" | "createdAt" | "updatedAt", ExtArgs["result"]["campaignRecipient"]>
+  export type CampaignRecipientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    campaign?: boolean | CampaignDefaultArgs<ExtArgs>
+    messages?: boolean | CampaignRecipient$messagesArgs<ExtArgs>
+    _count?: boolean | CampaignRecipientCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CampaignRecipientIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    campaign?: boolean | CampaignDefaultArgs<ExtArgs>
+  }
+  export type CampaignRecipientIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    campaign?: boolean | CampaignDefaultArgs<ExtArgs>
+  }
+
+  export type $CampaignRecipientPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CampaignRecipient"
+    objects: {
+      campaign: Prisma.$CampaignPayload<ExtArgs>
+      messages: Prisma.$MessagePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      campaignId: string
+      email: string
+      name: string | null
+      status: $Enums.CampaignRecipientStatus
+      attempts: number
+      lastError: string | null
+      sentAt: Date | null
+      openedAt: Date | null
+      openCount: number
+      clickedAt: Date | null
+      clickCount: number
+      clickedUrl: string | null
+      repliedAt: Date | null
+      replyCount: number
+      messageId: string | null
+      variables: Prisma.JsonValue | null
+      trackingToken: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["campaignRecipient"]>
+    composites: {}
+  }
+
+  type CampaignRecipientGetPayload<S extends boolean | null | undefined | CampaignRecipientDefaultArgs> = $Result.GetResult<Prisma.$CampaignRecipientPayload, S>
+
+  type CampaignRecipientCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CampaignRecipientFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CampaignRecipientCountAggregateInputType | true
+    }
+
+  export interface CampaignRecipientDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CampaignRecipient'], meta: { name: 'CampaignRecipient' } }
+    /**
+     * Find zero or one CampaignRecipient that matches the filter.
+     * @param {CampaignRecipientFindUniqueArgs} args - Arguments to find a CampaignRecipient
+     * @example
+     * // Get one CampaignRecipient
+     * const campaignRecipient = await prisma.campaignRecipient.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CampaignRecipientFindUniqueArgs>(args: SelectSubset<T, CampaignRecipientFindUniqueArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CampaignRecipient that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CampaignRecipientFindUniqueOrThrowArgs} args - Arguments to find a CampaignRecipient
+     * @example
+     * // Get one CampaignRecipient
+     * const campaignRecipient = await prisma.campaignRecipient.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CampaignRecipientFindUniqueOrThrowArgs>(args: SelectSubset<T, CampaignRecipientFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CampaignRecipient that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignRecipientFindFirstArgs} args - Arguments to find a CampaignRecipient
+     * @example
+     * // Get one CampaignRecipient
+     * const campaignRecipient = await prisma.campaignRecipient.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CampaignRecipientFindFirstArgs>(args?: SelectSubset<T, CampaignRecipientFindFirstArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CampaignRecipient that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignRecipientFindFirstOrThrowArgs} args - Arguments to find a CampaignRecipient
+     * @example
+     * // Get one CampaignRecipient
+     * const campaignRecipient = await prisma.campaignRecipient.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CampaignRecipientFindFirstOrThrowArgs>(args?: SelectSubset<T, CampaignRecipientFindFirstOrThrowArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CampaignRecipients that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignRecipientFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CampaignRecipients
+     * const campaignRecipients = await prisma.campaignRecipient.findMany()
+     * 
+     * // Get first 10 CampaignRecipients
+     * const campaignRecipients = await prisma.campaignRecipient.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const campaignRecipientWithIdOnly = await prisma.campaignRecipient.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CampaignRecipientFindManyArgs>(args?: SelectSubset<T, CampaignRecipientFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CampaignRecipient.
+     * @param {CampaignRecipientCreateArgs} args - Arguments to create a CampaignRecipient.
+     * @example
+     * // Create one CampaignRecipient
+     * const CampaignRecipient = await prisma.campaignRecipient.create({
+     *   data: {
+     *     // ... data to create a CampaignRecipient
+     *   }
+     * })
+     * 
+     */
+    create<T extends CampaignRecipientCreateArgs>(args: SelectSubset<T, CampaignRecipientCreateArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CampaignRecipients.
+     * @param {CampaignRecipientCreateManyArgs} args - Arguments to create many CampaignRecipients.
+     * @example
+     * // Create many CampaignRecipients
+     * const campaignRecipient = await prisma.campaignRecipient.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CampaignRecipientCreateManyArgs>(args?: SelectSubset<T, CampaignRecipientCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CampaignRecipients and returns the data saved in the database.
+     * @param {CampaignRecipientCreateManyAndReturnArgs} args - Arguments to create many CampaignRecipients.
+     * @example
+     * // Create many CampaignRecipients
+     * const campaignRecipient = await prisma.campaignRecipient.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CampaignRecipients and only return the `id`
+     * const campaignRecipientWithIdOnly = await prisma.campaignRecipient.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CampaignRecipientCreateManyAndReturnArgs>(args?: SelectSubset<T, CampaignRecipientCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CampaignRecipient.
+     * @param {CampaignRecipientDeleteArgs} args - Arguments to delete one CampaignRecipient.
+     * @example
+     * // Delete one CampaignRecipient
+     * const CampaignRecipient = await prisma.campaignRecipient.delete({
+     *   where: {
+     *     // ... filter to delete one CampaignRecipient
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CampaignRecipientDeleteArgs>(args: SelectSubset<T, CampaignRecipientDeleteArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CampaignRecipient.
+     * @param {CampaignRecipientUpdateArgs} args - Arguments to update one CampaignRecipient.
+     * @example
+     * // Update one CampaignRecipient
+     * const campaignRecipient = await prisma.campaignRecipient.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CampaignRecipientUpdateArgs>(args: SelectSubset<T, CampaignRecipientUpdateArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CampaignRecipients.
+     * @param {CampaignRecipientDeleteManyArgs} args - Arguments to filter CampaignRecipients to delete.
+     * @example
+     * // Delete a few CampaignRecipients
+     * const { count } = await prisma.campaignRecipient.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CampaignRecipientDeleteManyArgs>(args?: SelectSubset<T, CampaignRecipientDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CampaignRecipients.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignRecipientUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CampaignRecipients
+     * const campaignRecipient = await prisma.campaignRecipient.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CampaignRecipientUpdateManyArgs>(args: SelectSubset<T, CampaignRecipientUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CampaignRecipients and returns the data updated in the database.
+     * @param {CampaignRecipientUpdateManyAndReturnArgs} args - Arguments to update many CampaignRecipients.
+     * @example
+     * // Update many CampaignRecipients
+     * const campaignRecipient = await prisma.campaignRecipient.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CampaignRecipients and only return the `id`
+     * const campaignRecipientWithIdOnly = await prisma.campaignRecipient.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CampaignRecipientUpdateManyAndReturnArgs>(args: SelectSubset<T, CampaignRecipientUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CampaignRecipient.
+     * @param {CampaignRecipientUpsertArgs} args - Arguments to update or create a CampaignRecipient.
+     * @example
+     * // Update or create a CampaignRecipient
+     * const campaignRecipient = await prisma.campaignRecipient.upsert({
+     *   create: {
+     *     // ... data to create a CampaignRecipient
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CampaignRecipient we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CampaignRecipientUpsertArgs>(args: SelectSubset<T, CampaignRecipientUpsertArgs<ExtArgs>>): Prisma__CampaignRecipientClient<$Result.GetResult<Prisma.$CampaignRecipientPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CampaignRecipients.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignRecipientCountArgs} args - Arguments to filter CampaignRecipients to count.
+     * @example
+     * // Count the number of CampaignRecipients
+     * const count = await prisma.campaignRecipient.count({
+     *   where: {
+     *     // ... the filter for the CampaignRecipients we want to count
+     *   }
+     * })
+    **/
+    count<T extends CampaignRecipientCountArgs>(
+      args?: Subset<T, CampaignRecipientCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CampaignRecipientCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CampaignRecipient.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignRecipientAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CampaignRecipientAggregateArgs>(args: Subset<T, CampaignRecipientAggregateArgs>): Prisma.PrismaPromise<GetCampaignRecipientAggregateType<T>>
+
+    /**
+     * Group by CampaignRecipient.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CampaignRecipientGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CampaignRecipientGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CampaignRecipientGroupByArgs['orderBy'] }
+        : { orderBy?: CampaignRecipientGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CampaignRecipientGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCampaignRecipientGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CampaignRecipient model
+   */
+  readonly fields: CampaignRecipientFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CampaignRecipient.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CampaignRecipientClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    campaign<T extends CampaignDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CampaignDefaultArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    messages<T extends CampaignRecipient$messagesArgs<ExtArgs> = {}>(args?: Subset<T, CampaignRecipient$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CampaignRecipient model
+   */
+  interface CampaignRecipientFieldRefs {
+    readonly id: FieldRef<"CampaignRecipient", 'String'>
+    readonly campaignId: FieldRef<"CampaignRecipient", 'String'>
+    readonly email: FieldRef<"CampaignRecipient", 'String'>
+    readonly name: FieldRef<"CampaignRecipient", 'String'>
+    readonly status: FieldRef<"CampaignRecipient", 'CampaignRecipientStatus'>
+    readonly attempts: FieldRef<"CampaignRecipient", 'Int'>
+    readonly lastError: FieldRef<"CampaignRecipient", 'String'>
+    readonly sentAt: FieldRef<"CampaignRecipient", 'DateTime'>
+    readonly openedAt: FieldRef<"CampaignRecipient", 'DateTime'>
+    readonly openCount: FieldRef<"CampaignRecipient", 'Int'>
+    readonly clickedAt: FieldRef<"CampaignRecipient", 'DateTime'>
+    readonly clickCount: FieldRef<"CampaignRecipient", 'Int'>
+    readonly clickedUrl: FieldRef<"CampaignRecipient", 'String'>
+    readonly repliedAt: FieldRef<"CampaignRecipient", 'DateTime'>
+    readonly replyCount: FieldRef<"CampaignRecipient", 'Int'>
+    readonly messageId: FieldRef<"CampaignRecipient", 'String'>
+    readonly variables: FieldRef<"CampaignRecipient", 'Json'>
+    readonly trackingToken: FieldRef<"CampaignRecipient", 'String'>
+    readonly createdAt: FieldRef<"CampaignRecipient", 'DateTime'>
+    readonly updatedAt: FieldRef<"CampaignRecipient", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CampaignRecipient findUnique
+   */
+  export type CampaignRecipientFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * Filter, which CampaignRecipient to fetch.
+     */
+    where: CampaignRecipientWhereUniqueInput
+  }
+
+  /**
+   * CampaignRecipient findUniqueOrThrow
+   */
+  export type CampaignRecipientFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * Filter, which CampaignRecipient to fetch.
+     */
+    where: CampaignRecipientWhereUniqueInput
+  }
+
+  /**
+   * CampaignRecipient findFirst
+   */
+  export type CampaignRecipientFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * Filter, which CampaignRecipient to fetch.
+     */
+    where?: CampaignRecipientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CampaignRecipients to fetch.
+     */
+    orderBy?: CampaignRecipientOrderByWithRelationInput | CampaignRecipientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CampaignRecipients.
+     */
+    cursor?: CampaignRecipientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CampaignRecipients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CampaignRecipients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CampaignRecipients.
+     */
+    distinct?: CampaignRecipientScalarFieldEnum | CampaignRecipientScalarFieldEnum[]
+  }
+
+  /**
+   * CampaignRecipient findFirstOrThrow
+   */
+  export type CampaignRecipientFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * Filter, which CampaignRecipient to fetch.
+     */
+    where?: CampaignRecipientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CampaignRecipients to fetch.
+     */
+    orderBy?: CampaignRecipientOrderByWithRelationInput | CampaignRecipientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CampaignRecipients.
+     */
+    cursor?: CampaignRecipientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CampaignRecipients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CampaignRecipients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CampaignRecipients.
+     */
+    distinct?: CampaignRecipientScalarFieldEnum | CampaignRecipientScalarFieldEnum[]
+  }
+
+  /**
+   * CampaignRecipient findMany
+   */
+  export type CampaignRecipientFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * Filter, which CampaignRecipients to fetch.
+     */
+    where?: CampaignRecipientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CampaignRecipients to fetch.
+     */
+    orderBy?: CampaignRecipientOrderByWithRelationInput | CampaignRecipientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CampaignRecipients.
+     */
+    cursor?: CampaignRecipientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CampaignRecipients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CampaignRecipients.
+     */
+    skip?: number
+    distinct?: CampaignRecipientScalarFieldEnum | CampaignRecipientScalarFieldEnum[]
+  }
+
+  /**
+   * CampaignRecipient create
+   */
+  export type CampaignRecipientCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CampaignRecipient.
+     */
+    data: XOR<CampaignRecipientCreateInput, CampaignRecipientUncheckedCreateInput>
+  }
+
+  /**
+   * CampaignRecipient createMany
+   */
+  export type CampaignRecipientCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CampaignRecipients.
+     */
+    data: CampaignRecipientCreateManyInput | CampaignRecipientCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CampaignRecipient createManyAndReturn
+   */
+  export type CampaignRecipientCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * The data used to create many CampaignRecipients.
+     */
+    data: CampaignRecipientCreateManyInput | CampaignRecipientCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CampaignRecipient update
+   */
+  export type CampaignRecipientUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CampaignRecipient.
+     */
+    data: XOR<CampaignRecipientUpdateInput, CampaignRecipientUncheckedUpdateInput>
+    /**
+     * Choose, which CampaignRecipient to update.
+     */
+    where: CampaignRecipientWhereUniqueInput
+  }
+
+  /**
+   * CampaignRecipient updateMany
+   */
+  export type CampaignRecipientUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CampaignRecipients.
+     */
+    data: XOR<CampaignRecipientUpdateManyMutationInput, CampaignRecipientUncheckedUpdateManyInput>
+    /**
+     * Filter which CampaignRecipients to update
+     */
+    where?: CampaignRecipientWhereInput
+    /**
+     * Limit how many CampaignRecipients to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CampaignRecipient updateManyAndReturn
+   */
+  export type CampaignRecipientUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * The data used to update CampaignRecipients.
+     */
+    data: XOR<CampaignRecipientUpdateManyMutationInput, CampaignRecipientUncheckedUpdateManyInput>
+    /**
+     * Filter which CampaignRecipients to update
+     */
+    where?: CampaignRecipientWhereInput
+    /**
+     * Limit how many CampaignRecipients to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CampaignRecipient upsert
+   */
+  export type CampaignRecipientUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CampaignRecipient to update in case it exists.
+     */
+    where: CampaignRecipientWhereUniqueInput
+    /**
+     * In case the CampaignRecipient found by the `where` argument doesn't exist, create a new CampaignRecipient with this data.
+     */
+    create: XOR<CampaignRecipientCreateInput, CampaignRecipientUncheckedCreateInput>
+    /**
+     * In case the CampaignRecipient was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CampaignRecipientUpdateInput, CampaignRecipientUncheckedUpdateInput>
+  }
+
+  /**
+   * CampaignRecipient delete
+   */
+  export type CampaignRecipientDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
+    /**
+     * Filter which CampaignRecipient to delete.
+     */
+    where: CampaignRecipientWhereUniqueInput
+  }
+
+  /**
+   * CampaignRecipient deleteMany
+   */
+  export type CampaignRecipientDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CampaignRecipients to delete
+     */
+    where?: CampaignRecipientWhereInput
+    /**
+     * Limit how many CampaignRecipients to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CampaignRecipient.messages
+   */
+  export type CampaignRecipient$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Message
+     */
+    select?: MessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Message
+     */
+    omit?: MessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageInclude<ExtArgs> | null
+    where?: MessageWhereInput
+    orderBy?: MessageOrderByWithRelationInput | MessageOrderByWithRelationInput[]
+    cursor?: MessageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MessageScalarFieldEnum | MessageScalarFieldEnum[]
+  }
+
+  /**
+   * CampaignRecipient without action
+   */
+  export type CampaignRecipientDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CampaignRecipient
+     */
+    select?: CampaignRecipientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CampaignRecipient
+     */
+    omit?: CampaignRecipientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignRecipientInclude<ExtArgs> | null
   }
 
 
@@ -17051,6 +20573,7 @@ export namespace Prisma {
     apiKeyId: 'apiKeyId',
     smtpAccountId: 'smtpAccountId',
     domainSenderId: 'domainSenderId',
+    campaignRecipientId: 'campaignRecipientId',
     idempotencyKey: 'idempotencyKey',
     to: 'to',
     cc: 'cc',
@@ -17085,6 +20608,73 @@ export namespace Prisma {
   };
 
   export type TemplateScalarFieldEnum = (typeof TemplateScalarFieldEnum)[keyof typeof TemplateScalarFieldEnum]
+
+
+  export const CampaignScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    userId: 'userId',
+    name: 'name',
+    status: 'status',
+    senderType: 'senderType',
+    smtpAccountId: 'smtpAccountId',
+    domainSenderId: 'domainSenderId',
+    templateId: 'templateId',
+    subject: 'subject',
+    html: 'html',
+    text: 'text',
+    fromName: 'fromName',
+    replyTo: 'replyTo',
+    headers: 'headers',
+    perMinuteLimit: 'perMinuteLimit',
+    warmupEnabled: 'warmupEnabled',
+    warmupStartPerMinute: 'warmupStartPerMinute',
+    warmupStep: 'warmupStep',
+    warmupIntervalMinutes: 'warmupIntervalMinutes',
+    warmupMaxPerMinute: 'warmupMaxPerMinute',
+    trackOpens: 'trackOpens',
+    trackClicks: 'trackClicks',
+    trackReplies: 'trackReplies',
+    totalRecipients: 'totalRecipients',
+    queuedCount: 'queuedCount',
+    sentCount: 'sentCount',
+    failedCount: 'failedCount',
+    openedCount: 'openedCount',
+    clickedCount: 'clickedCount',
+    repliedCount: 'repliedCount',
+    startedAt: 'startedAt',
+    completedAt: 'completedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CampaignScalarFieldEnum = (typeof CampaignScalarFieldEnum)[keyof typeof CampaignScalarFieldEnum]
+
+
+  export const CampaignRecipientScalarFieldEnum: {
+    id: 'id',
+    campaignId: 'campaignId',
+    email: 'email',
+    name: 'name',
+    status: 'status',
+    attempts: 'attempts',
+    lastError: 'lastError',
+    sentAt: 'sentAt',
+    openedAt: 'openedAt',
+    openCount: 'openCount',
+    clickedAt: 'clickedAt',
+    clickCount: 'clickCount',
+    clickedUrl: 'clickedUrl',
+    repliedAt: 'repliedAt',
+    replyCount: 'replyCount',
+    messageId: 'messageId',
+    variables: 'variables',
+    trackingToken: 'trackingToken',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CampaignRecipientScalarFieldEnum = (typeof CampaignRecipientScalarFieldEnum)[keyof typeof CampaignRecipientScalarFieldEnum]
 
 
   export const AuditLogScalarFieldEnum: {
@@ -17317,6 +20907,48 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'CampaignStatus'
+   */
+  export type EnumCampaignStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CampaignStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CampaignStatus[]'
+   */
+  export type ListEnumCampaignStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CampaignStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CampaignSenderType'
+   */
+  export type EnumCampaignSenderTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CampaignSenderType'>
+    
+
+
+  /**
+   * Reference to a field of type 'CampaignSenderType[]'
+   */
+  export type ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CampaignSenderType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CampaignRecipientStatus'
+   */
+  export type EnumCampaignRecipientStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CampaignRecipientStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CampaignRecipientStatus[]'
+   */
+  export type ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CampaignRecipientStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ActorType'
    */
   export type EnumActorTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActorType'>
@@ -17368,6 +21000,7 @@ export namespace Prisma {
     auditLogs?: AuditLogListRelationFilter
     companies?: CompanyListRelationFilter
     domains?: DomainListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }
 
   export type TenantOrderByWithRelationInput = {
@@ -17388,6 +21021,7 @@ export namespace Prisma {
     auditLogs?: AuditLogOrderByRelationAggregateInput
     companies?: CompanyOrderByRelationAggregateInput
     domains?: DomainOrderByRelationAggregateInput
+    campaigns?: CampaignOrderByRelationAggregateInput
   }
 
   export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -17411,6 +21045,7 @@ export namespace Prisma {
     auditLogs?: AuditLogListRelationFilter
     companies?: CompanyListRelationFilter
     domains?: DomainListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }, "id">
 
   export type TenantOrderByWithAggregationInput = {
@@ -17462,6 +21097,7 @@ export namespace Prisma {
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     domains?: DomainListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -17480,6 +21116,7 @@ export namespace Prisma {
     tenant?: TenantOrderByWithRelationInput
     company?: CompanyOrderByWithRelationInput
     domains?: DomainOrderByRelationAggregateInput
+    campaigns?: CampaignOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -17502,6 +21139,7 @@ export namespace Prisma {
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     domains?: DomainListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }, "id" | "tenantId_email">
 
   export type UserOrderByWithAggregationInput = {
@@ -17793,6 +21431,7 @@ export namespace Prisma {
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
     permissions?: ApiKeyPermissionListRelationFilter
     messages?: MessageListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }
 
   export type SmtpAccountOrderByWithRelationInput = {
@@ -17818,6 +21457,7 @@ export namespace Prisma {
     tenant?: TenantOrderByWithRelationInput
     permissions?: ApiKeyPermissionOrderByRelationAggregateInput
     messages?: MessageOrderByRelationAggregateInput
+    campaigns?: CampaignOrderByRelationAggregateInput
   }
 
   export type SmtpAccountWhereUniqueInput = Prisma.AtLeast<{
@@ -17847,6 +21487,7 @@ export namespace Prisma {
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
     permissions?: ApiKeyPermissionListRelationFilter
     messages?: MessageListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }, "id" | "tenantId_gmailAddress">
 
   export type SmtpAccountOrderByWithAggregationInput = {
@@ -17929,6 +21570,7 @@ export namespace Prisma {
     domain?: XOR<DomainScalarRelationFilter, DomainWhereInput>
     messages?: MessageListRelationFilter
     permissions?: ApiKeyDomainPermissionListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }
 
   export type DomainSenderOrderByWithRelationInput = {
@@ -17956,6 +21598,7 @@ export namespace Prisma {
     domain?: DomainOrderByWithRelationInput
     messages?: MessageOrderByRelationAggregateInput
     permissions?: ApiKeyDomainPermissionOrderByRelationAggregateInput
+    campaigns?: CampaignOrderByRelationAggregateInput
   }
 
   export type DomainSenderWhereUniqueInput = Prisma.AtLeast<{
@@ -17987,6 +21630,7 @@ export namespace Prisma {
     domain?: XOR<DomainScalarRelationFilter, DomainWhereInput>
     messages?: MessageListRelationFilter
     permissions?: ApiKeyDomainPermissionListRelationFilter
+    campaigns?: CampaignListRelationFilter
   }, "id" | "tenantId_emailAddress">
 
   export type DomainSenderOrderByWithAggregationInput = {
@@ -18228,9 +21872,10 @@ export namespace Prisma {
     NOT?: MessageWhereInput | MessageWhereInput[]
     id?: StringFilter<"Message"> | string
     tenantId?: StringFilter<"Message"> | string
-    apiKeyId?: StringFilter<"Message"> | string
+    apiKeyId?: StringNullableFilter<"Message"> | string | null
     smtpAccountId?: StringNullableFilter<"Message"> | string | null
     domainSenderId?: StringNullableFilter<"Message"> | string | null
+    campaignRecipientId?: StringNullableFilter<"Message"> | string | null
     idempotencyKey?: StringFilter<"Message"> | string
     to?: JsonFilter<"Message">
     cc?: JsonFilter<"Message">
@@ -18248,17 +21893,19 @@ export namespace Prisma {
     queuedAt?: DateTimeFilter<"Message"> | Date | string
     sentAt?: DateTimeNullableFilter<"Message"> | Date | string | null
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
-    apiKey?: XOR<ApiKeyScalarRelationFilter, ApiKeyWhereInput>
+    apiKey?: XOR<ApiKeyNullableScalarRelationFilter, ApiKeyWhereInput> | null
     smtpAccount?: XOR<SmtpAccountNullableScalarRelationFilter, SmtpAccountWhereInput> | null
     domainSender?: XOR<DomainSenderNullableScalarRelationFilter, DomainSenderWhereInput> | null
+    campaignRecipient?: XOR<CampaignRecipientNullableScalarRelationFilter, CampaignRecipientWhereInput> | null
   }
 
   export type MessageOrderByWithRelationInput = {
     id?: SortOrder
     tenantId?: SortOrder
-    apiKeyId?: SortOrder
+    apiKeyId?: SortOrderInput | SortOrder
     smtpAccountId?: SortOrderInput | SortOrder
     domainSenderId?: SortOrderInput | SortOrder
+    campaignRecipientId?: SortOrderInput | SortOrder
     idempotencyKey?: SortOrder
     to?: SortOrder
     cc?: SortOrder
@@ -18279,6 +21926,7 @@ export namespace Prisma {
     apiKey?: ApiKeyOrderByWithRelationInput
     smtpAccount?: SmtpAccountOrderByWithRelationInput
     domainSender?: DomainSenderOrderByWithRelationInput
+    campaignRecipient?: CampaignRecipientOrderByWithRelationInput
   }
 
   export type MessageWhereUniqueInput = Prisma.AtLeast<{
@@ -18288,9 +21936,10 @@ export namespace Prisma {
     OR?: MessageWhereInput[]
     NOT?: MessageWhereInput | MessageWhereInput[]
     tenantId?: StringFilter<"Message"> | string
-    apiKeyId?: StringFilter<"Message"> | string
+    apiKeyId?: StringNullableFilter<"Message"> | string | null
     smtpAccountId?: StringNullableFilter<"Message"> | string | null
     domainSenderId?: StringNullableFilter<"Message"> | string | null
+    campaignRecipientId?: StringNullableFilter<"Message"> | string | null
     idempotencyKey?: StringFilter<"Message"> | string
     to?: JsonFilter<"Message">
     cc?: JsonFilter<"Message">
@@ -18308,17 +21957,19 @@ export namespace Prisma {
     queuedAt?: DateTimeFilter<"Message"> | Date | string
     sentAt?: DateTimeNullableFilter<"Message"> | Date | string | null
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
-    apiKey?: XOR<ApiKeyScalarRelationFilter, ApiKeyWhereInput>
+    apiKey?: XOR<ApiKeyNullableScalarRelationFilter, ApiKeyWhereInput> | null
     smtpAccount?: XOR<SmtpAccountNullableScalarRelationFilter, SmtpAccountWhereInput> | null
     domainSender?: XOR<DomainSenderNullableScalarRelationFilter, DomainSenderWhereInput> | null
+    campaignRecipient?: XOR<CampaignRecipientNullableScalarRelationFilter, CampaignRecipientWhereInput> | null
   }, "id" | "apiKeyId_idempotencyKey">
 
   export type MessageOrderByWithAggregationInput = {
     id?: SortOrder
     tenantId?: SortOrder
-    apiKeyId?: SortOrder
+    apiKeyId?: SortOrderInput | SortOrder
     smtpAccountId?: SortOrderInput | SortOrder
     domainSenderId?: SortOrderInput | SortOrder
+    campaignRecipientId?: SortOrderInput | SortOrder
     idempotencyKey?: SortOrder
     to?: SortOrder
     cc?: SortOrder
@@ -18348,9 +21999,10 @@ export namespace Prisma {
     NOT?: MessageScalarWhereWithAggregatesInput | MessageScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Message"> | string
     tenantId?: StringWithAggregatesFilter<"Message"> | string
-    apiKeyId?: StringWithAggregatesFilter<"Message"> | string
+    apiKeyId?: StringNullableWithAggregatesFilter<"Message"> | string | null
     smtpAccountId?: StringNullableWithAggregatesFilter<"Message"> | string | null
     domainSenderId?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    campaignRecipientId?: StringNullableWithAggregatesFilter<"Message"> | string | null
     idempotencyKey?: StringWithAggregatesFilter<"Message"> | string
     to?: JsonWithAggregatesFilter<"Message">
     cc?: JsonWithAggregatesFilter<"Message">
@@ -18383,6 +22035,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Template"> | Date | string
     updatedAt?: DateTimeFilter<"Template"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    campaigns?: CampaignListRelationFilter
   }
 
   export type TemplateOrderByWithRelationInput = {
@@ -18396,6 +22049,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenant?: TenantOrderByWithRelationInput
+    campaigns?: CampaignOrderByRelationAggregateInput
   }
 
   export type TemplateWhereUniqueInput = Prisma.AtLeast<{
@@ -18413,6 +22067,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Template"> | Date | string
     updatedAt?: DateTimeFilter<"Template"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    campaigns?: CampaignListRelationFilter
   }, "id" | "tenantId_name">
 
   export type TemplateOrderByWithAggregationInput = {
@@ -18443,6 +22098,364 @@ export namespace Prisma {
     status?: EnumTemplateStatusWithAggregatesFilter<"Template"> | $Enums.TemplateStatus
     createdAt?: DateTimeWithAggregatesFilter<"Template"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Template"> | Date | string
+  }
+
+  export type CampaignWhereInput = {
+    AND?: CampaignWhereInput | CampaignWhereInput[]
+    OR?: CampaignWhereInput[]
+    NOT?: CampaignWhereInput | CampaignWhereInput[]
+    id?: StringFilter<"Campaign"> | string
+    tenantId?: StringFilter<"Campaign"> | string
+    userId?: StringFilter<"Campaign"> | string
+    name?: StringFilter<"Campaign"> | string
+    status?: EnumCampaignStatusFilter<"Campaign"> | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFilter<"Campaign"> | $Enums.CampaignSenderType
+    smtpAccountId?: StringNullableFilter<"Campaign"> | string | null
+    domainSenderId?: StringNullableFilter<"Campaign"> | string | null
+    templateId?: StringNullableFilter<"Campaign"> | string | null
+    subject?: StringNullableFilter<"Campaign"> | string | null
+    html?: StringNullableFilter<"Campaign"> | string | null
+    text?: StringNullableFilter<"Campaign"> | string | null
+    fromName?: StringNullableFilter<"Campaign"> | string | null
+    replyTo?: StringNullableFilter<"Campaign"> | string | null
+    headers?: JsonNullableFilter<"Campaign">
+    perMinuteLimit?: IntNullableFilter<"Campaign"> | number | null
+    warmupEnabled?: BoolFilter<"Campaign"> | boolean
+    warmupStartPerMinute?: IntFilter<"Campaign"> | number
+    warmupStep?: IntFilter<"Campaign"> | number
+    warmupIntervalMinutes?: IntFilter<"Campaign"> | number
+    warmupMaxPerMinute?: IntFilter<"Campaign"> | number
+    trackOpens?: BoolFilter<"Campaign"> | boolean
+    trackClicks?: BoolFilter<"Campaign"> | boolean
+    trackReplies?: BoolFilter<"Campaign"> | boolean
+    totalRecipients?: IntFilter<"Campaign"> | number
+    queuedCount?: IntFilter<"Campaign"> | number
+    sentCount?: IntFilter<"Campaign"> | number
+    failedCount?: IntFilter<"Campaign"> | number
+    openedCount?: IntFilter<"Campaign"> | number
+    clickedCount?: IntFilter<"Campaign"> | number
+    repliedCount?: IntFilter<"Campaign"> | number
+    startedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
+    completedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
+    createdAt?: DateTimeFilter<"Campaign"> | Date | string
+    updatedAt?: DateTimeFilter<"Campaign"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    smtpAccount?: XOR<SmtpAccountNullableScalarRelationFilter, SmtpAccountWhereInput> | null
+    domainSender?: XOR<DomainSenderNullableScalarRelationFilter, DomainSenderWhereInput> | null
+    template?: XOR<TemplateNullableScalarRelationFilter, TemplateWhereInput> | null
+    recipients?: CampaignRecipientListRelationFilter
+  }
+
+  export type CampaignOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    senderType?: SortOrder
+    smtpAccountId?: SortOrderInput | SortOrder
+    domainSenderId?: SortOrderInput | SortOrder
+    templateId?: SortOrderInput | SortOrder
+    subject?: SortOrderInput | SortOrder
+    html?: SortOrderInput | SortOrder
+    text?: SortOrderInput | SortOrder
+    fromName?: SortOrderInput | SortOrder
+    replyTo?: SortOrderInput | SortOrder
+    headers?: SortOrderInput | SortOrder
+    perMinuteLimit?: SortOrderInput | SortOrder
+    warmupEnabled?: SortOrder
+    warmupStartPerMinute?: SortOrder
+    warmupStep?: SortOrder
+    warmupIntervalMinutes?: SortOrder
+    warmupMaxPerMinute?: SortOrder
+    trackOpens?: SortOrder
+    trackClicks?: SortOrder
+    trackReplies?: SortOrder
+    totalRecipients?: SortOrder
+    queuedCount?: SortOrder
+    sentCount?: SortOrder
+    failedCount?: SortOrder
+    openedCount?: SortOrder
+    clickedCount?: SortOrder
+    repliedCount?: SortOrder
+    startedAt?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    smtpAccount?: SmtpAccountOrderByWithRelationInput
+    domainSender?: DomainSenderOrderByWithRelationInput
+    template?: TemplateOrderByWithRelationInput
+    recipients?: CampaignRecipientOrderByRelationAggregateInput
+  }
+
+  export type CampaignWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CampaignWhereInput | CampaignWhereInput[]
+    OR?: CampaignWhereInput[]
+    NOT?: CampaignWhereInput | CampaignWhereInput[]
+    tenantId?: StringFilter<"Campaign"> | string
+    userId?: StringFilter<"Campaign"> | string
+    name?: StringFilter<"Campaign"> | string
+    status?: EnumCampaignStatusFilter<"Campaign"> | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFilter<"Campaign"> | $Enums.CampaignSenderType
+    smtpAccountId?: StringNullableFilter<"Campaign"> | string | null
+    domainSenderId?: StringNullableFilter<"Campaign"> | string | null
+    templateId?: StringNullableFilter<"Campaign"> | string | null
+    subject?: StringNullableFilter<"Campaign"> | string | null
+    html?: StringNullableFilter<"Campaign"> | string | null
+    text?: StringNullableFilter<"Campaign"> | string | null
+    fromName?: StringNullableFilter<"Campaign"> | string | null
+    replyTo?: StringNullableFilter<"Campaign"> | string | null
+    headers?: JsonNullableFilter<"Campaign">
+    perMinuteLimit?: IntNullableFilter<"Campaign"> | number | null
+    warmupEnabled?: BoolFilter<"Campaign"> | boolean
+    warmupStartPerMinute?: IntFilter<"Campaign"> | number
+    warmupStep?: IntFilter<"Campaign"> | number
+    warmupIntervalMinutes?: IntFilter<"Campaign"> | number
+    warmupMaxPerMinute?: IntFilter<"Campaign"> | number
+    trackOpens?: BoolFilter<"Campaign"> | boolean
+    trackClicks?: BoolFilter<"Campaign"> | boolean
+    trackReplies?: BoolFilter<"Campaign"> | boolean
+    totalRecipients?: IntFilter<"Campaign"> | number
+    queuedCount?: IntFilter<"Campaign"> | number
+    sentCount?: IntFilter<"Campaign"> | number
+    failedCount?: IntFilter<"Campaign"> | number
+    openedCount?: IntFilter<"Campaign"> | number
+    clickedCount?: IntFilter<"Campaign"> | number
+    repliedCount?: IntFilter<"Campaign"> | number
+    startedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
+    completedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
+    createdAt?: DateTimeFilter<"Campaign"> | Date | string
+    updatedAt?: DateTimeFilter<"Campaign"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    smtpAccount?: XOR<SmtpAccountNullableScalarRelationFilter, SmtpAccountWhereInput> | null
+    domainSender?: XOR<DomainSenderNullableScalarRelationFilter, DomainSenderWhereInput> | null
+    template?: XOR<TemplateNullableScalarRelationFilter, TemplateWhereInput> | null
+    recipients?: CampaignRecipientListRelationFilter
+  }, "id">
+
+  export type CampaignOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    senderType?: SortOrder
+    smtpAccountId?: SortOrderInput | SortOrder
+    domainSenderId?: SortOrderInput | SortOrder
+    templateId?: SortOrderInput | SortOrder
+    subject?: SortOrderInput | SortOrder
+    html?: SortOrderInput | SortOrder
+    text?: SortOrderInput | SortOrder
+    fromName?: SortOrderInput | SortOrder
+    replyTo?: SortOrderInput | SortOrder
+    headers?: SortOrderInput | SortOrder
+    perMinuteLimit?: SortOrderInput | SortOrder
+    warmupEnabled?: SortOrder
+    warmupStartPerMinute?: SortOrder
+    warmupStep?: SortOrder
+    warmupIntervalMinutes?: SortOrder
+    warmupMaxPerMinute?: SortOrder
+    trackOpens?: SortOrder
+    trackClicks?: SortOrder
+    trackReplies?: SortOrder
+    totalRecipients?: SortOrder
+    queuedCount?: SortOrder
+    sentCount?: SortOrder
+    failedCount?: SortOrder
+    openedCount?: SortOrder
+    clickedCount?: SortOrder
+    repliedCount?: SortOrder
+    startedAt?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CampaignCountOrderByAggregateInput
+    _avg?: CampaignAvgOrderByAggregateInput
+    _max?: CampaignMaxOrderByAggregateInput
+    _min?: CampaignMinOrderByAggregateInput
+    _sum?: CampaignSumOrderByAggregateInput
+  }
+
+  export type CampaignScalarWhereWithAggregatesInput = {
+    AND?: CampaignScalarWhereWithAggregatesInput | CampaignScalarWhereWithAggregatesInput[]
+    OR?: CampaignScalarWhereWithAggregatesInput[]
+    NOT?: CampaignScalarWhereWithAggregatesInput | CampaignScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Campaign"> | string
+    tenantId?: StringWithAggregatesFilter<"Campaign"> | string
+    userId?: StringWithAggregatesFilter<"Campaign"> | string
+    name?: StringWithAggregatesFilter<"Campaign"> | string
+    status?: EnumCampaignStatusWithAggregatesFilter<"Campaign"> | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeWithAggregatesFilter<"Campaign"> | $Enums.CampaignSenderType
+    smtpAccountId?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    domainSenderId?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    templateId?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    subject?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    html?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    text?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    fromName?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    replyTo?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    headers?: JsonNullableWithAggregatesFilter<"Campaign">
+    perMinuteLimit?: IntNullableWithAggregatesFilter<"Campaign"> | number | null
+    warmupEnabled?: BoolWithAggregatesFilter<"Campaign"> | boolean
+    warmupStartPerMinute?: IntWithAggregatesFilter<"Campaign"> | number
+    warmupStep?: IntWithAggregatesFilter<"Campaign"> | number
+    warmupIntervalMinutes?: IntWithAggregatesFilter<"Campaign"> | number
+    warmupMaxPerMinute?: IntWithAggregatesFilter<"Campaign"> | number
+    trackOpens?: BoolWithAggregatesFilter<"Campaign"> | boolean
+    trackClicks?: BoolWithAggregatesFilter<"Campaign"> | boolean
+    trackReplies?: BoolWithAggregatesFilter<"Campaign"> | boolean
+    totalRecipients?: IntWithAggregatesFilter<"Campaign"> | number
+    queuedCount?: IntWithAggregatesFilter<"Campaign"> | number
+    sentCount?: IntWithAggregatesFilter<"Campaign"> | number
+    failedCount?: IntWithAggregatesFilter<"Campaign"> | number
+    openedCount?: IntWithAggregatesFilter<"Campaign"> | number
+    clickedCount?: IntWithAggregatesFilter<"Campaign"> | number
+    repliedCount?: IntWithAggregatesFilter<"Campaign"> | number
+    startedAt?: DateTimeNullableWithAggregatesFilter<"Campaign"> | Date | string | null
+    completedAt?: DateTimeNullableWithAggregatesFilter<"Campaign"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Campaign"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Campaign"> | Date | string
+  }
+
+  export type CampaignRecipientWhereInput = {
+    AND?: CampaignRecipientWhereInput | CampaignRecipientWhereInput[]
+    OR?: CampaignRecipientWhereInput[]
+    NOT?: CampaignRecipientWhereInput | CampaignRecipientWhereInput[]
+    id?: StringFilter<"CampaignRecipient"> | string
+    campaignId?: StringFilter<"CampaignRecipient"> | string
+    email?: StringFilter<"CampaignRecipient"> | string
+    name?: StringNullableFilter<"CampaignRecipient"> | string | null
+    status?: EnumCampaignRecipientStatusFilter<"CampaignRecipient"> | $Enums.CampaignRecipientStatus
+    attempts?: IntFilter<"CampaignRecipient"> | number
+    lastError?: StringNullableFilter<"CampaignRecipient"> | string | null
+    sentAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    openedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    openCount?: IntFilter<"CampaignRecipient"> | number
+    clickedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    clickCount?: IntFilter<"CampaignRecipient"> | number
+    clickedUrl?: StringNullableFilter<"CampaignRecipient"> | string | null
+    repliedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    replyCount?: IntFilter<"CampaignRecipient"> | number
+    messageId?: StringNullableFilter<"CampaignRecipient"> | string | null
+    variables?: JsonNullableFilter<"CampaignRecipient">
+    trackingToken?: StringFilter<"CampaignRecipient"> | string
+    createdAt?: DateTimeFilter<"CampaignRecipient"> | Date | string
+    updatedAt?: DateTimeFilter<"CampaignRecipient"> | Date | string
+    campaign?: XOR<CampaignScalarRelationFilter, CampaignWhereInput>
+    messages?: MessageListRelationFilter
+  }
+
+  export type CampaignRecipientOrderByWithRelationInput = {
+    id?: SortOrder
+    campaignId?: SortOrder
+    email?: SortOrder
+    name?: SortOrderInput | SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    openedAt?: SortOrderInput | SortOrder
+    openCount?: SortOrder
+    clickedAt?: SortOrderInput | SortOrder
+    clickCount?: SortOrder
+    clickedUrl?: SortOrderInput | SortOrder
+    repliedAt?: SortOrderInput | SortOrder
+    replyCount?: SortOrder
+    messageId?: SortOrderInput | SortOrder
+    variables?: SortOrderInput | SortOrder
+    trackingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    campaign?: CampaignOrderByWithRelationInput
+    messages?: MessageOrderByRelationAggregateInput
+  }
+
+  export type CampaignRecipientWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    trackingToken?: string
+    campaignId_email?: CampaignRecipientCampaignIdEmailCompoundUniqueInput
+    AND?: CampaignRecipientWhereInput | CampaignRecipientWhereInput[]
+    OR?: CampaignRecipientWhereInput[]
+    NOT?: CampaignRecipientWhereInput | CampaignRecipientWhereInput[]
+    campaignId?: StringFilter<"CampaignRecipient"> | string
+    email?: StringFilter<"CampaignRecipient"> | string
+    name?: StringNullableFilter<"CampaignRecipient"> | string | null
+    status?: EnumCampaignRecipientStatusFilter<"CampaignRecipient"> | $Enums.CampaignRecipientStatus
+    attempts?: IntFilter<"CampaignRecipient"> | number
+    lastError?: StringNullableFilter<"CampaignRecipient"> | string | null
+    sentAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    openedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    openCount?: IntFilter<"CampaignRecipient"> | number
+    clickedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    clickCount?: IntFilter<"CampaignRecipient"> | number
+    clickedUrl?: StringNullableFilter<"CampaignRecipient"> | string | null
+    repliedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    replyCount?: IntFilter<"CampaignRecipient"> | number
+    messageId?: StringNullableFilter<"CampaignRecipient"> | string | null
+    variables?: JsonNullableFilter<"CampaignRecipient">
+    createdAt?: DateTimeFilter<"CampaignRecipient"> | Date | string
+    updatedAt?: DateTimeFilter<"CampaignRecipient"> | Date | string
+    campaign?: XOR<CampaignScalarRelationFilter, CampaignWhereInput>
+    messages?: MessageListRelationFilter
+  }, "id" | "trackingToken" | "campaignId_email">
+
+  export type CampaignRecipientOrderByWithAggregationInput = {
+    id?: SortOrder
+    campaignId?: SortOrder
+    email?: SortOrder
+    name?: SortOrderInput | SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    openedAt?: SortOrderInput | SortOrder
+    openCount?: SortOrder
+    clickedAt?: SortOrderInput | SortOrder
+    clickCount?: SortOrder
+    clickedUrl?: SortOrderInput | SortOrder
+    repliedAt?: SortOrderInput | SortOrder
+    replyCount?: SortOrder
+    messageId?: SortOrderInput | SortOrder
+    variables?: SortOrderInput | SortOrder
+    trackingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CampaignRecipientCountOrderByAggregateInput
+    _avg?: CampaignRecipientAvgOrderByAggregateInput
+    _max?: CampaignRecipientMaxOrderByAggregateInput
+    _min?: CampaignRecipientMinOrderByAggregateInput
+    _sum?: CampaignRecipientSumOrderByAggregateInput
+  }
+
+  export type CampaignRecipientScalarWhereWithAggregatesInput = {
+    AND?: CampaignRecipientScalarWhereWithAggregatesInput | CampaignRecipientScalarWhereWithAggregatesInput[]
+    OR?: CampaignRecipientScalarWhereWithAggregatesInput[]
+    NOT?: CampaignRecipientScalarWhereWithAggregatesInput | CampaignRecipientScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CampaignRecipient"> | string
+    campaignId?: StringWithAggregatesFilter<"CampaignRecipient"> | string
+    email?: StringWithAggregatesFilter<"CampaignRecipient"> | string
+    name?: StringNullableWithAggregatesFilter<"CampaignRecipient"> | string | null
+    status?: EnumCampaignRecipientStatusWithAggregatesFilter<"CampaignRecipient"> | $Enums.CampaignRecipientStatus
+    attempts?: IntWithAggregatesFilter<"CampaignRecipient"> | number
+    lastError?: StringNullableWithAggregatesFilter<"CampaignRecipient"> | string | null
+    sentAt?: DateTimeNullableWithAggregatesFilter<"CampaignRecipient"> | Date | string | null
+    openedAt?: DateTimeNullableWithAggregatesFilter<"CampaignRecipient"> | Date | string | null
+    openCount?: IntWithAggregatesFilter<"CampaignRecipient"> | number
+    clickedAt?: DateTimeNullableWithAggregatesFilter<"CampaignRecipient"> | Date | string | null
+    clickCount?: IntWithAggregatesFilter<"CampaignRecipient"> | number
+    clickedUrl?: StringNullableWithAggregatesFilter<"CampaignRecipient"> | string | null
+    repliedAt?: DateTimeNullableWithAggregatesFilter<"CampaignRecipient"> | Date | string | null
+    replyCount?: IntWithAggregatesFilter<"CampaignRecipient"> | number
+    messageId?: StringNullableWithAggregatesFilter<"CampaignRecipient"> | string | null
+    variables?: JsonNullableWithAggregatesFilter<"CampaignRecipient">
+    trackingToken?: StringWithAggregatesFilter<"CampaignRecipient"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"CampaignRecipient"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CampaignRecipient"> | Date | string
   }
 
   export type AuditLogWhereInput = {
@@ -18538,6 +22551,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateInput = {
@@ -18558,6 +22572,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUpdateInput = {
@@ -18578,6 +22593,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateInput = {
@@ -18598,6 +22614,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateManyInput = {
@@ -18648,6 +22665,7 @@ export namespace Prisma {
     tenant: TenantCreateNestedOneWithoutUsersInput
     company?: CompanyCreateNestedOneWithoutUserInput
     domains?: DomainCreateNestedManyWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -18665,6 +22683,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
     domains?: DomainUncheckedCreateNestedManyWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -18682,6 +22701,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneRequiredWithoutUsersNestedInput
     company?: CompanyUpdateOneWithoutUserNestedInput
     domains?: DomainUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -18699,6 +22719,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
     domains?: DomainUncheckedUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -19026,6 +23047,7 @@ export namespace Prisma {
     tenant: TenantCreateNestedOneWithoutSmtpAccountsInput
     permissions?: ApiKeyPermissionCreateNestedManyWithoutSmtpAccountInput
     messages?: MessageCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountUncheckedCreateInput = {
@@ -19050,6 +23072,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     permissions?: ApiKeyPermissionUncheckedCreateNestedManyWithoutSmtpAccountInput
     messages?: MessageUncheckedCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountUpdateInput = {
@@ -19074,6 +23097,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneRequiredWithoutSmtpAccountsNestedInput
     permissions?: ApiKeyPermissionUpdateManyWithoutSmtpAccountNestedInput
     messages?: MessageUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type SmtpAccountUncheckedUpdateInput = {
@@ -19098,6 +23122,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     permissions?: ApiKeyPermissionUncheckedUpdateManyWithoutSmtpAccountNestedInput
     messages?: MessageUncheckedUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type SmtpAccountCreateManyInput = {
@@ -19188,6 +23213,7 @@ export namespace Prisma {
     domain: DomainCreateNestedOneWithoutSendersInput
     messages?: MessageCreateNestedManyWithoutDomainSenderInput
     permissions?: ApiKeyDomainPermissionCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderUncheckedCreateInput = {
@@ -19213,6 +23239,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     messages?: MessageUncheckedCreateNestedManyWithoutDomainSenderInput
     permissions?: ApiKeyDomainPermissionUncheckedCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderUpdateInput = {
@@ -19238,6 +23265,7 @@ export namespace Prisma {
     domain?: DomainUpdateOneRequiredWithoutSendersNestedInput
     messages?: MessageUpdateManyWithoutDomainSenderNestedInput
     permissions?: ApiKeyDomainPermissionUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderUncheckedUpdateInput = {
@@ -19263,6 +23291,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutDomainSenderNestedInput
     permissions?: ApiKeyDomainPermissionUncheckedUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderCreateManyInput = {
@@ -19521,17 +23550,19 @@ export namespace Prisma {
     queuedAt?: Date | string
     sentAt?: Date | string | null
     tenant: TenantCreateNestedOneWithoutMessagesInput
-    apiKey: ApiKeyCreateNestedOneWithoutMessagesInput
+    apiKey?: ApiKeyCreateNestedOneWithoutMessagesInput
     smtpAccount?: SmtpAccountCreateNestedOneWithoutMessagesInput
     domainSender?: DomainSenderCreateNestedOneWithoutMessagesInput
+    campaignRecipient?: CampaignRecipientCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateInput = {
     id?: string
     tenantId: string
-    apiKeyId: string
+    apiKeyId?: string | null
     smtpAccountId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -19569,17 +23600,19 @@ export namespace Prisma {
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tenant?: TenantUpdateOneRequiredWithoutMessagesNestedInput
-    apiKey?: ApiKeyUpdateOneRequiredWithoutMessagesNestedInput
+    apiKey?: ApiKeyUpdateOneWithoutMessagesNestedInput
     smtpAccount?: SmtpAccountUpdateOneWithoutMessagesNestedInput
     domainSender?: DomainSenderUpdateOneWithoutMessagesNestedInput
+    campaignRecipient?: CampaignRecipientUpdateOneWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -19601,9 +23634,10 @@ export namespace Prisma {
   export type MessageCreateManyInput = {
     id?: string
     tenantId: string
-    apiKeyId: string
+    apiKeyId?: string | null
     smtpAccountId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -19645,9 +23679,10 @@ export namespace Prisma {
   export type MessageUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -19676,6 +23711,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutTemplatesInput
+    campaigns?: CampaignCreateNestedManyWithoutTemplateInput
   }
 
   export type TemplateUncheckedCreateInput = {
@@ -19688,6 +23724,7 @@ export namespace Prisma {
     status?: $Enums.TemplateStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTemplateInput
   }
 
   export type TemplateUpdateInput = {
@@ -19700,6 +23737,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutTemplatesNestedInput
+    campaigns?: CampaignUpdateManyWithoutTemplateNestedInput
   }
 
   export type TemplateUncheckedUpdateInput = {
@@ -19712,6 +23750,7 @@ export namespace Prisma {
     status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    campaigns?: CampaignUncheckedUpdateManyWithoutTemplateNestedInput
   }
 
   export type TemplateCreateManyInput = {
@@ -19745,6 +23784,435 @@ export namespace Prisma {
     html?: StringFieldUpdateOperationsInput | string
     text?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CampaignCreateInput = {
+    id?: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCampaignsInput
+    user: UserCreateNestedOneWithoutCampaignsInput
+    smtpAccount?: SmtpAccountCreateNestedOneWithoutCampaignsInput
+    domainSender?: DomainSenderCreateNestedOneWithoutCampaignsInput
+    template?: TemplateCreateNestedOneWithoutCampaignsInput
+    recipients?: CampaignRecipientCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipients?: CampaignRecipientUncheckedCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCampaignsNestedInput
+    user?: UserUpdateOneRequiredWithoutCampaignsNestedInput
+    smtpAccount?: SmtpAccountUpdateOneWithoutCampaignsNestedInput
+    domainSender?: DomainSenderUpdateOneWithoutCampaignsNestedInput
+    template?: TemplateUpdateOneWithoutCampaignsNestedInput
+    recipients?: CampaignRecipientUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipients?: CampaignRecipientUncheckedUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignCreateManyInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CampaignUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CampaignUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CampaignRecipientCreateInput = {
+    id?: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    campaign: CampaignCreateNestedOneWithoutRecipientsInput
+    messages?: MessageCreateNestedManyWithoutCampaignRecipientInput
+  }
+
+  export type CampaignRecipientUncheckedCreateInput = {
+    id?: string
+    campaignId: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: MessageUncheckedCreateNestedManyWithoutCampaignRecipientInput
+  }
+
+  export type CampaignRecipientUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    campaign?: CampaignUpdateOneRequiredWithoutRecipientsNestedInput
+    messages?: MessageUpdateManyWithoutCampaignRecipientNestedInput
+  }
+
+  export type CampaignRecipientUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    campaignId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUncheckedUpdateManyWithoutCampaignRecipientNestedInput
+  }
+
+  export type CampaignRecipientCreateManyInput = {
+    id?: string
+    campaignId: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CampaignRecipientUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CampaignRecipientUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    campaignId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19941,6 +24409,12 @@ export namespace Prisma {
     none?: DomainWhereInput
   }
 
+  export type CampaignListRelationFilter = {
+    every?: CampaignWhereInput
+    some?: CampaignWhereInput
+    none?: CampaignWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -19979,6 +24453,10 @@ export namespace Prisma {
   }
 
   export type DomainOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CampaignOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -20779,6 +25257,11 @@ export namespace Prisma {
     not?: NestedEnumMessageStatusFilter<$PrismaModel> | $Enums.MessageStatus
   }
 
+  export type ApiKeyNullableScalarRelationFilter = {
+    is?: ApiKeyWhereInput | null
+    isNot?: ApiKeyWhereInput | null
+  }
+
   export type SmtpAccountNullableScalarRelationFilter = {
     is?: SmtpAccountWhereInput | null
     isNot?: SmtpAccountWhereInput | null
@@ -20787,6 +25270,11 @@ export namespace Prisma {
   export type DomainSenderNullableScalarRelationFilter = {
     is?: DomainSenderWhereInput | null
     isNot?: DomainSenderWhereInput | null
+  }
+
+  export type CampaignRecipientNullableScalarRelationFilter = {
+    is?: CampaignRecipientWhereInput | null
+    isNot?: CampaignRecipientWhereInput | null
   }
 
   export type MessageApiKeyIdIdempotencyKeyCompoundUniqueInput = {
@@ -20800,6 +25288,7 @@ export namespace Prisma {
     apiKeyId?: SortOrder
     smtpAccountId?: SortOrder
     domainSenderId?: SortOrder
+    campaignRecipientId?: SortOrder
     idempotencyKey?: SortOrder
     to?: SortOrder
     cc?: SortOrder
@@ -20828,6 +25317,7 @@ export namespace Prisma {
     apiKeyId?: SortOrder
     smtpAccountId?: SortOrder
     domainSenderId?: SortOrder
+    campaignRecipientId?: SortOrder
     idempotencyKey?: SortOrder
     subject?: SortOrder
     text?: SortOrder
@@ -20848,6 +25338,7 @@ export namespace Prisma {
     apiKeyId?: SortOrder
     smtpAccountId?: SortOrder
     domainSenderId?: SortOrder
+    campaignRecipientId?: SortOrder
     idempotencyKey?: SortOrder
     subject?: SortOrder
     text?: SortOrder
@@ -20958,6 +25449,332 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTemplateStatusFilter<$PrismaModel>
     _max?: NestedEnumTemplateStatusFilter<$PrismaModel>
+  }
+
+  export type EnumCampaignStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignStatus | EnumCampaignStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignStatusFilter<$PrismaModel> | $Enums.CampaignStatus
+  }
+
+  export type EnumCampaignSenderTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignSenderType | EnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignSenderTypeFilter<$PrismaModel> | $Enums.CampaignSenderType
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type TemplateNullableScalarRelationFilter = {
+    is?: TemplateWhereInput | null
+    isNot?: TemplateWhereInput | null
+  }
+
+  export type CampaignRecipientListRelationFilter = {
+    every?: CampaignRecipientWhereInput
+    some?: CampaignRecipientWhereInput
+    none?: CampaignRecipientWhereInput
+  }
+
+  export type CampaignRecipientOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CampaignCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    senderType?: SortOrder
+    smtpAccountId?: SortOrder
+    domainSenderId?: SortOrder
+    templateId?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrder
+    fromName?: SortOrder
+    replyTo?: SortOrder
+    headers?: SortOrder
+    perMinuteLimit?: SortOrder
+    warmupEnabled?: SortOrder
+    warmupStartPerMinute?: SortOrder
+    warmupStep?: SortOrder
+    warmupIntervalMinutes?: SortOrder
+    warmupMaxPerMinute?: SortOrder
+    trackOpens?: SortOrder
+    trackClicks?: SortOrder
+    trackReplies?: SortOrder
+    totalRecipients?: SortOrder
+    queuedCount?: SortOrder
+    sentCount?: SortOrder
+    failedCount?: SortOrder
+    openedCount?: SortOrder
+    clickedCount?: SortOrder
+    repliedCount?: SortOrder
+    startedAt?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CampaignAvgOrderByAggregateInput = {
+    perMinuteLimit?: SortOrder
+    warmupStartPerMinute?: SortOrder
+    warmupStep?: SortOrder
+    warmupIntervalMinutes?: SortOrder
+    warmupMaxPerMinute?: SortOrder
+    totalRecipients?: SortOrder
+    queuedCount?: SortOrder
+    sentCount?: SortOrder
+    failedCount?: SortOrder
+    openedCount?: SortOrder
+    clickedCount?: SortOrder
+    repliedCount?: SortOrder
+  }
+
+  export type CampaignMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    senderType?: SortOrder
+    smtpAccountId?: SortOrder
+    domainSenderId?: SortOrder
+    templateId?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrder
+    fromName?: SortOrder
+    replyTo?: SortOrder
+    perMinuteLimit?: SortOrder
+    warmupEnabled?: SortOrder
+    warmupStartPerMinute?: SortOrder
+    warmupStep?: SortOrder
+    warmupIntervalMinutes?: SortOrder
+    warmupMaxPerMinute?: SortOrder
+    trackOpens?: SortOrder
+    trackClicks?: SortOrder
+    trackReplies?: SortOrder
+    totalRecipients?: SortOrder
+    queuedCount?: SortOrder
+    sentCount?: SortOrder
+    failedCount?: SortOrder
+    openedCount?: SortOrder
+    clickedCount?: SortOrder
+    repliedCount?: SortOrder
+    startedAt?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CampaignMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    senderType?: SortOrder
+    smtpAccountId?: SortOrder
+    domainSenderId?: SortOrder
+    templateId?: SortOrder
+    subject?: SortOrder
+    html?: SortOrder
+    text?: SortOrder
+    fromName?: SortOrder
+    replyTo?: SortOrder
+    perMinuteLimit?: SortOrder
+    warmupEnabled?: SortOrder
+    warmupStartPerMinute?: SortOrder
+    warmupStep?: SortOrder
+    warmupIntervalMinutes?: SortOrder
+    warmupMaxPerMinute?: SortOrder
+    trackOpens?: SortOrder
+    trackClicks?: SortOrder
+    trackReplies?: SortOrder
+    totalRecipients?: SortOrder
+    queuedCount?: SortOrder
+    sentCount?: SortOrder
+    failedCount?: SortOrder
+    openedCount?: SortOrder
+    clickedCount?: SortOrder
+    repliedCount?: SortOrder
+    startedAt?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CampaignSumOrderByAggregateInput = {
+    perMinuteLimit?: SortOrder
+    warmupStartPerMinute?: SortOrder
+    warmupStep?: SortOrder
+    warmupIntervalMinutes?: SortOrder
+    warmupMaxPerMinute?: SortOrder
+    totalRecipients?: SortOrder
+    queuedCount?: SortOrder
+    sentCount?: SortOrder
+    failedCount?: SortOrder
+    openedCount?: SortOrder
+    clickedCount?: SortOrder
+    repliedCount?: SortOrder
+  }
+
+  export type EnumCampaignStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignStatus | EnumCampaignStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignStatusWithAggregatesFilter<$PrismaModel> | $Enums.CampaignStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCampaignStatusFilter<$PrismaModel>
+    _max?: NestedEnumCampaignStatusFilter<$PrismaModel>
+  }
+
+  export type EnumCampaignSenderTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignSenderType | EnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignSenderTypeWithAggregatesFilter<$PrismaModel> | $Enums.CampaignSenderType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCampaignSenderTypeFilter<$PrismaModel>
+    _max?: NestedEnumCampaignSenderTypeFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type EnumCampaignRecipientStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignRecipientStatus | EnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignRecipientStatusFilter<$PrismaModel> | $Enums.CampaignRecipientStatus
+  }
+
+  export type CampaignScalarRelationFilter = {
+    is?: CampaignWhereInput
+    isNot?: CampaignWhereInput
+  }
+
+  export type CampaignRecipientCampaignIdEmailCompoundUniqueInput = {
+    campaignId: string
+    email: string
+  }
+
+  export type CampaignRecipientCountOrderByAggregateInput = {
+    id?: SortOrder
+    campaignId?: SortOrder
+    email?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    sentAt?: SortOrder
+    openedAt?: SortOrder
+    openCount?: SortOrder
+    clickedAt?: SortOrder
+    clickCount?: SortOrder
+    clickedUrl?: SortOrder
+    repliedAt?: SortOrder
+    replyCount?: SortOrder
+    messageId?: SortOrder
+    variables?: SortOrder
+    trackingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CampaignRecipientAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+    openCount?: SortOrder
+    clickCount?: SortOrder
+    replyCount?: SortOrder
+  }
+
+  export type CampaignRecipientMaxOrderByAggregateInput = {
+    id?: SortOrder
+    campaignId?: SortOrder
+    email?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    sentAt?: SortOrder
+    openedAt?: SortOrder
+    openCount?: SortOrder
+    clickedAt?: SortOrder
+    clickCount?: SortOrder
+    clickedUrl?: SortOrder
+    repliedAt?: SortOrder
+    replyCount?: SortOrder
+    messageId?: SortOrder
+    trackingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CampaignRecipientMinOrderByAggregateInput = {
+    id?: SortOrder
+    campaignId?: SortOrder
+    email?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    sentAt?: SortOrder
+    openedAt?: SortOrder
+    openCount?: SortOrder
+    clickedAt?: SortOrder
+    clickCount?: SortOrder
+    clickedUrl?: SortOrder
+    repliedAt?: SortOrder
+    replyCount?: SortOrder
+    messageId?: SortOrder
+    trackingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CampaignRecipientSumOrderByAggregateInput = {
+    attempts?: SortOrder
+    openCount?: SortOrder
+    clickCount?: SortOrder
+    replyCount?: SortOrder
+  }
+
+  export type EnumCampaignRecipientStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignRecipientStatus | EnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignRecipientStatusWithAggregatesFilter<$PrismaModel> | $Enums.CampaignRecipientStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCampaignRecipientStatusFilter<$PrismaModel>
+    _max?: NestedEnumCampaignRecipientStatusFilter<$PrismaModel>
   }
 
   export type EnumActorTypeFilter<$PrismaModel = never> = {
@@ -21074,6 +25891,13 @@ export namespace Prisma {
     connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
   }
 
+  export type CampaignCreateNestedManyWithoutTenantInput = {
+    create?: XOR<CampaignCreateWithoutTenantInput, CampaignUncheckedCreateWithoutTenantInput> | CampaignCreateWithoutTenantInput[] | CampaignUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTenantInput | CampaignCreateOrConnectWithoutTenantInput[]
+    createMany?: CampaignCreateManyTenantInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -21135,6 +25959,13 @@ export namespace Prisma {
     connectOrCreate?: DomainCreateOrConnectWithoutTenantInput | DomainCreateOrConnectWithoutTenantInput[]
     createMany?: DomainCreateManyTenantInputEnvelope
     connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+  }
+
+  export type CampaignUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<CampaignCreateWithoutTenantInput, CampaignUncheckedCreateWithoutTenantInput> | CampaignCreateWithoutTenantInput[] | CampaignUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTenantInput | CampaignCreateOrConnectWithoutTenantInput[]
+    createMany?: CampaignCreateManyTenantInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -21287,6 +26118,20 @@ export namespace Prisma {
     deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
   }
 
+  export type CampaignUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<CampaignCreateWithoutTenantInput, CampaignUncheckedCreateWithoutTenantInput> | CampaignCreateWithoutTenantInput[] | CampaignUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTenantInput | CampaignCreateOrConnectWithoutTenantInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutTenantInput | CampaignUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: CampaignCreateManyTenantInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutTenantInput | CampaignUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutTenantInput | CampaignUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -21413,6 +26258,20 @@ export namespace Prisma {
     deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
   }
 
+  export type CampaignUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<CampaignCreateWithoutTenantInput, CampaignUncheckedCreateWithoutTenantInput> | CampaignCreateWithoutTenantInput[] | CampaignUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTenantInput | CampaignCreateOrConnectWithoutTenantInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutTenantInput | CampaignUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: CampaignCreateManyTenantInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutTenantInput | CampaignUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutTenantInput | CampaignUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
   export type TenantCreateNestedOneWithoutUsersInput = {
     create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
     connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
@@ -21432,6 +26291,13 @@ export namespace Prisma {
     connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
   }
 
+  export type CampaignCreateNestedManyWithoutUserInput = {
+    create?: XOR<CampaignCreateWithoutUserInput, CampaignUncheckedCreateWithoutUserInput> | CampaignCreateWithoutUserInput[] | CampaignUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutUserInput | CampaignCreateOrConnectWithoutUserInput[]
+    createMany?: CampaignCreateManyUserInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+  }
+
   export type CompanyUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
@@ -21443,6 +26309,13 @@ export namespace Prisma {
     connectOrCreate?: DomainCreateOrConnectWithoutUserInput | DomainCreateOrConnectWithoutUserInput[]
     createMany?: DomainCreateManyUserInputEnvelope
     connect?: DomainWhereUniqueInput | DomainWhereUniqueInput[]
+  }
+
+  export type CampaignUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CampaignCreateWithoutUserInput, CampaignUncheckedCreateWithoutUserInput> | CampaignCreateWithoutUserInput[] | CampaignUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutUserInput | CampaignCreateOrConnectWithoutUserInput[]
+    createMany?: CampaignCreateManyUserInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
   }
 
   export type EnumUserRoleFieldUpdateOperationsInput = {
@@ -21489,6 +26362,20 @@ export namespace Prisma {
     deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
   }
 
+  export type CampaignUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CampaignCreateWithoutUserInput, CampaignUncheckedCreateWithoutUserInput> | CampaignCreateWithoutUserInput[] | CampaignUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutUserInput | CampaignCreateOrConnectWithoutUserInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutUserInput | CampaignUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CampaignCreateManyUserInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutUserInput | CampaignUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutUserInput | CampaignUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
   export type CompanyUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
@@ -21511,6 +26398,20 @@ export namespace Prisma {
     update?: DomainUpdateWithWhereUniqueWithoutUserInput | DomainUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: DomainUpdateManyWithWhereWithoutUserInput | DomainUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: DomainScalarWhereInput | DomainScalarWhereInput[]
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CampaignCreateWithoutUserInput, CampaignUncheckedCreateWithoutUserInput> | CampaignCreateWithoutUserInput[] | CampaignUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutUserInput | CampaignCreateOrConnectWithoutUserInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutUserInput | CampaignUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CampaignCreateManyUserInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutUserInput | CampaignUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutUserInput | CampaignUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
   }
 
   export type TenantCreateNestedOneWithoutDomainsInput = {
@@ -21635,6 +26536,13 @@ export namespace Prisma {
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
   }
 
+  export type CampaignCreateNestedManyWithoutSmtpAccountInput = {
+    create?: XOR<CampaignCreateWithoutSmtpAccountInput, CampaignUncheckedCreateWithoutSmtpAccountInput> | CampaignCreateWithoutSmtpAccountInput[] | CampaignUncheckedCreateWithoutSmtpAccountInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutSmtpAccountInput | CampaignCreateOrConnectWithoutSmtpAccountInput[]
+    createMany?: CampaignCreateManySmtpAccountInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+  }
+
   export type ApiKeyPermissionUncheckedCreateNestedManyWithoutSmtpAccountInput = {
     create?: XOR<ApiKeyPermissionCreateWithoutSmtpAccountInput, ApiKeyPermissionUncheckedCreateWithoutSmtpAccountInput> | ApiKeyPermissionCreateWithoutSmtpAccountInput[] | ApiKeyPermissionUncheckedCreateWithoutSmtpAccountInput[]
     connectOrCreate?: ApiKeyPermissionCreateOrConnectWithoutSmtpAccountInput | ApiKeyPermissionCreateOrConnectWithoutSmtpAccountInput[]
@@ -21647,6 +26555,13 @@ export namespace Prisma {
     connectOrCreate?: MessageCreateOrConnectWithoutSmtpAccountInput | MessageCreateOrConnectWithoutSmtpAccountInput[]
     createMany?: MessageCreateManySmtpAccountInputEnvelope
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type CampaignUncheckedCreateNestedManyWithoutSmtpAccountInput = {
+    create?: XOR<CampaignCreateWithoutSmtpAccountInput, CampaignUncheckedCreateWithoutSmtpAccountInput> | CampaignCreateWithoutSmtpAccountInput[] | CampaignUncheckedCreateWithoutSmtpAccountInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutSmtpAccountInput | CampaignCreateOrConnectWithoutSmtpAccountInput[]
+    createMany?: CampaignCreateManySmtpAccountInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
   }
 
   export type EnumSenderStatusFieldUpdateOperationsInput = {
@@ -21689,6 +26604,20 @@ export namespace Prisma {
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
+  export type CampaignUpdateManyWithoutSmtpAccountNestedInput = {
+    create?: XOR<CampaignCreateWithoutSmtpAccountInput, CampaignUncheckedCreateWithoutSmtpAccountInput> | CampaignCreateWithoutSmtpAccountInput[] | CampaignUncheckedCreateWithoutSmtpAccountInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutSmtpAccountInput | CampaignCreateOrConnectWithoutSmtpAccountInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutSmtpAccountInput | CampaignUpsertWithWhereUniqueWithoutSmtpAccountInput[]
+    createMany?: CampaignCreateManySmtpAccountInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutSmtpAccountInput | CampaignUpdateWithWhereUniqueWithoutSmtpAccountInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutSmtpAccountInput | CampaignUpdateManyWithWhereWithoutSmtpAccountInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
   export type ApiKeyPermissionUncheckedUpdateManyWithoutSmtpAccountNestedInput = {
     create?: XOR<ApiKeyPermissionCreateWithoutSmtpAccountInput, ApiKeyPermissionUncheckedCreateWithoutSmtpAccountInput> | ApiKeyPermissionCreateWithoutSmtpAccountInput[] | ApiKeyPermissionUncheckedCreateWithoutSmtpAccountInput[]
     connectOrCreate?: ApiKeyPermissionCreateOrConnectWithoutSmtpAccountInput | ApiKeyPermissionCreateOrConnectWithoutSmtpAccountInput[]
@@ -21717,6 +26646,20 @@ export namespace Prisma {
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
+  export type CampaignUncheckedUpdateManyWithoutSmtpAccountNestedInput = {
+    create?: XOR<CampaignCreateWithoutSmtpAccountInput, CampaignUncheckedCreateWithoutSmtpAccountInput> | CampaignCreateWithoutSmtpAccountInput[] | CampaignUncheckedCreateWithoutSmtpAccountInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutSmtpAccountInput | CampaignCreateOrConnectWithoutSmtpAccountInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutSmtpAccountInput | CampaignUpsertWithWhereUniqueWithoutSmtpAccountInput[]
+    createMany?: CampaignCreateManySmtpAccountInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutSmtpAccountInput | CampaignUpdateWithWhereUniqueWithoutSmtpAccountInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutSmtpAccountInput | CampaignUpdateManyWithWhereWithoutSmtpAccountInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
   export type TenantCreateNestedOneWithoutDomainSendersInput = {
     create?: XOR<TenantCreateWithoutDomainSendersInput, TenantUncheckedCreateWithoutDomainSendersInput>
     connectOrCreate?: TenantCreateOrConnectWithoutDomainSendersInput
@@ -21743,6 +26686,13 @@ export namespace Prisma {
     connect?: ApiKeyDomainPermissionWhereUniqueInput | ApiKeyDomainPermissionWhereUniqueInput[]
   }
 
+  export type CampaignCreateNestedManyWithoutDomainSenderInput = {
+    create?: XOR<CampaignCreateWithoutDomainSenderInput, CampaignUncheckedCreateWithoutDomainSenderInput> | CampaignCreateWithoutDomainSenderInput[] | CampaignUncheckedCreateWithoutDomainSenderInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutDomainSenderInput | CampaignCreateOrConnectWithoutDomainSenderInput[]
+    createMany?: CampaignCreateManyDomainSenderInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+  }
+
   export type MessageUncheckedCreateNestedManyWithoutDomainSenderInput = {
     create?: XOR<MessageCreateWithoutDomainSenderInput, MessageUncheckedCreateWithoutDomainSenderInput> | MessageCreateWithoutDomainSenderInput[] | MessageUncheckedCreateWithoutDomainSenderInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutDomainSenderInput | MessageCreateOrConnectWithoutDomainSenderInput[]
@@ -21755,6 +26705,13 @@ export namespace Prisma {
     connectOrCreate?: ApiKeyDomainPermissionCreateOrConnectWithoutDomainSenderInput | ApiKeyDomainPermissionCreateOrConnectWithoutDomainSenderInput[]
     createMany?: ApiKeyDomainPermissionCreateManyDomainSenderInputEnvelope
     connect?: ApiKeyDomainPermissionWhereUniqueInput | ApiKeyDomainPermissionWhereUniqueInput[]
+  }
+
+  export type CampaignUncheckedCreateNestedManyWithoutDomainSenderInput = {
+    create?: XOR<CampaignCreateWithoutDomainSenderInput, CampaignUncheckedCreateWithoutDomainSenderInput> | CampaignCreateWithoutDomainSenderInput[] | CampaignUncheckedCreateWithoutDomainSenderInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutDomainSenderInput | CampaignCreateOrConnectWithoutDomainSenderInput[]
+    createMany?: CampaignCreateManyDomainSenderInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
   }
 
   export type TenantUpdateOneRequiredWithoutDomainSendersNestedInput = {
@@ -21801,6 +26758,20 @@ export namespace Prisma {
     deleteMany?: ApiKeyDomainPermissionScalarWhereInput | ApiKeyDomainPermissionScalarWhereInput[]
   }
 
+  export type CampaignUpdateManyWithoutDomainSenderNestedInput = {
+    create?: XOR<CampaignCreateWithoutDomainSenderInput, CampaignUncheckedCreateWithoutDomainSenderInput> | CampaignCreateWithoutDomainSenderInput[] | CampaignUncheckedCreateWithoutDomainSenderInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutDomainSenderInput | CampaignCreateOrConnectWithoutDomainSenderInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutDomainSenderInput | CampaignUpsertWithWhereUniqueWithoutDomainSenderInput[]
+    createMany?: CampaignCreateManyDomainSenderInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutDomainSenderInput | CampaignUpdateWithWhereUniqueWithoutDomainSenderInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutDomainSenderInput | CampaignUpdateManyWithWhereWithoutDomainSenderInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
   export type MessageUncheckedUpdateManyWithoutDomainSenderNestedInput = {
     create?: XOR<MessageCreateWithoutDomainSenderInput, MessageUncheckedCreateWithoutDomainSenderInput> | MessageCreateWithoutDomainSenderInput[] | MessageUncheckedCreateWithoutDomainSenderInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutDomainSenderInput | MessageCreateOrConnectWithoutDomainSenderInput[]
@@ -21827,6 +26798,20 @@ export namespace Prisma {
     update?: ApiKeyDomainPermissionUpdateWithWhereUniqueWithoutDomainSenderInput | ApiKeyDomainPermissionUpdateWithWhereUniqueWithoutDomainSenderInput[]
     updateMany?: ApiKeyDomainPermissionUpdateManyWithWhereWithoutDomainSenderInput | ApiKeyDomainPermissionUpdateManyWithWhereWithoutDomainSenderInput[]
     deleteMany?: ApiKeyDomainPermissionScalarWhereInput | ApiKeyDomainPermissionScalarWhereInput[]
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutDomainSenderNestedInput = {
+    create?: XOR<CampaignCreateWithoutDomainSenderInput, CampaignUncheckedCreateWithoutDomainSenderInput> | CampaignCreateWithoutDomainSenderInput[] | CampaignUncheckedCreateWithoutDomainSenderInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutDomainSenderInput | CampaignCreateOrConnectWithoutDomainSenderInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutDomainSenderInput | CampaignUpsertWithWhereUniqueWithoutDomainSenderInput[]
+    createMany?: CampaignCreateManyDomainSenderInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutDomainSenderInput | CampaignUpdateWithWhereUniqueWithoutDomainSenderInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutDomainSenderInput | CampaignUpdateManyWithWhereWithoutDomainSenderInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
   }
 
   export type TenantCreateNestedOneWithoutApiKeysInput = {
@@ -22053,6 +27038,12 @@ export namespace Prisma {
     connect?: DomainSenderWhereUniqueInput
   }
 
+  export type CampaignRecipientCreateNestedOneWithoutMessagesInput = {
+    create?: XOR<CampaignRecipientCreateWithoutMessagesInput, CampaignRecipientUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: CampaignRecipientCreateOrConnectWithoutMessagesInput
+    connect?: CampaignRecipientWhereUniqueInput
+  }
+
   export type EnumMessageStatusFieldUpdateOperationsInput = {
     set?: $Enums.MessageStatus
   }
@@ -22065,10 +27056,12 @@ export namespace Prisma {
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutMessagesInput, TenantUpdateWithoutMessagesInput>, TenantUncheckedUpdateWithoutMessagesInput>
   }
 
-  export type ApiKeyUpdateOneRequiredWithoutMessagesNestedInput = {
+  export type ApiKeyUpdateOneWithoutMessagesNestedInput = {
     create?: XOR<ApiKeyCreateWithoutMessagesInput, ApiKeyUncheckedCreateWithoutMessagesInput>
     connectOrCreate?: ApiKeyCreateOrConnectWithoutMessagesInput
     upsert?: ApiKeyUpsertWithoutMessagesInput
+    disconnect?: ApiKeyWhereInput | boolean
+    delete?: ApiKeyWhereInput | boolean
     connect?: ApiKeyWhereUniqueInput
     update?: XOR<XOR<ApiKeyUpdateToOneWithWhereWithoutMessagesInput, ApiKeyUpdateWithoutMessagesInput>, ApiKeyUncheckedUpdateWithoutMessagesInput>
   }
@@ -22093,10 +27086,34 @@ export namespace Prisma {
     update?: XOR<XOR<DomainSenderUpdateToOneWithWhereWithoutMessagesInput, DomainSenderUpdateWithoutMessagesInput>, DomainSenderUncheckedUpdateWithoutMessagesInput>
   }
 
+  export type CampaignRecipientUpdateOneWithoutMessagesNestedInput = {
+    create?: XOR<CampaignRecipientCreateWithoutMessagesInput, CampaignRecipientUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: CampaignRecipientCreateOrConnectWithoutMessagesInput
+    upsert?: CampaignRecipientUpsertWithoutMessagesInput
+    disconnect?: CampaignRecipientWhereInput | boolean
+    delete?: CampaignRecipientWhereInput | boolean
+    connect?: CampaignRecipientWhereUniqueInput
+    update?: XOR<XOR<CampaignRecipientUpdateToOneWithWhereWithoutMessagesInput, CampaignRecipientUpdateWithoutMessagesInput>, CampaignRecipientUncheckedUpdateWithoutMessagesInput>
+  }
+
   export type TenantCreateNestedOneWithoutTemplatesInput = {
     create?: XOR<TenantCreateWithoutTemplatesInput, TenantUncheckedCreateWithoutTemplatesInput>
     connectOrCreate?: TenantCreateOrConnectWithoutTemplatesInput
     connect?: TenantWhereUniqueInput
+  }
+
+  export type CampaignCreateNestedManyWithoutTemplateInput = {
+    create?: XOR<CampaignCreateWithoutTemplateInput, CampaignUncheckedCreateWithoutTemplateInput> | CampaignCreateWithoutTemplateInput[] | CampaignUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTemplateInput | CampaignCreateOrConnectWithoutTemplateInput[]
+    createMany?: CampaignCreateManyTemplateInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+  }
+
+  export type CampaignUncheckedCreateNestedManyWithoutTemplateInput = {
+    create?: XOR<CampaignCreateWithoutTemplateInput, CampaignUncheckedCreateWithoutTemplateInput> | CampaignCreateWithoutTemplateInput[] | CampaignUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTemplateInput | CampaignCreateOrConnectWithoutTemplateInput[]
+    createMany?: CampaignCreateManyTemplateInputEnvelope
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
   }
 
   export type EnumTemplateStatusFieldUpdateOperationsInput = {
@@ -22109,6 +27126,228 @@ export namespace Prisma {
     upsert?: TenantUpsertWithoutTemplatesInput
     connect?: TenantWhereUniqueInput
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutTemplatesInput, TenantUpdateWithoutTemplatesInput>, TenantUncheckedUpdateWithoutTemplatesInput>
+  }
+
+  export type CampaignUpdateManyWithoutTemplateNestedInput = {
+    create?: XOR<CampaignCreateWithoutTemplateInput, CampaignUncheckedCreateWithoutTemplateInput> | CampaignCreateWithoutTemplateInput[] | CampaignUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTemplateInput | CampaignCreateOrConnectWithoutTemplateInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutTemplateInput | CampaignUpsertWithWhereUniqueWithoutTemplateInput[]
+    createMany?: CampaignCreateManyTemplateInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutTemplateInput | CampaignUpdateWithWhereUniqueWithoutTemplateInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutTemplateInput | CampaignUpdateManyWithWhereWithoutTemplateInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutTemplateNestedInput = {
+    create?: XOR<CampaignCreateWithoutTemplateInput, CampaignUncheckedCreateWithoutTemplateInput> | CampaignCreateWithoutTemplateInput[] | CampaignUncheckedCreateWithoutTemplateInput[]
+    connectOrCreate?: CampaignCreateOrConnectWithoutTemplateInput | CampaignCreateOrConnectWithoutTemplateInput[]
+    upsert?: CampaignUpsertWithWhereUniqueWithoutTemplateInput | CampaignUpsertWithWhereUniqueWithoutTemplateInput[]
+    createMany?: CampaignCreateManyTemplateInputEnvelope
+    set?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    disconnect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    delete?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+    update?: CampaignUpdateWithWhereUniqueWithoutTemplateInput | CampaignUpdateWithWhereUniqueWithoutTemplateInput[]
+    updateMany?: CampaignUpdateManyWithWhereWithoutTemplateInput | CampaignUpdateManyWithWhereWithoutTemplateInput[]
+    deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
+  export type TenantCreateNestedOneWithoutCampaignsInput = {
+    create?: XOR<TenantCreateWithoutCampaignsInput, TenantUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutCampaignsInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCampaignsInput = {
+    create?: XOR<UserCreateWithoutCampaignsInput, UserUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCampaignsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type SmtpAccountCreateNestedOneWithoutCampaignsInput = {
+    create?: XOR<SmtpAccountCreateWithoutCampaignsInput, SmtpAccountUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: SmtpAccountCreateOrConnectWithoutCampaignsInput
+    connect?: SmtpAccountWhereUniqueInput
+  }
+
+  export type DomainSenderCreateNestedOneWithoutCampaignsInput = {
+    create?: XOR<DomainSenderCreateWithoutCampaignsInput, DomainSenderUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutCampaignsInput
+    connect?: DomainSenderWhereUniqueInput
+  }
+
+  export type TemplateCreateNestedOneWithoutCampaignsInput = {
+    create?: XOR<TemplateCreateWithoutCampaignsInput, TemplateUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: TemplateCreateOrConnectWithoutCampaignsInput
+    connect?: TemplateWhereUniqueInput
+  }
+
+  export type CampaignRecipientCreateNestedManyWithoutCampaignInput = {
+    create?: XOR<CampaignRecipientCreateWithoutCampaignInput, CampaignRecipientUncheckedCreateWithoutCampaignInput> | CampaignRecipientCreateWithoutCampaignInput[] | CampaignRecipientUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: CampaignRecipientCreateOrConnectWithoutCampaignInput | CampaignRecipientCreateOrConnectWithoutCampaignInput[]
+    createMany?: CampaignRecipientCreateManyCampaignInputEnvelope
+    connect?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+  }
+
+  export type CampaignRecipientUncheckedCreateNestedManyWithoutCampaignInput = {
+    create?: XOR<CampaignRecipientCreateWithoutCampaignInput, CampaignRecipientUncheckedCreateWithoutCampaignInput> | CampaignRecipientCreateWithoutCampaignInput[] | CampaignRecipientUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: CampaignRecipientCreateOrConnectWithoutCampaignInput | CampaignRecipientCreateOrConnectWithoutCampaignInput[]
+    createMany?: CampaignRecipientCreateManyCampaignInputEnvelope
+    connect?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+  }
+
+  export type EnumCampaignStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CampaignStatus
+  }
+
+  export type EnumCampaignSenderTypeFieldUpdateOperationsInput = {
+    set?: $Enums.CampaignSenderType
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type TenantUpdateOneRequiredWithoutCampaignsNestedInput = {
+    create?: XOR<TenantCreateWithoutCampaignsInput, TenantUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutCampaignsInput
+    upsert?: TenantUpsertWithoutCampaignsInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutCampaignsInput, TenantUpdateWithoutCampaignsInput>, TenantUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCampaignsNestedInput = {
+    create?: XOR<UserCreateWithoutCampaignsInput, UserUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCampaignsInput
+    upsert?: UserUpsertWithoutCampaignsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCampaignsInput, UserUpdateWithoutCampaignsInput>, UserUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type SmtpAccountUpdateOneWithoutCampaignsNestedInput = {
+    create?: XOR<SmtpAccountCreateWithoutCampaignsInput, SmtpAccountUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: SmtpAccountCreateOrConnectWithoutCampaignsInput
+    upsert?: SmtpAccountUpsertWithoutCampaignsInput
+    disconnect?: SmtpAccountWhereInput | boolean
+    delete?: SmtpAccountWhereInput | boolean
+    connect?: SmtpAccountWhereUniqueInput
+    update?: XOR<XOR<SmtpAccountUpdateToOneWithWhereWithoutCampaignsInput, SmtpAccountUpdateWithoutCampaignsInput>, SmtpAccountUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type DomainSenderUpdateOneWithoutCampaignsNestedInput = {
+    create?: XOR<DomainSenderCreateWithoutCampaignsInput, DomainSenderUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: DomainSenderCreateOrConnectWithoutCampaignsInput
+    upsert?: DomainSenderUpsertWithoutCampaignsInput
+    disconnect?: DomainSenderWhereInput | boolean
+    delete?: DomainSenderWhereInput | boolean
+    connect?: DomainSenderWhereUniqueInput
+    update?: XOR<XOR<DomainSenderUpdateToOneWithWhereWithoutCampaignsInput, DomainSenderUpdateWithoutCampaignsInput>, DomainSenderUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type TemplateUpdateOneWithoutCampaignsNestedInput = {
+    create?: XOR<TemplateCreateWithoutCampaignsInput, TemplateUncheckedCreateWithoutCampaignsInput>
+    connectOrCreate?: TemplateCreateOrConnectWithoutCampaignsInput
+    upsert?: TemplateUpsertWithoutCampaignsInput
+    disconnect?: TemplateWhereInput | boolean
+    delete?: TemplateWhereInput | boolean
+    connect?: TemplateWhereUniqueInput
+    update?: XOR<XOR<TemplateUpdateToOneWithWhereWithoutCampaignsInput, TemplateUpdateWithoutCampaignsInput>, TemplateUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type CampaignRecipientUpdateManyWithoutCampaignNestedInput = {
+    create?: XOR<CampaignRecipientCreateWithoutCampaignInput, CampaignRecipientUncheckedCreateWithoutCampaignInput> | CampaignRecipientCreateWithoutCampaignInput[] | CampaignRecipientUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: CampaignRecipientCreateOrConnectWithoutCampaignInput | CampaignRecipientCreateOrConnectWithoutCampaignInput[]
+    upsert?: CampaignRecipientUpsertWithWhereUniqueWithoutCampaignInput | CampaignRecipientUpsertWithWhereUniqueWithoutCampaignInput[]
+    createMany?: CampaignRecipientCreateManyCampaignInputEnvelope
+    set?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    disconnect?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    delete?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    connect?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    update?: CampaignRecipientUpdateWithWhereUniqueWithoutCampaignInput | CampaignRecipientUpdateWithWhereUniqueWithoutCampaignInput[]
+    updateMany?: CampaignRecipientUpdateManyWithWhereWithoutCampaignInput | CampaignRecipientUpdateManyWithWhereWithoutCampaignInput[]
+    deleteMany?: CampaignRecipientScalarWhereInput | CampaignRecipientScalarWhereInput[]
+  }
+
+  export type CampaignRecipientUncheckedUpdateManyWithoutCampaignNestedInput = {
+    create?: XOR<CampaignRecipientCreateWithoutCampaignInput, CampaignRecipientUncheckedCreateWithoutCampaignInput> | CampaignRecipientCreateWithoutCampaignInput[] | CampaignRecipientUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: CampaignRecipientCreateOrConnectWithoutCampaignInput | CampaignRecipientCreateOrConnectWithoutCampaignInput[]
+    upsert?: CampaignRecipientUpsertWithWhereUniqueWithoutCampaignInput | CampaignRecipientUpsertWithWhereUniqueWithoutCampaignInput[]
+    createMany?: CampaignRecipientCreateManyCampaignInputEnvelope
+    set?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    disconnect?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    delete?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    connect?: CampaignRecipientWhereUniqueInput | CampaignRecipientWhereUniqueInput[]
+    update?: CampaignRecipientUpdateWithWhereUniqueWithoutCampaignInput | CampaignRecipientUpdateWithWhereUniqueWithoutCampaignInput[]
+    updateMany?: CampaignRecipientUpdateManyWithWhereWithoutCampaignInput | CampaignRecipientUpdateManyWithWhereWithoutCampaignInput[]
+    deleteMany?: CampaignRecipientScalarWhereInput | CampaignRecipientScalarWhereInput[]
+  }
+
+  export type CampaignCreateNestedOneWithoutRecipientsInput = {
+    create?: XOR<CampaignCreateWithoutRecipientsInput, CampaignUncheckedCreateWithoutRecipientsInput>
+    connectOrCreate?: CampaignCreateOrConnectWithoutRecipientsInput
+    connect?: CampaignWhereUniqueInput
+  }
+
+  export type MessageCreateNestedManyWithoutCampaignRecipientInput = {
+    create?: XOR<MessageCreateWithoutCampaignRecipientInput, MessageUncheckedCreateWithoutCampaignRecipientInput> | MessageCreateWithoutCampaignRecipientInput[] | MessageUncheckedCreateWithoutCampaignRecipientInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutCampaignRecipientInput | MessageCreateOrConnectWithoutCampaignRecipientInput[]
+    createMany?: MessageCreateManyCampaignRecipientInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type MessageUncheckedCreateNestedManyWithoutCampaignRecipientInput = {
+    create?: XOR<MessageCreateWithoutCampaignRecipientInput, MessageUncheckedCreateWithoutCampaignRecipientInput> | MessageCreateWithoutCampaignRecipientInput[] | MessageUncheckedCreateWithoutCampaignRecipientInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutCampaignRecipientInput | MessageCreateOrConnectWithoutCampaignRecipientInput[]
+    createMany?: MessageCreateManyCampaignRecipientInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type EnumCampaignRecipientStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CampaignRecipientStatus
+  }
+
+  export type CampaignUpdateOneRequiredWithoutRecipientsNestedInput = {
+    create?: XOR<CampaignCreateWithoutRecipientsInput, CampaignUncheckedCreateWithoutRecipientsInput>
+    connectOrCreate?: CampaignCreateOrConnectWithoutRecipientsInput
+    upsert?: CampaignUpsertWithoutRecipientsInput
+    connect?: CampaignWhereUniqueInput
+    update?: XOR<XOR<CampaignUpdateToOneWithWhereWithoutRecipientsInput, CampaignUpdateWithoutRecipientsInput>, CampaignUncheckedUpdateWithoutRecipientsInput>
+  }
+
+  export type MessageUpdateManyWithoutCampaignRecipientNestedInput = {
+    create?: XOR<MessageCreateWithoutCampaignRecipientInput, MessageUncheckedCreateWithoutCampaignRecipientInput> | MessageCreateWithoutCampaignRecipientInput[] | MessageUncheckedCreateWithoutCampaignRecipientInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutCampaignRecipientInput | MessageCreateOrConnectWithoutCampaignRecipientInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutCampaignRecipientInput | MessageUpsertWithWhereUniqueWithoutCampaignRecipientInput[]
+    createMany?: MessageCreateManyCampaignRecipientInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutCampaignRecipientInput | MessageUpdateWithWhereUniqueWithoutCampaignRecipientInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutCampaignRecipientInput | MessageUpdateManyWithWhereWithoutCampaignRecipientInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
+  export type MessageUncheckedUpdateManyWithoutCampaignRecipientNestedInput = {
+    create?: XOR<MessageCreateWithoutCampaignRecipientInput, MessageUncheckedCreateWithoutCampaignRecipientInput> | MessageCreateWithoutCampaignRecipientInput[] | MessageUncheckedCreateWithoutCampaignRecipientInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutCampaignRecipientInput | MessageCreateOrConnectWithoutCampaignRecipientInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutCampaignRecipientInput | MessageUpsertWithWhereUniqueWithoutCampaignRecipientInput[]
+    createMany?: MessageCreateManyCampaignRecipientInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutCampaignRecipientInput | MessageUpdateWithWhereUniqueWithoutCampaignRecipientInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutCampaignRecipientInput | MessageUpdateManyWithWhereWithoutCampaignRecipientInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
   export type TenantCreateNestedOneWithoutAuditLogsInput = {
@@ -22468,6 +27707,84 @@ export namespace Prisma {
     _max?: NestedEnumTemplateStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumCampaignStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignStatus | EnumCampaignStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignStatusFilter<$PrismaModel> | $Enums.CampaignStatus
+  }
+
+  export type NestedEnumCampaignSenderTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignSenderType | EnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignSenderTypeFilter<$PrismaModel> | $Enums.CampaignSenderType
+  }
+
+  export type NestedEnumCampaignStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignStatus | EnumCampaignStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignStatusWithAggregatesFilter<$PrismaModel> | $Enums.CampaignStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCampaignStatusFilter<$PrismaModel>
+    _max?: NestedEnumCampaignStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCampaignSenderTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignSenderType | EnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignSenderType[] | ListEnumCampaignSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignSenderTypeWithAggregatesFilter<$PrismaModel> | $Enums.CampaignSenderType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCampaignSenderTypeFilter<$PrismaModel>
+    _max?: NestedEnumCampaignSenderTypeFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumCampaignRecipientStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignRecipientStatus | EnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignRecipientStatusFilter<$PrismaModel> | $Enums.CampaignRecipientStatus
+  }
+
+  export type NestedEnumCampaignRecipientStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CampaignRecipientStatus | EnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CampaignRecipientStatus[] | ListEnumCampaignRecipientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCampaignRecipientStatusWithAggregatesFilter<$PrismaModel> | $Enums.CampaignRecipientStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCampaignRecipientStatusFilter<$PrismaModel>
+    _max?: NestedEnumCampaignRecipientStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumActorTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ActorType | EnumActorTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ActorType[] | ListEnumActorTypeFieldRefInput<$PrismaModel>
@@ -22499,6 +27816,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
     domains?: DomainCreateNestedManyWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTenantInput = {
@@ -22515,6 +27833,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
     domains?: DomainUncheckedCreateNestedManyWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTenantInput = {
@@ -22548,6 +27867,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     permissions?: ApiKeyPermissionCreateNestedManyWithoutSmtpAccountInput
     messages?: MessageCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountUncheckedCreateWithoutTenantInput = {
@@ -22571,6 +27891,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     permissions?: ApiKeyPermissionUncheckedCreateNestedManyWithoutSmtpAccountInput
     messages?: MessageUncheckedCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountCreateOrConnectWithoutTenantInput = {
@@ -22605,6 +27926,7 @@ export namespace Prisma {
     domain: DomainCreateNestedOneWithoutSendersInput
     messages?: MessageCreateNestedManyWithoutDomainSenderInput
     permissions?: ApiKeyDomainPermissionCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderUncheckedCreateWithoutTenantInput = {
@@ -22629,6 +27951,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     messages?: MessageUncheckedCreateNestedManyWithoutDomainSenderInput
     permissions?: ApiKeyDomainPermissionUncheckedCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderCreateOrConnectWithoutTenantInput = {
@@ -22690,6 +28013,7 @@ export namespace Prisma {
     status?: $Enums.TemplateStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    campaigns?: CampaignCreateNestedManyWithoutTemplateInput
   }
 
   export type TemplateUncheckedCreateWithoutTenantInput = {
@@ -22701,6 +28025,7 @@ export namespace Prisma {
     status?: $Enums.TemplateStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTemplateInput
   }
 
   export type TemplateCreateOrConnectWithoutTenantInput = {
@@ -22731,16 +28056,18 @@ export namespace Prisma {
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
-    apiKey: ApiKeyCreateNestedOneWithoutMessagesInput
+    apiKey?: ApiKeyCreateNestedOneWithoutMessagesInput
     smtpAccount?: SmtpAccountCreateNestedOneWithoutMessagesInput
     domainSender?: DomainSenderCreateNestedOneWithoutMessagesInput
+    campaignRecipient?: CampaignRecipientCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateWithoutTenantInput = {
     id?: string
-    apiKeyId: string
+    apiKeyId?: string | null
     smtpAccountId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -22890,6 +28217,92 @@ export namespace Prisma {
 
   export type DomainCreateManyTenantInputEnvelope = {
     data: DomainCreateManyTenantInput | DomainCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CampaignCreateWithoutTenantInput = {
+    id?: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCampaignsInput
+    smtpAccount?: SmtpAccountCreateNestedOneWithoutCampaignsInput
+    domainSender?: DomainSenderCreateNestedOneWithoutCampaignsInput
+    template?: TemplateCreateNestedOneWithoutCampaignsInput
+    recipients?: CampaignRecipientCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUncheckedCreateWithoutTenantInput = {
+    id?: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipients?: CampaignRecipientUncheckedCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignCreateOrConnectWithoutTenantInput = {
+    where: CampaignWhereUniqueInput
+    create: XOR<CampaignCreateWithoutTenantInput, CampaignUncheckedCreateWithoutTenantInput>
+  }
+
+  export type CampaignCreateManyTenantInputEnvelope = {
+    data: CampaignCreateManyTenantInput | CampaignCreateManyTenantInput[]
     skipDuplicates?: boolean
   }
 
@@ -23095,9 +28508,10 @@ export namespace Prisma {
     NOT?: MessageScalarWhereInput | MessageScalarWhereInput[]
     id?: StringFilter<"Message"> | string
     tenantId?: StringFilter<"Message"> | string
-    apiKeyId?: StringFilter<"Message"> | string
+    apiKeyId?: StringNullableFilter<"Message"> | string | null
     smtpAccountId?: StringNullableFilter<"Message"> | string | null
     domainSenderId?: StringNullableFilter<"Message"> | string | null
+    campaignRecipientId?: StringNullableFilter<"Message"> | string | null
     idempotencyKey?: StringFilter<"Message"> | string
     to?: JsonFilter<"Message">
     cc?: JsonFilter<"Message">
@@ -23222,6 +28636,63 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Domain"> | Date | string
   }
 
+  export type CampaignUpsertWithWhereUniqueWithoutTenantInput = {
+    where: CampaignWhereUniqueInput
+    update: XOR<CampaignUpdateWithoutTenantInput, CampaignUncheckedUpdateWithoutTenantInput>
+    create: XOR<CampaignCreateWithoutTenantInput, CampaignUncheckedCreateWithoutTenantInput>
+  }
+
+  export type CampaignUpdateWithWhereUniqueWithoutTenantInput = {
+    where: CampaignWhereUniqueInput
+    data: XOR<CampaignUpdateWithoutTenantInput, CampaignUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type CampaignUpdateManyWithWhereWithoutTenantInput = {
+    where: CampaignScalarWhereInput
+    data: XOR<CampaignUpdateManyMutationInput, CampaignUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type CampaignScalarWhereInput = {
+    AND?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+    OR?: CampaignScalarWhereInput[]
+    NOT?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+    id?: StringFilter<"Campaign"> | string
+    tenantId?: StringFilter<"Campaign"> | string
+    userId?: StringFilter<"Campaign"> | string
+    name?: StringFilter<"Campaign"> | string
+    status?: EnumCampaignStatusFilter<"Campaign"> | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFilter<"Campaign"> | $Enums.CampaignSenderType
+    smtpAccountId?: StringNullableFilter<"Campaign"> | string | null
+    domainSenderId?: StringNullableFilter<"Campaign"> | string | null
+    templateId?: StringNullableFilter<"Campaign"> | string | null
+    subject?: StringNullableFilter<"Campaign"> | string | null
+    html?: StringNullableFilter<"Campaign"> | string | null
+    text?: StringNullableFilter<"Campaign"> | string | null
+    fromName?: StringNullableFilter<"Campaign"> | string | null
+    replyTo?: StringNullableFilter<"Campaign"> | string | null
+    headers?: JsonNullableFilter<"Campaign">
+    perMinuteLimit?: IntNullableFilter<"Campaign"> | number | null
+    warmupEnabled?: BoolFilter<"Campaign"> | boolean
+    warmupStartPerMinute?: IntFilter<"Campaign"> | number
+    warmupStep?: IntFilter<"Campaign"> | number
+    warmupIntervalMinutes?: IntFilter<"Campaign"> | number
+    warmupMaxPerMinute?: IntFilter<"Campaign"> | number
+    trackOpens?: BoolFilter<"Campaign"> | boolean
+    trackClicks?: BoolFilter<"Campaign"> | boolean
+    trackReplies?: BoolFilter<"Campaign"> | boolean
+    totalRecipients?: IntFilter<"Campaign"> | number
+    queuedCount?: IntFilter<"Campaign"> | number
+    sentCount?: IntFilter<"Campaign"> | number
+    failedCount?: IntFilter<"Campaign"> | number
+    openedCount?: IntFilter<"Campaign"> | number
+    clickedCount?: IntFilter<"Campaign"> | number
+    repliedCount?: IntFilter<"Campaign"> | number
+    startedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
+    completedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
+    createdAt?: DateTimeFilter<"Campaign"> | Date | string
+    updatedAt?: DateTimeFilter<"Campaign"> | Date | string
+  }
+
   export type TenantCreateWithoutUsersInput = {
     id?: string
     name: string
@@ -23239,6 +28710,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutUsersInput = {
@@ -23258,6 +28730,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutUsersInput = {
@@ -23352,6 +28825,92 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CampaignCreateWithoutUserInput = {
+    id?: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCampaignsInput
+    smtpAccount?: SmtpAccountCreateNestedOneWithoutCampaignsInput
+    domainSender?: DomainSenderCreateNestedOneWithoutCampaignsInput
+    template?: TemplateCreateNestedOneWithoutCampaignsInput
+    recipients?: CampaignRecipientCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUncheckedCreateWithoutUserInput = {
+    id?: string
+    tenantId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipients?: CampaignRecipientUncheckedCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignCreateOrConnectWithoutUserInput = {
+    where: CampaignWhereUniqueInput
+    create: XOR<CampaignCreateWithoutUserInput, CampaignUncheckedCreateWithoutUserInput>
+  }
+
+  export type CampaignCreateManyUserInputEnvelope = {
+    data: CampaignCreateManyUserInput | CampaignCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TenantUpsertWithoutUsersInput = {
     update: XOR<TenantUpdateWithoutUsersInput, TenantUncheckedUpdateWithoutUsersInput>
     create: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
@@ -23380,6 +28939,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutUsersInput = {
@@ -23399,6 +28959,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CompanyUpsertWithoutUserInput = {
@@ -23454,6 +29015,22 @@ export namespace Prisma {
     data: XOR<DomainUpdateManyMutationInput, DomainUncheckedUpdateManyWithoutUserInput>
   }
 
+  export type CampaignUpsertWithWhereUniqueWithoutUserInput = {
+    where: CampaignWhereUniqueInput
+    update: XOR<CampaignUpdateWithoutUserInput, CampaignUncheckedUpdateWithoutUserInput>
+    create: XOR<CampaignCreateWithoutUserInput, CampaignUncheckedCreateWithoutUserInput>
+  }
+
+  export type CampaignUpdateWithWhereUniqueWithoutUserInput = {
+    where: CampaignWhereUniqueInput
+    data: XOR<CampaignUpdateWithoutUserInput, CampaignUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CampaignUpdateManyWithWhereWithoutUserInput = {
+    where: CampaignScalarWhereInput
+    data: XOR<CampaignUpdateManyMutationInput, CampaignUncheckedUpdateManyWithoutUserInput>
+  }
+
   export type TenantCreateWithoutDomainsInput = {
     id?: string
     name: string
@@ -23471,6 +29048,7 @@ export namespace Prisma {
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutDomainsInput = {
@@ -23490,6 +29068,7 @@ export namespace Prisma {
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutDomainsInput = {
@@ -23511,6 +29090,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutUsersInput
     company?: CompanyCreateNestedOneWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDomainsInput = {
@@ -23527,6 +29107,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDomainsInput = {
@@ -23556,6 +29137,7 @@ export namespace Prisma {
     tenant: TenantCreateNestedOneWithoutDomainSendersInput
     messages?: MessageCreateNestedManyWithoutDomainSenderInput
     permissions?: ApiKeyDomainPermissionCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderUncheckedCreateWithoutDomainInput = {
@@ -23580,6 +29162,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     messages?: MessageUncheckedCreateNestedManyWithoutDomainSenderInput
     permissions?: ApiKeyDomainPermissionUncheckedCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderCreateOrConnectWithoutDomainInput = {
@@ -23620,6 +29203,7 @@ export namespace Prisma {
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutDomainsInput = {
@@ -23639,6 +29223,7 @@ export namespace Prisma {
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserUpsertWithoutDomainsInput = {
@@ -23666,6 +29251,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutUsersNestedInput
     company?: CompanyUpdateOneWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDomainsInput = {
@@ -23682,6 +29268,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type DomainSenderUpsertWithWhereUniqueWithoutDomainInput = {
@@ -23717,6 +29304,7 @@ export namespace Prisma {
     messages?: MessageCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCompaniesInput = {
@@ -23736,6 +29324,7 @@ export namespace Prisma {
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCompaniesInput = {
@@ -23757,6 +29346,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutUsersInput
     domains?: DomainCreateNestedManyWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCompanyInput = {
@@ -23773,6 +29363,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     domains?: DomainUncheckedCreateNestedManyWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCompanyInput = {
@@ -23808,6 +29399,7 @@ export namespace Prisma {
     messages?: MessageUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCompaniesInput = {
@@ -23827,6 +29419,7 @@ export namespace Prisma {
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserUpsertWithoutCompanyInput = {
@@ -23854,6 +29447,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutUsersNestedInput
     domains?: DomainUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompanyInput = {
@@ -23870,6 +29464,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     domains?: DomainUncheckedUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TenantCreateWithoutSmtpAccountsInput = {
@@ -23889,6 +29484,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutSmtpAccountsInput = {
@@ -23908,6 +29504,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutSmtpAccountsInput = {
@@ -23952,15 +29549,17 @@ export namespace Prisma {
     queuedAt?: Date | string
     sentAt?: Date | string | null
     tenant: TenantCreateNestedOneWithoutMessagesInput
-    apiKey: ApiKeyCreateNestedOneWithoutMessagesInput
+    apiKey?: ApiKeyCreateNestedOneWithoutMessagesInput
     domainSender?: DomainSenderCreateNestedOneWithoutMessagesInput
+    campaignRecipient?: CampaignRecipientCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateWithoutSmtpAccountInput = {
     id?: string
     tenantId: string
-    apiKeyId: string
+    apiKeyId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -23986,6 +29585,92 @@ export namespace Prisma {
 
   export type MessageCreateManySmtpAccountInputEnvelope = {
     data: MessageCreateManySmtpAccountInput | MessageCreateManySmtpAccountInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CampaignCreateWithoutSmtpAccountInput = {
+    id?: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCampaignsInput
+    user: UserCreateNestedOneWithoutCampaignsInput
+    domainSender?: DomainSenderCreateNestedOneWithoutCampaignsInput
+    template?: TemplateCreateNestedOneWithoutCampaignsInput
+    recipients?: CampaignRecipientCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUncheckedCreateWithoutSmtpAccountInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipients?: CampaignRecipientUncheckedCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignCreateOrConnectWithoutSmtpAccountInput = {
+    where: CampaignWhereUniqueInput
+    create: XOR<CampaignCreateWithoutSmtpAccountInput, CampaignUncheckedCreateWithoutSmtpAccountInput>
+  }
+
+  export type CampaignCreateManySmtpAccountInputEnvelope = {
+    data: CampaignCreateManySmtpAccountInput | CampaignCreateManySmtpAccountInput[]
     skipDuplicates?: boolean
   }
 
@@ -24017,6 +29702,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutSmtpAccountsInput = {
@@ -24036,6 +29722,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ApiKeyPermissionUpsertWithWhereUniqueWithoutSmtpAccountInput = {
@@ -24078,6 +29765,22 @@ export namespace Prisma {
     data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutSmtpAccountInput>
   }
 
+  export type CampaignUpsertWithWhereUniqueWithoutSmtpAccountInput = {
+    where: CampaignWhereUniqueInput
+    update: XOR<CampaignUpdateWithoutSmtpAccountInput, CampaignUncheckedUpdateWithoutSmtpAccountInput>
+    create: XOR<CampaignCreateWithoutSmtpAccountInput, CampaignUncheckedCreateWithoutSmtpAccountInput>
+  }
+
+  export type CampaignUpdateWithWhereUniqueWithoutSmtpAccountInput = {
+    where: CampaignWhereUniqueInput
+    data: XOR<CampaignUpdateWithoutSmtpAccountInput, CampaignUncheckedUpdateWithoutSmtpAccountInput>
+  }
+
+  export type CampaignUpdateManyWithWhereWithoutSmtpAccountInput = {
+    where: CampaignScalarWhereInput
+    data: XOR<CampaignUpdateManyMutationInput, CampaignUncheckedUpdateManyWithoutSmtpAccountInput>
+  }
+
   export type TenantCreateWithoutDomainSendersInput = {
     id?: string
     name: string
@@ -24095,6 +29798,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutDomainSendersInput = {
@@ -24114,6 +29818,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutDomainSendersInput = {
@@ -24191,15 +29896,17 @@ export namespace Prisma {
     queuedAt?: Date | string
     sentAt?: Date | string | null
     tenant: TenantCreateNestedOneWithoutMessagesInput
-    apiKey: ApiKeyCreateNestedOneWithoutMessagesInput
+    apiKey?: ApiKeyCreateNestedOneWithoutMessagesInput
     smtpAccount?: SmtpAccountCreateNestedOneWithoutMessagesInput
+    campaignRecipient?: CampaignRecipientCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateWithoutDomainSenderInput = {
     id?: string
     tenantId: string
-    apiKeyId: string
+    apiKeyId?: string | null
     smtpAccountId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -24246,6 +29953,92 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CampaignCreateWithoutDomainSenderInput = {
+    id?: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCampaignsInput
+    user: UserCreateNestedOneWithoutCampaignsInput
+    smtpAccount?: SmtpAccountCreateNestedOneWithoutCampaignsInput
+    template?: TemplateCreateNestedOneWithoutCampaignsInput
+    recipients?: CampaignRecipientCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUncheckedCreateWithoutDomainSenderInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipients?: CampaignRecipientUncheckedCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignCreateOrConnectWithoutDomainSenderInput = {
+    where: CampaignWhereUniqueInput
+    create: XOR<CampaignCreateWithoutDomainSenderInput, CampaignUncheckedCreateWithoutDomainSenderInput>
+  }
+
+  export type CampaignCreateManyDomainSenderInputEnvelope = {
+    data: CampaignCreateManyDomainSenderInput | CampaignCreateManyDomainSenderInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TenantUpsertWithoutDomainSendersInput = {
     update: XOR<TenantUpdateWithoutDomainSendersInput, TenantUncheckedUpdateWithoutDomainSendersInput>
     create: XOR<TenantCreateWithoutDomainSendersInput, TenantUncheckedCreateWithoutDomainSendersInput>
@@ -24274,6 +30067,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutDomainSendersInput = {
@@ -24293,6 +30087,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type DomainUpsertWithoutSendersInput = {
@@ -24392,6 +30187,22 @@ export namespace Prisma {
     domainSenderId?: StringFilter<"ApiKeyDomainPermission"> | string
   }
 
+  export type CampaignUpsertWithWhereUniqueWithoutDomainSenderInput = {
+    where: CampaignWhereUniqueInput
+    update: XOR<CampaignUpdateWithoutDomainSenderInput, CampaignUncheckedUpdateWithoutDomainSenderInput>
+    create: XOR<CampaignCreateWithoutDomainSenderInput, CampaignUncheckedCreateWithoutDomainSenderInput>
+  }
+
+  export type CampaignUpdateWithWhereUniqueWithoutDomainSenderInput = {
+    where: CampaignWhereUniqueInput
+    data: XOR<CampaignUpdateWithoutDomainSenderInput, CampaignUncheckedUpdateWithoutDomainSenderInput>
+  }
+
+  export type CampaignUpdateManyWithWhereWithoutDomainSenderInput = {
+    where: CampaignScalarWhereInput
+    data: XOR<CampaignUpdateManyMutationInput, CampaignUncheckedUpdateManyWithoutDomainSenderInput>
+  }
+
   export type TenantCreateWithoutApiKeysInput = {
     id?: string
     name: string
@@ -24409,6 +30220,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutApiKeysInput = {
@@ -24428,6 +30240,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutApiKeysInput = {
@@ -24492,6 +30305,7 @@ export namespace Prisma {
     tenant: TenantCreateNestedOneWithoutMessagesInput
     smtpAccount?: SmtpAccountCreateNestedOneWithoutMessagesInput
     domainSender?: DomainSenderCreateNestedOneWithoutMessagesInput
+    campaignRecipient?: CampaignRecipientCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateWithoutApiKeyInput = {
@@ -24499,6 +30313,7 @@ export namespace Prisma {
     tenantId: string
     smtpAccountId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -24555,6 +30370,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutApiKeysInput = {
@@ -24574,6 +30390,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ApiKeyPermissionUpsertWithWhereUniqueWithoutApiKeyInput = {
@@ -24680,6 +30497,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutSmtpAccountsInput
     messages?: MessageCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountUncheckedCreateWithoutPermissionsInput = {
@@ -24703,6 +30521,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: MessageUncheckedCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountCreateOrConnectWithoutPermissionsInput = {
@@ -24783,6 +30602,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutSmtpAccountsNestedInput
     messages?: MessageUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type SmtpAccountUncheckedUpdateWithoutPermissionsInput = {
@@ -24806,6 +30626,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type ApiKeyCreateWithoutDomainPermissionsInput = {
@@ -24865,6 +30686,7 @@ export namespace Prisma {
     tenant: TenantCreateNestedOneWithoutDomainSendersInput
     domain: DomainCreateNestedOneWithoutSendersInput
     messages?: MessageCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderUncheckedCreateWithoutPermissionsInput = {
@@ -24889,6 +30711,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: MessageUncheckedCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderCreateOrConnectWithoutPermissionsInput = {
@@ -24970,6 +30793,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneRequiredWithoutDomainSendersNestedInput
     domain?: DomainUpdateOneRequiredWithoutSendersNestedInput
     messages?: MessageUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderUncheckedUpdateWithoutPermissionsInput = {
@@ -24994,6 +30818,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type TenantCreateWithoutMessagesInput = {
@@ -25013,6 +30838,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutMessagesInput = {
@@ -25032,6 +30858,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutMessagesInput = {
@@ -25095,6 +30922,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutSmtpAccountsInput
     permissions?: ApiKeyPermissionCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountUncheckedCreateWithoutMessagesInput = {
@@ -25118,6 +30946,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     permissions?: ApiKeyPermissionUncheckedCreateNestedManyWithoutSmtpAccountInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutSmtpAccountInput
   }
 
   export type SmtpAccountCreateOrConnectWithoutMessagesInput = {
@@ -25147,6 +30976,7 @@ export namespace Prisma {
     tenant: TenantCreateNestedOneWithoutDomainSendersInput
     domain: DomainCreateNestedOneWithoutSendersInput
     permissions?: ApiKeyDomainPermissionCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderUncheckedCreateWithoutMessagesInput = {
@@ -25171,11 +31001,63 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     permissions?: ApiKeyDomainPermissionUncheckedCreateNestedManyWithoutDomainSenderInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutDomainSenderInput
   }
 
   export type DomainSenderCreateOrConnectWithoutMessagesInput = {
     where: DomainSenderWhereUniqueInput
     create: XOR<DomainSenderCreateWithoutMessagesInput, DomainSenderUncheckedCreateWithoutMessagesInput>
+  }
+
+  export type CampaignRecipientCreateWithoutMessagesInput = {
+    id?: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    campaign: CampaignCreateNestedOneWithoutRecipientsInput
+  }
+
+  export type CampaignRecipientUncheckedCreateWithoutMessagesInput = {
+    id?: string
+    campaignId: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CampaignRecipientCreateOrConnectWithoutMessagesInput = {
+    where: CampaignRecipientWhereUniqueInput
+    create: XOR<CampaignRecipientCreateWithoutMessagesInput, CampaignRecipientUncheckedCreateWithoutMessagesInput>
   }
 
   export type TenantUpsertWithoutMessagesInput = {
@@ -25206,6 +31088,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutMessagesInput = {
@@ -25225,6 +31108,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ApiKeyUpsertWithoutMessagesInput = {
@@ -25300,6 +31184,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutSmtpAccountsNestedInput
     permissions?: ApiKeyPermissionUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type SmtpAccountUncheckedUpdateWithoutMessagesInput = {
@@ -25323,6 +31208,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     permissions?: ApiKeyPermissionUncheckedUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type DomainSenderUpsertWithoutMessagesInput = {
@@ -25358,6 +31244,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneRequiredWithoutDomainSendersNestedInput
     domain?: DomainUpdateOneRequiredWithoutSendersNestedInput
     permissions?: ApiKeyDomainPermissionUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderUncheckedUpdateWithoutMessagesInput = {
@@ -25382,6 +31269,64 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     permissions?: ApiKeyDomainPermissionUncheckedUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutDomainSenderNestedInput
+  }
+
+  export type CampaignRecipientUpsertWithoutMessagesInput = {
+    update: XOR<CampaignRecipientUpdateWithoutMessagesInput, CampaignRecipientUncheckedUpdateWithoutMessagesInput>
+    create: XOR<CampaignRecipientCreateWithoutMessagesInput, CampaignRecipientUncheckedCreateWithoutMessagesInput>
+    where?: CampaignRecipientWhereInput
+  }
+
+  export type CampaignRecipientUpdateToOneWithWhereWithoutMessagesInput = {
+    where?: CampaignRecipientWhereInput
+    data: XOR<CampaignRecipientUpdateWithoutMessagesInput, CampaignRecipientUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type CampaignRecipientUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    campaign?: CampaignUpdateOneRequiredWithoutRecipientsNestedInput
+  }
+
+  export type CampaignRecipientUncheckedUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    campaignId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TenantCreateWithoutTemplatesInput = {
@@ -25401,6 +31346,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutTemplatesInput = {
@@ -25420,11 +31366,98 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutTemplatesInput = {
     where: TenantWhereUniqueInput
     create: XOR<TenantCreateWithoutTemplatesInput, TenantUncheckedCreateWithoutTemplatesInput>
+  }
+
+  export type CampaignCreateWithoutTemplateInput = {
+    id?: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCampaignsInput
+    user: UserCreateNestedOneWithoutCampaignsInput
+    smtpAccount?: SmtpAccountCreateNestedOneWithoutCampaignsInput
+    domainSender?: DomainSenderCreateNestedOneWithoutCampaignsInput
+    recipients?: CampaignRecipientCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUncheckedCreateWithoutTemplateInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipients?: CampaignRecipientUncheckedCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignCreateOrConnectWithoutTemplateInput = {
+    where: CampaignWhereUniqueInput
+    create: XOR<CampaignCreateWithoutTemplateInput, CampaignUncheckedCreateWithoutTemplateInput>
+  }
+
+  export type CampaignCreateManyTemplateInputEnvelope = {
+    data: CampaignCreateManyTemplateInput | CampaignCreateManyTemplateInput[]
+    skipDuplicates?: boolean
   }
 
   export type TenantUpsertWithoutTemplatesInput = {
@@ -25455,6 +31488,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutTemplatesInput = {
@@ -25474,6 +31508,835 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type CampaignUpsertWithWhereUniqueWithoutTemplateInput = {
+    where: CampaignWhereUniqueInput
+    update: XOR<CampaignUpdateWithoutTemplateInput, CampaignUncheckedUpdateWithoutTemplateInput>
+    create: XOR<CampaignCreateWithoutTemplateInput, CampaignUncheckedCreateWithoutTemplateInput>
+  }
+
+  export type CampaignUpdateWithWhereUniqueWithoutTemplateInput = {
+    where: CampaignWhereUniqueInput
+    data: XOR<CampaignUpdateWithoutTemplateInput, CampaignUncheckedUpdateWithoutTemplateInput>
+  }
+
+  export type CampaignUpdateManyWithWhereWithoutTemplateInput = {
+    where: CampaignScalarWhereInput
+    data: XOR<CampaignUpdateManyMutationInput, CampaignUncheckedUpdateManyWithoutTemplateInput>
+  }
+
+  export type TenantCreateWithoutCampaignsInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    templates?: TemplateCreateNestedManyWithoutTenantInput
+    messages?: MessageCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogCreateNestedManyWithoutTenantInput
+    companies?: CompanyCreateNestedManyWithoutTenantInput
+    domains?: DomainCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutCampaignsInput = {
+    id?: string
+    name: string
+    plan?: string
+    status?: $Enums.TenantStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dailySentCount?: number
+    dailyCountResetAt?: Date | string | null
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    smtpAccounts?: SmtpAccountUncheckedCreateNestedManyWithoutTenantInput
+    domainSenders?: DomainSenderUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    templates?: TemplateUncheckedCreateNestedManyWithoutTenantInput
+    messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutTenantInput
+    companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
+    domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutCampaignsInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutCampaignsInput, TenantUncheckedCreateWithoutCampaignsInput>
+  }
+
+  export type UserCreateWithoutCampaignsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    role?: $Enums.UserRole
+    mfaEnabled?: boolean
+    mfaSecretEnc?: string | null
+    mfaSecretIv?: string | null
+    mfaSecretTag?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutUsersInput
+    company?: CompanyCreateNestedOneWithoutUserInput
+    domains?: DomainCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCampaignsInput = {
+    id?: string
+    tenantId: string
+    email: string
+    passwordHash: string
+    role?: $Enums.UserRole
+    mfaEnabled?: boolean
+    mfaSecretEnc?: string | null
+    mfaSecretIv?: string | null
+    mfaSecretTag?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company?: CompanyUncheckedCreateNestedOneWithoutUserInput
+    domains?: DomainUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCampaignsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCampaignsInput, UserUncheckedCreateWithoutCampaignsInput>
+  }
+
+  export type SmtpAccountCreateWithoutCampaignsInput = {
+    id?: string
+    label: string
+    gmailAddress: string
+    encryptedAppPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perMinuteLimit?: number
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutSmtpAccountsInput
+    permissions?: ApiKeyPermissionCreateNestedManyWithoutSmtpAccountInput
+    messages?: MessageCreateNestedManyWithoutSmtpAccountInput
+  }
+
+  export type SmtpAccountUncheckedCreateWithoutCampaignsInput = {
+    id?: string
+    tenantId: string
+    label: string
+    gmailAddress: string
+    encryptedAppPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perMinuteLimit?: number
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissions?: ApiKeyPermissionUncheckedCreateNestedManyWithoutSmtpAccountInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSmtpAccountInput
+  }
+
+  export type SmtpAccountCreateOrConnectWithoutCampaignsInput = {
+    where: SmtpAccountWhereUniqueInput
+    create: XOR<SmtpAccountCreateWithoutCampaignsInput, SmtpAccountUncheckedCreateWithoutCampaignsInput>
+  }
+
+  export type DomainSenderCreateWithoutCampaignsInput = {
+    id?: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutDomainSendersInput
+    domain: DomainCreateNestedOneWithoutSendersInput
+    messages?: MessageCreateNestedManyWithoutDomainSenderInput
+    permissions?: ApiKeyDomainPermissionCreateNestedManyWithoutDomainSenderInput
+  }
+
+  export type DomainSenderUncheckedCreateWithoutCampaignsInput = {
+    id?: string
+    tenantId: string
+    domainId: string
+    label: string
+    emailAddress: string
+    username: string
+    encryptedPassword: string
+    iv: string
+    authTag: string
+    keyVersion: string
+    status?: $Enums.SenderStatus
+    perDayLimit?: number
+    sentTodayCount?: number
+    sentTodayResetAt?: Date | string | null
+    lastSuccessAt?: Date | string | null
+    lastErrorAt?: Date | string | null
+    errorStreak?: number
+    healthScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: MessageUncheckedCreateNestedManyWithoutDomainSenderInput
+    permissions?: ApiKeyDomainPermissionUncheckedCreateNestedManyWithoutDomainSenderInput
+  }
+
+  export type DomainSenderCreateOrConnectWithoutCampaignsInput = {
+    where: DomainSenderWhereUniqueInput
+    create: XOR<DomainSenderCreateWithoutCampaignsInput, DomainSenderUncheckedCreateWithoutCampaignsInput>
+  }
+
+  export type TemplateCreateWithoutCampaignsInput = {
+    id?: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutTemplatesInput
+  }
+
+  export type TemplateUncheckedCreateWithoutCampaignsInput = {
+    id?: string
+    tenantId: string
+    name: string
+    subject: string
+    html: string
+    text?: string | null
+    status?: $Enums.TemplateStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TemplateCreateOrConnectWithoutCampaignsInput = {
+    where: TemplateWhereUniqueInput
+    create: XOR<TemplateCreateWithoutCampaignsInput, TemplateUncheckedCreateWithoutCampaignsInput>
+  }
+
+  export type CampaignRecipientCreateWithoutCampaignInput = {
+    id?: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: MessageCreateNestedManyWithoutCampaignRecipientInput
+  }
+
+  export type CampaignRecipientUncheckedCreateWithoutCampaignInput = {
+    id?: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: MessageUncheckedCreateNestedManyWithoutCampaignRecipientInput
+  }
+
+  export type CampaignRecipientCreateOrConnectWithoutCampaignInput = {
+    where: CampaignRecipientWhereUniqueInput
+    create: XOR<CampaignRecipientCreateWithoutCampaignInput, CampaignRecipientUncheckedCreateWithoutCampaignInput>
+  }
+
+  export type CampaignRecipientCreateManyCampaignInputEnvelope = {
+    data: CampaignRecipientCreateManyCampaignInput | CampaignRecipientCreateManyCampaignInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TenantUpsertWithoutCampaignsInput = {
+    update: XOR<TenantUpdateWithoutCampaignsInput, TenantUncheckedUpdateWithoutCampaignsInput>
+    create: XOR<TenantCreateWithoutCampaignsInput, TenantUncheckedCreateWithoutCampaignsInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutCampaignsInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutCampaignsInput, TenantUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type TenantUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUpdateManyWithoutTenantNestedInput
+    messages?: MessageUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUpdateManyWithoutTenantNestedInput
+    domains?: DomainUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    status?: EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dailySentCount?: IntFieldUpdateOperationsInput | number
+    dailyCountResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    smtpAccounts?: SmtpAccountUncheckedUpdateManyWithoutTenantNestedInput
+    domainSenders?: DomainSenderUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    templates?: TemplateUncheckedUpdateManyWithoutTenantNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+    companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type UserUpsertWithoutCampaignsInput = {
+    update: XOR<UserUpdateWithoutCampaignsInput, UserUncheckedUpdateWithoutCampaignsInput>
+    create: XOR<UserCreateWithoutCampaignsInput, UserUncheckedCreateWithoutCampaignsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCampaignsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCampaignsInput, UserUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type UserUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    mfaSecretEnc?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretIv?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretTag?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutUsersNestedInput
+    company?: CompanyUpdateOneWithoutUserNestedInput
+    domains?: DomainUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    mfaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    mfaSecretEnc?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretIv?: NullableStringFieldUpdateOperationsInput | string | null
+    mfaSecretTag?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
+    domains?: DomainUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type SmtpAccountUpsertWithoutCampaignsInput = {
+    update: XOR<SmtpAccountUpdateWithoutCampaignsInput, SmtpAccountUncheckedUpdateWithoutCampaignsInput>
+    create: XOR<SmtpAccountCreateWithoutCampaignsInput, SmtpAccountUncheckedCreateWithoutCampaignsInput>
+    where?: SmtpAccountWhereInput
+  }
+
+  export type SmtpAccountUpdateToOneWithWhereWithoutCampaignsInput = {
+    where?: SmtpAccountWhereInput
+    data: XOR<SmtpAccountUpdateWithoutCampaignsInput, SmtpAccountUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type SmtpAccountUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    gmailAddress?: StringFieldUpdateOperationsInput | string
+    encryptedAppPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perMinuteLimit?: IntFieldUpdateOperationsInput | number
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutSmtpAccountsNestedInput
+    permissions?: ApiKeyPermissionUpdateManyWithoutSmtpAccountNestedInput
+    messages?: MessageUpdateManyWithoutSmtpAccountNestedInput
+  }
+
+  export type SmtpAccountUncheckedUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    gmailAddress?: StringFieldUpdateOperationsInput | string
+    encryptedAppPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perMinuteLimit?: IntFieldUpdateOperationsInput | number
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissions?: ApiKeyPermissionUncheckedUpdateManyWithoutSmtpAccountNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSmtpAccountNestedInput
+  }
+
+  export type DomainSenderUpsertWithoutCampaignsInput = {
+    update: XOR<DomainSenderUpdateWithoutCampaignsInput, DomainSenderUncheckedUpdateWithoutCampaignsInput>
+    create: XOR<DomainSenderCreateWithoutCampaignsInput, DomainSenderUncheckedCreateWithoutCampaignsInput>
+    where?: DomainSenderWhereInput
+  }
+
+  export type DomainSenderUpdateToOneWithWhereWithoutCampaignsInput = {
+    where?: DomainSenderWhereInput
+    data: XOR<DomainSenderUpdateWithoutCampaignsInput, DomainSenderUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type DomainSenderUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutDomainSendersNestedInput
+    domain?: DomainUpdateOneRequiredWithoutSendersNestedInput
+    messages?: MessageUpdateManyWithoutDomainSenderNestedInput
+    permissions?: ApiKeyDomainPermissionUpdateManyWithoutDomainSenderNestedInput
+  }
+
+  export type DomainSenderUncheckedUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    domainId?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    emailAddress?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    encryptedPassword?: StringFieldUpdateOperationsInput | string
+    iv?: StringFieldUpdateOperationsInput | string
+    authTag?: StringFieldUpdateOperationsInput | string
+    keyVersion?: StringFieldUpdateOperationsInput | string
+    status?: EnumSenderStatusFieldUpdateOperationsInput | $Enums.SenderStatus
+    perDayLimit?: IntFieldUpdateOperationsInput | number
+    sentTodayCount?: IntFieldUpdateOperationsInput | number
+    sentTodayResetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorStreak?: IntFieldUpdateOperationsInput | number
+    healthScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUncheckedUpdateManyWithoutDomainSenderNestedInput
+    permissions?: ApiKeyDomainPermissionUncheckedUpdateManyWithoutDomainSenderNestedInput
+  }
+
+  export type TemplateUpsertWithoutCampaignsInput = {
+    update: XOR<TemplateUpdateWithoutCampaignsInput, TemplateUncheckedUpdateWithoutCampaignsInput>
+    create: XOR<TemplateCreateWithoutCampaignsInput, TemplateUncheckedCreateWithoutCampaignsInput>
+    where?: TemplateWhereInput
+  }
+
+  export type TemplateUpdateToOneWithWhereWithoutCampaignsInput = {
+    where?: TemplateWhereInput
+    data: XOR<TemplateUpdateWithoutCampaignsInput, TemplateUncheckedUpdateWithoutCampaignsInput>
+  }
+
+  export type TemplateUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutTemplatesNestedInput
+  }
+
+  export type TemplateUncheckedUpdateWithoutCampaignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    html?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CampaignRecipientUpsertWithWhereUniqueWithoutCampaignInput = {
+    where: CampaignRecipientWhereUniqueInput
+    update: XOR<CampaignRecipientUpdateWithoutCampaignInput, CampaignRecipientUncheckedUpdateWithoutCampaignInput>
+    create: XOR<CampaignRecipientCreateWithoutCampaignInput, CampaignRecipientUncheckedCreateWithoutCampaignInput>
+  }
+
+  export type CampaignRecipientUpdateWithWhereUniqueWithoutCampaignInput = {
+    where: CampaignRecipientWhereUniqueInput
+    data: XOR<CampaignRecipientUpdateWithoutCampaignInput, CampaignRecipientUncheckedUpdateWithoutCampaignInput>
+  }
+
+  export type CampaignRecipientUpdateManyWithWhereWithoutCampaignInput = {
+    where: CampaignRecipientScalarWhereInput
+    data: XOR<CampaignRecipientUpdateManyMutationInput, CampaignRecipientUncheckedUpdateManyWithoutCampaignInput>
+  }
+
+  export type CampaignRecipientScalarWhereInput = {
+    AND?: CampaignRecipientScalarWhereInput | CampaignRecipientScalarWhereInput[]
+    OR?: CampaignRecipientScalarWhereInput[]
+    NOT?: CampaignRecipientScalarWhereInput | CampaignRecipientScalarWhereInput[]
+    id?: StringFilter<"CampaignRecipient"> | string
+    campaignId?: StringFilter<"CampaignRecipient"> | string
+    email?: StringFilter<"CampaignRecipient"> | string
+    name?: StringNullableFilter<"CampaignRecipient"> | string | null
+    status?: EnumCampaignRecipientStatusFilter<"CampaignRecipient"> | $Enums.CampaignRecipientStatus
+    attempts?: IntFilter<"CampaignRecipient"> | number
+    lastError?: StringNullableFilter<"CampaignRecipient"> | string | null
+    sentAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    openedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    openCount?: IntFilter<"CampaignRecipient"> | number
+    clickedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    clickCount?: IntFilter<"CampaignRecipient"> | number
+    clickedUrl?: StringNullableFilter<"CampaignRecipient"> | string | null
+    repliedAt?: DateTimeNullableFilter<"CampaignRecipient"> | Date | string | null
+    replyCount?: IntFilter<"CampaignRecipient"> | number
+    messageId?: StringNullableFilter<"CampaignRecipient"> | string | null
+    variables?: JsonNullableFilter<"CampaignRecipient">
+    trackingToken?: StringFilter<"CampaignRecipient"> | string
+    createdAt?: DateTimeFilter<"CampaignRecipient"> | Date | string
+    updatedAt?: DateTimeFilter<"CampaignRecipient"> | Date | string
+  }
+
+  export type CampaignCreateWithoutRecipientsInput = {
+    id?: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutCampaignsInput
+    user: UserCreateNestedOneWithoutCampaignsInput
+    smtpAccount?: SmtpAccountCreateNestedOneWithoutCampaignsInput
+    domainSender?: DomainSenderCreateNestedOneWithoutCampaignsInput
+    template?: TemplateCreateNestedOneWithoutCampaignsInput
+  }
+
+  export type CampaignUncheckedCreateWithoutRecipientsInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CampaignCreateOrConnectWithoutRecipientsInput = {
+    where: CampaignWhereUniqueInput
+    create: XOR<CampaignCreateWithoutRecipientsInput, CampaignUncheckedCreateWithoutRecipientsInput>
+  }
+
+  export type MessageCreateWithoutCampaignRecipientInput = {
+    id?: string
+    idempotencyKey: string
+    to: JsonNullValueInput | InputJsonValue
+    cc: JsonNullValueInput | InputJsonValue
+    bcc: JsonNullValueInput | InputJsonValue
+    subject: string
+    text?: string | null
+    html?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    status?: $Enums.MessageStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    queuedAt?: Date | string
+    sentAt?: Date | string | null
+    tenant: TenantCreateNestedOneWithoutMessagesInput
+    apiKey?: ApiKeyCreateNestedOneWithoutMessagesInput
+    smtpAccount?: SmtpAccountCreateNestedOneWithoutMessagesInput
+    domainSender?: DomainSenderCreateNestedOneWithoutMessagesInput
+  }
+
+  export type MessageUncheckedCreateWithoutCampaignRecipientInput = {
+    id?: string
+    tenantId: string
+    apiKeyId?: string | null
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    idempotencyKey: string
+    to: JsonNullValueInput | InputJsonValue
+    cc: JsonNullValueInput | InputJsonValue
+    bcc: JsonNullValueInput | InputJsonValue
+    subject: string
+    text?: string | null
+    html?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    status?: $Enums.MessageStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    queuedAt?: Date | string
+    sentAt?: Date | string | null
+  }
+
+  export type MessageCreateOrConnectWithoutCampaignRecipientInput = {
+    where: MessageWhereUniqueInput
+    create: XOR<MessageCreateWithoutCampaignRecipientInput, MessageUncheckedCreateWithoutCampaignRecipientInput>
+  }
+
+  export type MessageCreateManyCampaignRecipientInputEnvelope = {
+    data: MessageCreateManyCampaignRecipientInput | MessageCreateManyCampaignRecipientInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CampaignUpsertWithoutRecipientsInput = {
+    update: XOR<CampaignUpdateWithoutRecipientsInput, CampaignUncheckedUpdateWithoutRecipientsInput>
+    create: XOR<CampaignCreateWithoutRecipientsInput, CampaignUncheckedCreateWithoutRecipientsInput>
+    where?: CampaignWhereInput
+  }
+
+  export type CampaignUpdateToOneWithWhereWithoutRecipientsInput = {
+    where?: CampaignWhereInput
+    data: XOR<CampaignUpdateWithoutRecipientsInput, CampaignUncheckedUpdateWithoutRecipientsInput>
+  }
+
+  export type CampaignUpdateWithoutRecipientsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCampaignsNestedInput
+    user?: UserUpdateOneRequiredWithoutCampaignsNestedInput
+    smtpAccount?: SmtpAccountUpdateOneWithoutCampaignsNestedInput
+    domainSender?: DomainSenderUpdateOneWithoutCampaignsNestedInput
+    template?: TemplateUpdateOneWithoutCampaignsNestedInput
+  }
+
+  export type CampaignUncheckedUpdateWithoutRecipientsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageUpsertWithWhereUniqueWithoutCampaignRecipientInput = {
+    where: MessageWhereUniqueInput
+    update: XOR<MessageUpdateWithoutCampaignRecipientInput, MessageUncheckedUpdateWithoutCampaignRecipientInput>
+    create: XOR<MessageCreateWithoutCampaignRecipientInput, MessageUncheckedCreateWithoutCampaignRecipientInput>
+  }
+
+  export type MessageUpdateWithWhereUniqueWithoutCampaignRecipientInput = {
+    where: MessageWhereUniqueInput
+    data: XOR<MessageUpdateWithoutCampaignRecipientInput, MessageUncheckedUpdateWithoutCampaignRecipientInput>
+  }
+
+  export type MessageUpdateManyWithWhereWithoutCampaignRecipientInput = {
+    where: MessageScalarWhereInput
+    data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutCampaignRecipientInput>
   }
 
   export type TenantCreateWithoutAuditLogsInput = {
@@ -25493,6 +32356,7 @@ export namespace Prisma {
     messages?: MessageCreateNestedManyWithoutTenantInput
     companies?: CompanyCreateNestedManyWithoutTenantInput
     domains?: DomainCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAuditLogsInput = {
@@ -25512,6 +32376,7 @@ export namespace Prisma {
     messages?: MessageUncheckedCreateNestedManyWithoutTenantInput
     companies?: CompanyUncheckedCreateNestedManyWithoutTenantInput
     domains?: DomainUncheckedCreateNestedManyWithoutTenantInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAuditLogsInput = {
@@ -25547,6 +32412,7 @@ export namespace Prisma {
     messages?: MessageUpdateManyWithoutTenantNestedInput
     companies?: CompanyUpdateManyWithoutTenantNestedInput
     domains?: DomainUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAuditLogsInput = {
@@ -25566,6 +32432,7 @@ export namespace Prisma {
     messages?: MessageUncheckedUpdateManyWithoutTenantNestedInput
     companies?: CompanyUncheckedUpdateManyWithoutTenantNestedInput
     domains?: DomainUncheckedUpdateManyWithoutTenantNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserCreateManyTenantInput = {
@@ -25650,9 +32517,10 @@ export namespace Prisma {
 
   export type MessageCreateManyTenantInput = {
     id?: string
-    apiKeyId: string
+    apiKeyId?: string | null
     smtpAccountId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -25717,6 +32585,43 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type CampaignCreateManyTenantInput = {
+    id?: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
@@ -25731,6 +32636,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
     domains?: DomainUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTenantInput = {
@@ -25747,6 +32653,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
     domains?: DomainUncheckedUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutTenantInput = {
@@ -25784,6 +32691,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     permissions?: ApiKeyPermissionUpdateManyWithoutSmtpAccountNestedInput
     messages?: MessageUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type SmtpAccountUncheckedUpdateWithoutTenantInput = {
@@ -25807,6 +32715,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     permissions?: ApiKeyPermissionUncheckedUpdateManyWithoutSmtpAccountNestedInput
     messages?: MessageUncheckedUpdateManyWithoutSmtpAccountNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutSmtpAccountNestedInput
   }
 
   export type SmtpAccountUncheckedUpdateManyWithoutTenantInput = {
@@ -25852,6 +32761,7 @@ export namespace Prisma {
     domain?: DomainUpdateOneRequiredWithoutSendersNestedInput
     messages?: MessageUpdateManyWithoutDomainSenderNestedInput
     permissions?: ApiKeyDomainPermissionUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderUncheckedUpdateWithoutTenantInput = {
@@ -25876,6 +32786,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutDomainSenderNestedInput
     permissions?: ApiKeyDomainPermissionUncheckedUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderUncheckedUpdateManyWithoutTenantInput = {
@@ -25951,6 +32862,7 @@ export namespace Prisma {
     status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    campaigns?: CampaignUpdateManyWithoutTemplateNestedInput
   }
 
   export type TemplateUncheckedUpdateWithoutTenantInput = {
@@ -25962,6 +32874,7 @@ export namespace Prisma {
     status?: EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    campaigns?: CampaignUncheckedUpdateManyWithoutTemplateNestedInput
   }
 
   export type TemplateUncheckedUpdateManyWithoutTenantInput = {
@@ -25993,16 +32906,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    apiKey?: ApiKeyUpdateOneRequiredWithoutMessagesNestedInput
+    apiKey?: ApiKeyUpdateOneWithoutMessagesNestedInput
     smtpAccount?: SmtpAccountUpdateOneWithoutMessagesNestedInput
     domainSender?: DomainSenderUpdateOneWithoutMessagesNestedInput
+    campaignRecipient?: CampaignRecipientUpdateOneWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -26023,9 +32938,10 @@ export namespace Prisma {
 
   export type MessageUncheckedUpdateManyWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -26184,6 +33100,119 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CampaignUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCampaignsNestedInput
+    smtpAccount?: SmtpAccountUpdateOneWithoutCampaignsNestedInput
+    domainSender?: DomainSenderUpdateOneWithoutCampaignsNestedInput
+    template?: TemplateUpdateOneWithoutCampaignsNestedInput
+    recipients?: CampaignRecipientUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipients?: CampaignRecipientUncheckedUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type DomainCreateManyUserInput = {
     id?: string
     tenantId: string
@@ -26202,6 +33231,43 @@ export namespace Prisma {
     smtpPort?: number
     smtpSecure?: boolean
     verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CampaignCreateManyUserInput = {
+    id?: string
+    tenantId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26274,6 +33340,119 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CampaignUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCampaignsNestedInput
+    smtpAccount?: SmtpAccountUpdateOneWithoutCampaignsNestedInput
+    domainSender?: DomainSenderUpdateOneWithoutCampaignsNestedInput
+    template?: TemplateUpdateOneWithoutCampaignsNestedInput
+    recipients?: CampaignRecipientUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipients?: CampaignRecipientUncheckedUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type DomainSenderCreateManyDomainInput = {
     id?: string
     tenantId: string
@@ -26318,6 +33497,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneRequiredWithoutDomainSendersNestedInput
     messages?: MessageUpdateManyWithoutDomainSenderNestedInput
     permissions?: ApiKeyDomainPermissionUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderUncheckedUpdateWithoutDomainInput = {
@@ -26342,6 +33522,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutDomainSenderNestedInput
     permissions?: ApiKeyDomainPermissionUncheckedUpdateManyWithoutDomainSenderNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutDomainSenderNestedInput
   }
 
   export type DomainSenderUncheckedUpdateManyWithoutDomainInput = {
@@ -26373,8 +33554,9 @@ export namespace Prisma {
   export type MessageCreateManySmtpAccountInput = {
     id?: string
     tenantId: string
-    apiKeyId: string
+    apiKeyId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -26391,6 +33573,43 @@ export namespace Prisma {
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
+  }
+
+  export type CampaignCreateManySmtpAccountInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    domainSenderId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ApiKeyPermissionUpdateWithoutSmtpAccountInput = {
@@ -26424,15 +33643,17 @@ export namespace Prisma {
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tenant?: TenantUpdateOneRequiredWithoutMessagesNestedInput
-    apiKey?: ApiKeyUpdateOneRequiredWithoutMessagesNestedInput
+    apiKey?: ApiKeyUpdateOneWithoutMessagesNestedInput
     domainSender?: DomainSenderUpdateOneWithoutMessagesNestedInput
+    campaignRecipient?: CampaignRecipientUpdateOneWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutSmtpAccountInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -26454,8 +33675,9 @@ export namespace Prisma {
   export type MessageUncheckedUpdateManyWithoutSmtpAccountInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -26474,11 +33696,125 @@ export namespace Prisma {
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type CampaignUpdateWithoutSmtpAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCampaignsNestedInput
+    user?: UserUpdateOneRequiredWithoutCampaignsNestedInput
+    domainSender?: DomainSenderUpdateOneWithoutCampaignsNestedInput
+    template?: TemplateUpdateOneWithoutCampaignsNestedInput
+    recipients?: CampaignRecipientUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateWithoutSmtpAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipients?: CampaignRecipientUncheckedUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutSmtpAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type MessageCreateManyDomainSenderInput = {
     id?: string
     tenantId: string
-    apiKeyId: string
+    apiKeyId?: string | null
     smtpAccountId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -26501,6 +33837,43 @@ export namespace Prisma {
     apiKeyId: string
   }
 
+  export type CampaignCreateManyDomainSenderInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    templateId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MessageUpdateWithoutDomainSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
     idempotencyKey?: StringFieldUpdateOperationsInput | string
@@ -26520,15 +33893,17 @@ export namespace Prisma {
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tenant?: TenantUpdateOneRequiredWithoutMessagesNestedInput
-    apiKey?: ApiKeyUpdateOneRequiredWithoutMessagesNestedInput
+    apiKey?: ApiKeyUpdateOneWithoutMessagesNestedInput
     smtpAccount?: SmtpAccountUpdateOneWithoutMessagesNestedInput
+    campaignRecipient?: CampaignRecipientUpdateOneWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutDomainSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -26550,8 +33925,9 @@ export namespace Prisma {
   export type MessageUncheckedUpdateManyWithoutDomainSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
-    apiKeyId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -26582,6 +33958,119 @@ export namespace Prisma {
     apiKeyId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type CampaignUpdateWithoutDomainSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCampaignsNestedInput
+    user?: UserUpdateOneRequiredWithoutCampaignsNestedInput
+    smtpAccount?: SmtpAccountUpdateOneWithoutCampaignsNestedInput
+    template?: TemplateUpdateOneWithoutCampaignsNestedInput
+    recipients?: CampaignRecipientUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateWithoutDomainSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipients?: CampaignRecipientUncheckedUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutDomainSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    templateId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ApiKeyPermissionCreateManyApiKeyInput = {
     smtpAccountId: string
   }
@@ -26595,6 +34084,7 @@ export namespace Prisma {
     tenantId: string
     smtpAccountId?: string | null
     domainSenderId?: string | null
+    campaignRecipientId?: string | null
     idempotencyKey: string
     to: JsonNullValueInput | InputJsonValue
     cc: JsonNullValueInput | InputJsonValue
@@ -26658,6 +34148,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneRequiredWithoutMessagesNestedInput
     smtpAccount?: SmtpAccountUpdateOneWithoutMessagesNestedInput
     domainSender?: DomainSenderUpdateOneWithoutMessagesNestedInput
+    campaignRecipient?: CampaignRecipientUpdateOneWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutApiKeyInput = {
@@ -26665,6 +34156,7 @@ export namespace Prisma {
     tenantId?: StringFieldUpdateOperationsInput | string
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string
     to?: JsonNullValueInput | InputJsonValue
     cc?: JsonNullValueInput | InputJsonValue
@@ -26686,6 +34178,343 @@ export namespace Prisma {
   export type MessageUncheckedUpdateManyWithoutApiKeyInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenantId?: StringFieldUpdateOperationsInput | string
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignRecipientId?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    to?: JsonNullValueInput | InputJsonValue
+    cc?: JsonNullValueInput | InputJsonValue
+    bcc?: JsonNullValueInput | InputJsonValue
+    subject?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CampaignCreateManyTemplateInput = {
+    id?: string
+    tenantId: string
+    userId: string
+    name: string
+    status?: $Enums.CampaignStatus
+    senderType: $Enums.CampaignSenderType
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    subject?: string | null
+    html?: string | null
+    text?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: number | null
+    warmupEnabled?: boolean
+    warmupStartPerMinute?: number
+    warmupStep?: number
+    warmupIntervalMinutes?: number
+    warmupMaxPerMinute?: number
+    trackOpens?: boolean
+    trackClicks?: boolean
+    trackReplies?: boolean
+    totalRecipients?: number
+    queuedCount?: number
+    sentCount?: number
+    failedCount?: number
+    openedCount?: number
+    clickedCount?: number
+    repliedCount?: number
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CampaignUpdateWithoutTemplateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutCampaignsNestedInput
+    user?: UserUpdateOneRequiredWithoutCampaignsNestedInput
+    smtpAccount?: SmtpAccountUpdateOneWithoutCampaignsNestedInput
+    domainSender?: DomainSenderUpdateOneWithoutCampaignsNestedInput
+    recipients?: CampaignRecipientUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateWithoutTemplateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipients?: CampaignRecipientUncheckedUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateManyWithoutTemplateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    senderType?: EnumCampaignSenderTypeFieldUpdateOperationsInput | $Enums.CampaignSenderType
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
+    warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
+    warmupStep?: IntFieldUpdateOperationsInput | number
+    warmupIntervalMinutes?: IntFieldUpdateOperationsInput | number
+    warmupMaxPerMinute?: IntFieldUpdateOperationsInput | number
+    trackOpens?: BoolFieldUpdateOperationsInput | boolean
+    trackClicks?: BoolFieldUpdateOperationsInput | boolean
+    trackReplies?: BoolFieldUpdateOperationsInput | boolean
+    totalRecipients?: IntFieldUpdateOperationsInput | number
+    queuedCount?: IntFieldUpdateOperationsInput | number
+    sentCount?: IntFieldUpdateOperationsInput | number
+    failedCount?: IntFieldUpdateOperationsInput | number
+    openedCount?: IntFieldUpdateOperationsInput | number
+    clickedCount?: IntFieldUpdateOperationsInput | number
+    repliedCount?: IntFieldUpdateOperationsInput | number
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CampaignRecipientCreateManyCampaignInput = {
+    id?: string
+    email: string
+    name?: string | null
+    status?: $Enums.CampaignRecipientStatus
+    attempts?: number
+    lastError?: string | null
+    sentAt?: Date | string | null
+    openedAt?: Date | string | null
+    openCount?: number
+    clickedAt?: Date | string | null
+    clickCount?: number
+    clickedUrl?: string | null
+    repliedAt?: Date | string | null
+    replyCount?: number
+    messageId?: string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CampaignRecipientUpdateWithoutCampaignInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUpdateManyWithoutCampaignRecipientNestedInput
+  }
+
+  export type CampaignRecipientUncheckedUpdateWithoutCampaignInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUncheckedUpdateManyWithoutCampaignRecipientNestedInput
+  }
+
+  export type CampaignRecipientUncheckedUpdateManyWithoutCampaignInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCampaignRecipientStatusFieldUpdateOperationsInput | $Enums.CampaignRecipientStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openCount?: IntFieldUpdateOperationsInput | number
+    clickedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clickCount?: IntFieldUpdateOperationsInput | number
+    clickedUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    repliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    replyCount?: IntFieldUpdateOperationsInput | number
+    messageId?: NullableStringFieldUpdateOperationsInput | string | null
+    variables?: NullableJsonNullValueInput | InputJsonValue
+    trackingToken?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageCreateManyCampaignRecipientInput = {
+    id?: string
+    tenantId: string
+    apiKeyId?: string | null
+    smtpAccountId?: string | null
+    domainSenderId?: string | null
+    idempotencyKey: string
+    to: JsonNullValueInput | InputJsonValue
+    cc: JsonNullValueInput | InputJsonValue
+    bcc: JsonNullValueInput | InputJsonValue
+    subject: string
+    text?: string | null
+    html?: string | null
+    fromName?: string | null
+    replyTo?: string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    status?: $Enums.MessageStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    queuedAt?: Date | string
+    sentAt?: Date | string | null
+  }
+
+  export type MessageUpdateWithoutCampaignRecipientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    to?: JsonNullValueInput | InputJsonValue
+    cc?: JsonNullValueInput | InputJsonValue
+    bcc?: JsonNullValueInput | InputJsonValue
+    subject?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tenant?: TenantUpdateOneRequiredWithoutMessagesNestedInput
+    apiKey?: ApiKeyUpdateOneWithoutMessagesNestedInput
+    smtpAccount?: SmtpAccountUpdateOneWithoutMessagesNestedInput
+    domainSender?: DomainSenderUpdateOneWithoutMessagesNestedInput
+  }
+
+  export type MessageUncheckedUpdateWithoutCampaignRecipientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
+    smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
+    domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    to?: JsonNullValueInput | InputJsonValue
+    cc?: JsonNullValueInput | InputJsonValue
+    bcc?: JsonNullValueInput | InputJsonValue
+    subject?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    html?: NullableStringFieldUpdateOperationsInput | string | null
+    fromName?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: NullableJsonNullValueInput | InputJsonValue
+    status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MessageUncheckedUpdateManyWithoutCampaignRecipientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    apiKeyId?: NullableStringFieldUpdateOperationsInput | string | null
     smtpAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     domainSenderId?: NullableStringFieldUpdateOperationsInput | string | null
     idempotencyKey?: StringFieldUpdateOperationsInput | string

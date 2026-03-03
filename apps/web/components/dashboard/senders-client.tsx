@@ -1,11 +1,12 @@
 "use client";
 
-import { FormEvent, Fragment, useState } from "react";
+import { FormEvent, Fragment, useEffect, useMemo, useState } from "react";
 import { AddSenderDialog } from "../add-gmail-sender-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Switch } from "../ui/switch";
 import { useToast } from "../ui/toast";
 import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
+import { parseApiError } from "../../lib/api-errors";
 
 export type Sender = {
   id: string;
@@ -47,9 +48,15 @@ export function SendersClient({
   initialSenders: Sender[];
   initialError?: string;
 }) {
+  const initialParsed = useMemo(
+    () => (initialError ? parseApiError(initialError) : null),
+    [initialError]
+  );
   const [senders, setSenders] = useState<Sender[]>(initialSenders);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(initialError ?? "");
+  const [error, setError] = useState(
+    initialParsed && !initialParsed.isAuth ? initialParsed.message : ""
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [hideDisabled, setHideDisabled] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,6 +66,16 @@ export function SendersClient({
   const [copyingId, setCopyingId] = useState<string | null>(null);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (initialParsed?.isAuth) {
+      toast({
+        variant: "error",
+        title: "Session expired",
+        description: initialParsed.message
+      });
+    }
+  }, [initialParsed, toast]);
+
   async function loadSenders() {
     setLoading(true);
     setError("");
@@ -66,11 +83,11 @@ export function SendersClient({
       const response = await browserApi<SenderResponse>("/admin/v1/senders");
       setSenders(response.data);
     } catch (err) {
-      const message = (err as Error).message || "Failed to load senders.";
-      setError(message);
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
       toast({
         variant: "error",
-        title: "Senders load unsuccessful",
+        title: isAuth ? "Session expired" : "Senders load unsuccessful",
         description: message
       });
     } finally {
@@ -126,10 +143,11 @@ export function SendersClient({
       setEditForm(DEFAULT_EDIT_FORM);
       await loadSenders();
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "Sender update unsuccessful",
-        description: (err as Error).message || "Failed to update sender."
+        title: isAuth ? "Session expired" : "Sender update unsuccessful",
+        description: message
       });
     } finally {
       setUpdatingId(null);
@@ -162,10 +180,11 @@ export function SendersClient({
       });
       await loadSenders();
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "Sender status update unsuccessful",
-        description: (err as Error).message || "Failed to update sender status."
+        title: isAuth ? "Session expired" : "Sender status update unsuccessful",
+        description: message
       });
     } finally {
       setTogglingId(null);

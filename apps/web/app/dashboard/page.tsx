@@ -52,6 +52,7 @@ export default function DashboardHomePage() {
         <FeatureTile
           title="Bulk Mail"
           description="Queue large batches."
+          href="/dashboard/bulk-email"
           icon={
             <svg
               width="26"

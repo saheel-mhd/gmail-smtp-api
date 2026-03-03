@@ -1,13 +1,15 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 type FeatureTileProps = {
   title: string;
   description?: string;
   icon: ReactNode;
+  href?: string;
 };
 
-export function FeatureTile({ title, description, icon }: FeatureTileProps) {
-  return (
+export function FeatureTile({ title, description, icon, href }: FeatureTileProps) {
+  const content = (
     <div
       className="feature-tile"
       style={{
@@ -49,4 +51,14 @@ export function FeatureTile({ title, description, icon }: FeatureTileProps) {
       </div>
     </div>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="feature-tile-link" aria-label={title}>
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }

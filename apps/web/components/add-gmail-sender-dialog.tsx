@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { browserApi, invalidateBrowserCache } from "../lib/browser-api";
+import { parseApiError } from "../lib/api-errors";
 import {
   Dialog,
   DialogContent,
@@ -183,10 +184,11 @@ export function AddSenderDialog({
       });
       onOpenChange(false);
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "Sender creation unsuccessful",
-        description: (err as Error).message || "Failed to add sender."
+        title: isAuth ? "Session expired" : "Sender creation unsuccessful",
+        description: message
       });
     } finally {
       setSubmitting(false);

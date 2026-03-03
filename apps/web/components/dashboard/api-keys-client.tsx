@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AddApiKeyDialog } from "../add-api-key-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Switch } from "../ui/switch";
 import { useToast } from "../ui/toast";
 import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
+import { parseApiError } from "../../lib/api-errors";
 
 export type Sender = {
   id: string;
@@ -33,14 +34,30 @@ export function ApiKeysClient({
   initialSenders: Sender[];
   initialError?: string;
 }) {
+  const initialParsed = useMemo(
+    () => (initialError ? parseApiError(initialError) : null),
+    [initialError]
+  );
   const [keys, setKeys] = useState<ApiKeyRow[]>(initialKeys);
   const [senders, setSenders] = useState<Sender[]>(initialSenders);
   const [newKey, setNewKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [hideRevoked, setHideRevoked] = useState(true);
-  const [error, setError] = useState(initialError ?? "");
+  const [error, setError] = useState(
+    initialParsed && !initialParsed.isAuth ? initialParsed.message : ""
+  );
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (initialParsed?.isAuth) {
+      toast({
+        variant: "error",
+        title: "Session expired",
+        description: initialParsed.message
+      });
+    }
+  }, [initialParsed, toast]);
 
   const senderEmailById = useMemo(() => {
     return new Map(senders.map((sender) => [sender.id, sender.emailAddress]));
@@ -57,11 +74,11 @@ export function ApiKeysClient({
       setKeys(keyResponse.data);
       setSenders(senderResponse.data);
     } catch (err) {
-      const message = (err as Error).message || "Failed to load data";
-      setError(message);
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
       toast({
         variant: "error",
-        title: "API keys load unsuccessful",
+        title: isAuth ? "Session expired" : "API keys load unsuccessful",
         description: message
       });
     } finally {
@@ -83,10 +100,11 @@ export function ApiKeysClient({
       });
       await loadData();
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "API key revoke unsuccessful",
-        description: (err as Error).message || "Failed to revoke API key"
+        title: isAuth ? "Session expired" : "API key revoke unsuccessful",
+        description: message
       });
     }
   }
@@ -110,10 +128,11 @@ export function ApiKeysClient({
       setNewKey(response.data.key);
       await loadData();
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "API key rotate unsuccessful",
-        description: (err as Error).message || "Failed to rotate API key"
+        title: isAuth ? "Session expired" : "API key rotate unsuccessful",
+        description: message
       });
     }
   }

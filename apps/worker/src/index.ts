@@ -1,20 +1,49 @@
-import { Job, UnrecoverableError, Worker } from "bullmq";
+import { Job, Queue, UnrecoverableError, Worker } from "bullmq";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import nodemailer from "nodemailer";
 import pino from "pino";
+import type { Prisma } from "../../api/generated/prisma/client";
 import { env } from "./env";
 import { prisma } from "./lib/prisma";
 import { redis } from "./lib/redis";
 import { decryptSecret } from "./lib/crypto";
+type TemplateRenderResult = {
+  value: string;
+  missing: string[];
+};
+
+function renderTemplate(
+  template: string,
+  variables: Record<string, string | number | boolean>
+): TemplateRenderResult {
+  const tokenRegex = /{{\s*([a-zA-Z0-9_]+)\s*}}/g;
+  const missing = new Set<string>();
+  const value = template.replace(tokenRegex, (_match, key: string) => {
+    if (!(key in variables)) {
+      missing.add(key);
+      return "";
+    }
+    const raw = variables[key];
+    return raw === null || raw === undefined ? "" : String(raw);
+  });
+  return { value, missing: Array.from(missing) };
+}
 
 const log = pino({ name: "gmail-smtp-worker" });
 const QUEUE_NAME = "send_email_jobs";
+const CAMPAIGN_QUEUE_NAME = "campaign_dispatch_jobs";
+const MAX_DISPATCH_BATCH = 200;
 const retryDelaysMs = [30_000, 120_000, 600_000, 1_800_000, 7_200_000];
 
 type SendJobData = {
   messageId: string;
+};
+
+type CampaignDispatchJobData = {
+  campaignId: string;
 };
 
 const workerMeta = (() => {
@@ -30,6 +59,23 @@ const workerMeta = (() => {
   }
   return { hostname, version };
 })();
+
+let sendQueue: Queue<SendJobData> | null = null;
+let campaignQueue: Queue<CampaignDispatchJobData> | null = null;
+
+function getSendQueue(): Queue<SendJobData> {
+  if (sendQueue) return sendQueue;
+  sendQueue = new Queue<SendJobData>(QUEUE_NAME, { connection: redis });
+  return sendQueue;
+}
+
+function getCampaignQueue(): Queue<CampaignDispatchJobData> {
+  if (campaignQueue) return campaignQueue;
+  campaignQueue = new Queue<CampaignDispatchJobData>(CAMPAIGN_QUEUE_NAME, {
+    connection: redis
+  });
+  return campaignQueue;
+}
 
 async function writeSystemEvent(action: "system.worker.started" | "system.worker.stopped") {
   const tenants = await prisma.tenant.findMany({
@@ -98,6 +144,379 @@ async function reserveDailySlot(
   return count;
 }
 
+function normalizeBaseUrl(url: string): string {
+  return url.replace(/\/$/, "");
+}
+
+function buildOpenPixelUrl(baseUrl: string, token: string): string {
+  return `${baseUrl}/v1/track/open/${token}`;
+}
+
+function buildClickUrl(baseUrl: string, token: string, url: string): string {
+  const encoded = encodeURIComponent(url);
+  return `${baseUrl}/v1/track/click/${token}?url=${encoded}`;
+}
+
+function applyTracking(
+  html: string,
+  baseUrl: string,
+  token: string,
+  trackOpens: boolean,
+  trackClicks: boolean
+): string {
+  let next = html;
+  if (trackClicks) {
+    next = next.replace(
+      /href=(["'])(https?:\/\/[^"']+)\1/gi,
+      (match, quote, url: string) => {
+        if (url.includes("/v1/track/click/")) return match;
+        return `href=${quote}${buildClickUrl(baseUrl, token, url)}${quote}`;
+      }
+    );
+  }
+  if (trackOpens) {
+    const pixel = `<img src="${buildOpenPixelUrl(baseUrl, token)}" width="1" height="1" style="display:none" alt="" />`;
+    next = `${next}${pixel}`;
+  }
+  return next;
+}
+
+async function consumeRateLimit(
+  key: string,
+  limit: number,
+  desired: number
+): Promise<number> {
+  if (limit <= 0 || desired <= 0) return 0;
+  const currentRaw = await redis.get(key);
+  const current = currentRaw ? Number(currentRaw) : 0;
+  const remaining = Math.max(0, limit - (Number.isFinite(current) ? current : 0));
+  const take = Math.min(remaining, desired);
+  if (!take) return 0;
+
+  const next = await redis.incrby(key, take);
+  if (next > limit) {
+    await redis.decrby(key, take);
+    return 0;
+  }
+  const ttl = await redis.ttl(key);
+  if (ttl < 0) {
+    await redis.expire(key, 60);
+  }
+  return take;
+}
+
+function computeWarmupLimit(campaign: {
+  perMinuteLimit: number | null;
+  warmupEnabled: boolean;
+  warmupStartPerMinute: number;
+  warmupStep: number;
+  warmupIntervalMinutes: number;
+  warmupMaxPerMinute: number;
+  startedAt: Date | null;
+}): number {
+  const baseLimit = campaign.perMinuteLimit ?? 0;
+  if (!campaign.warmupEnabled || !campaign.startedAt) {
+    return baseLimit;
+  }
+  const minutes = Math.max(
+    0,
+    Math.floor((Date.now() - campaign.startedAt.getTime()) / 60000)
+  );
+  const steps = Math.floor(minutes / campaign.warmupIntervalMinutes);
+  const warmed = campaign.warmupStartPerMinute + steps * campaign.warmupStep;
+  const capped = Math.min(warmed, campaign.warmupMaxPerMinute);
+  return baseLimit ? Math.min(baseLimit, capped) : capped;
+}
+
+async function maybeCompleteCampaign(campaignId: string): Promise<void> {
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    select: {
+      status: true,
+      totalRecipients: true,
+      sentCount: true,
+      failedCount: true,
+      queuedCount: true
+    }
+  });
+  if (!campaign || campaign.status !== "running") return;
+  if (
+    campaign.totalRecipients > 0 &&
+    campaign.sentCount + campaign.failedCount >= campaign.totalRecipients &&
+    campaign.queuedCount <= 0
+  ) {
+    await prisma.campaign.update({
+      where: { id: campaignId },
+      data: { status: "completed", completedAt: new Date() }
+    });
+  }
+}
+
+function minutesKey(): string {
+  return Math.floor(Date.now() / 60000).toString();
+}
+
+async function scheduleCampaignDispatch(campaignId: string, delayMs: number): Promise<void> {
+  try {
+    await getCampaignQueue().add(
+      "campaign-dispatch",
+      { campaignId },
+      { delay: Math.max(0, delayMs), jobId: `campaign-dispatch-${campaignId}-${Date.now()}` }
+    );
+  } catch (error) {
+    log.warn({ campaignId, err: error }, "failed to reschedule campaign dispatch");
+  }
+}
+
+async function processCampaignDispatchJob(job: Job<CampaignDispatchJobData>): Promise<void> {
+  const { campaignId } = job.data;
+  const lockKey = `lock:campaign:${campaignId}`;
+    const lock = await redis.set(lockKey, "1", "EX", 20, "NX");
+  if (!lock) return;
+
+  try {
+    const campaign = await prisma.campaign.findUnique({
+      where: { id: campaignId },
+      include: {
+        template: true,
+        smtpAccount: true,
+        domainSender: { include: { domain: true } }
+      }
+    });
+    if (!campaign || campaign.status !== "running") return;
+
+    const sender = campaign.smtpAccount ?? campaign.domainSender;
+    if (!sender || sender.status !== "active") {
+      await prisma.campaign.update({
+        where: { id: campaign.id },
+        data: { status: "paused" }
+      });
+      return;
+    }
+    if (campaign.senderType === "domain" && !campaign.domainSender?.domain?.smtpHost) {
+      await prisma.campaign.update({
+        where: { id: campaign.id },
+        data: { status: "paused" }
+      });
+      return;
+    }
+
+    const warmupLimit = computeWarmupLimit(campaign);
+    const senderLimit = "perMinuteLimit" in sender ? sender.perMinuteLimit : null;
+    const effectiveLimit =
+      senderLimit && senderLimit > 0
+        ? Math.min(warmupLimit || senderLimit, senderLimit)
+        : warmupLimit;
+
+    if (!effectiveLimit || effectiveLimit <= 0) {
+      await scheduleCampaignDispatch(campaign.id, 60_000);
+      return;
+    }
+
+    const perMinuteKey = `rl:campaign:${campaign.id}:${minutesKey()}`;
+    const allowance = await consumeRateLimit(
+      perMinuteKey,
+      effectiveLimit,
+      Math.min(MAX_DISPATCH_BATCH, effectiveLimit)
+    );
+    if (!allowance) {
+      await scheduleCampaignDispatch(campaign.id, 15_000);
+      return;
+    }
+
+    const recipients = await prisma.campaignRecipient.findMany({
+      where: { campaignId: campaign.id, status: "pending" },
+      orderBy: { createdAt: "asc" },
+      take: allowance
+    });
+
+    if (!recipients.length) {
+      if (allowance > 0) {
+        await redis.decrby(perMinuteKey, allowance);
+      }
+      await maybeCompleteCampaign(campaign.id);
+      return;
+    }
+
+    if (campaign.templateId && !campaign.template) {
+      await prisma.campaign.update({
+        where: { id: campaign.id },
+        data: { status: "paused" }
+      });
+      return;
+    }
+
+    const baseUrl = normalizeBaseUrl(env.APP_TRACKING_BASE_URL ?? env.APP_BASE_URL);
+    const useTemplate = Boolean(campaign.templateId && campaign.template);
+    const baseSubject = useTemplate ? campaign.template?.subject ?? "" : campaign.subject ?? "";
+    const baseHtml = useTemplate ? campaign.template?.html ?? "" : campaign.html ?? "";
+    const baseText = useTemplate ? campaign.template?.text ?? null : campaign.text ?? null;
+
+    const now = new Date();
+    type QueuedMessage = Prisma.MessageCreateManyInput & {
+      id: string;
+      campaignRecipientId?: string | null;
+    };
+    const messageCreates: QueuedMessage[] = [];
+    const recipientUpdates: Array<ReturnType<typeof prisma.campaignRecipient.update>> = [];
+    let failedCount = 0;
+
+    for (const recipient of recipients) {
+      const variables =
+        recipient.variables && typeof recipient.variables === "object"
+          ? (recipient.variables as Record<string, string | number | boolean>)
+          : {};
+      const defaultVars: Record<string, string> = {
+        Name: recipient.name ?? "",
+        Email: recipient.email,
+        name: recipient.name ?? "",
+        email: recipient.email
+      };
+      const mergedVariables = {
+        ...defaultVars,
+        ...variables
+      };
+
+      const subjectRendered = renderTemplate(baseSubject, mergedVariables);
+      const htmlRendered = baseHtml
+        ? renderTemplate(baseHtml, mergedVariables)
+        : { value: "", missing: [] };
+      const textRendered = baseText
+        ? renderTemplate(baseText, mergedVariables)
+        : { value: "", missing: [] };
+
+      const missing = Array.from(
+        new Set([...subjectRendered.missing, ...htmlRendered.missing, ...textRendered.missing])
+      );
+      if (missing.length) {
+        failedCount += 1;
+        recipientUpdates.push(
+          prisma.campaignRecipient.update({
+            where: { id: recipient.id },
+            data: {
+              status: "failed",
+              lastError: `missing template variables: ${missing.join(", ")}`,
+              attempts: { increment: 1 }
+            }
+          })
+        );
+        continue;
+      }
+
+      let html = htmlRendered.value;
+      if (html && (campaign.trackOpens || campaign.trackClicks)) {
+        html = applyTracking(html, baseUrl, recipient.trackingToken, campaign.trackOpens, campaign.trackClicks);
+      }
+
+      const headers =
+        campaign.headers && typeof campaign.headers === "object"
+          ? { ...(campaign.headers as Record<string, string>) }
+          : {};
+      if (campaign.trackReplies) {
+        headers["X-Reply-Token"] = recipient.trackingToken;
+      }
+
+      const messageId = randomUUID();
+      messageCreates.push({
+        id: messageId,
+        tenantId: campaign.tenantId,
+        apiKeyId: null,
+        smtpAccountId: campaign.senderType === "gmail" ? campaign.smtpAccountId : null,
+        domainSenderId: campaign.senderType === "domain" ? campaign.domainSenderId : null,
+        campaignRecipientId: recipient.id,
+        idempotencyKey: `campaign:${campaign.id}:${recipient.id}`,
+        to: [recipient.email],
+        cc: [],
+        bcc: [],
+        subject: subjectRendered.value,
+        text: textRendered.value || null,
+        html: html || null,
+        fromName: campaign.fromName,
+        replyTo: campaign.replyTo,
+        headers,
+        status: "queued",
+        queuedAt: now
+      });
+
+      recipientUpdates.push(
+        prisma.campaignRecipient.update({
+          where: { id: recipient.id },
+          data: {
+            status: "queued",
+            lastError: null,
+            messageId
+          }
+        })
+      );
+    }
+
+    if (recipientUpdates.length) {
+      await prisma.$transaction(recipientUpdates);
+    }
+
+    let queueFailures: string[] = [];
+    if (messageCreates.length) {
+      await prisma.message.createMany({ data: messageCreates });
+      for (const message of messageCreates) {
+        try {
+          await getSendQueue().add(
+            "send-email",
+            { messageId: message.id },
+            { jobId: message.id }
+          );
+        } catch (error) {
+          queueFailures.push(message.id);
+          log.error({ err: error, messageId: message.id }, "failed to enqueue campaign message");
+        }
+      }
+    }
+
+    if (queueFailures.length) {
+      const recipientIds = messageCreates
+        .filter((message) => queueFailures.includes(message.id))
+        .map((message) => message.campaignRecipientId)
+        .filter((id): id is string => Boolean(id));
+      const failureUpdates: Prisma.PrismaPromise<unknown>[] = [
+        prisma.message.updateMany({
+          where: { id: { in: queueFailures } },
+          data: { status: "failed", lastError: "queue unavailable" }
+        })
+      ];
+      if (recipientIds.length) {
+        failureUpdates.push(
+          prisma.campaignRecipient.updateMany({
+            where: { id: { in: recipientIds } },
+            data: { status: "failed", lastError: "queue unavailable" }
+          })
+        );
+      }
+      await prisma.$transaction(failureUpdates);
+    }
+
+    const queuedSuccessCount = Math.max(0, messageCreates.length - queueFailures.length);
+    const failedTotal = failedCount + queueFailures.length;
+    await prisma.campaign.update({
+      where: { id: campaign.id },
+      data: {
+        queuedCount: queuedSuccessCount ? { increment: queuedSuccessCount } : undefined,
+        failedCount: failedTotal ? { increment: failedTotal } : undefined
+      }
+    });
+
+    if (allowance > queuedSuccessCount) {
+      await redis.decrby(perMinuteKey, allowance - queuedSuccessCount);
+    }
+
+    if (messageCreates.length >= allowance) {
+      await scheduleCampaignDispatch(campaign.id, 5_000);
+    } else {
+      await scheduleCampaignDispatch(campaign.id, 10_000);
+    }
+  } finally {
+    await redis.del(lockKey);
+  }
+}
+
 async function processSendJob(job: Job<SendJobData>): Promise<void> {
   const message = await prisma.message.findUnique({
     where: { id: job.data.messageId },
@@ -106,6 +525,12 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
       domainSender: {
         include: {
           domain: true
+        }
+      },
+      campaignRecipient: {
+        select: {
+          id: true,
+          campaignId: true
         }
       }
     }
@@ -153,6 +578,15 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
       attempts: { increment: 1 }
     }
   });
+  if (message.campaignRecipient) {
+    await prisma.campaignRecipient.update({
+      where: { id: message.campaignRecipient.id },
+      data: {
+        status: "sending",
+        attempts: { increment: 1 }
+      }
+    });
+  }
 
   try {
     let transporter: nodemailer.Transporter;
@@ -207,12 +641,13 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
       headers: (message.headers ?? {}) as Record<string, string>
     });
 
-    await prisma.$transaction([
+    const now = new Date();
+    const updates: Prisma.PrismaPromise<unknown>[] = [
       prisma.message.update({
         where: { id: message.id },
         data: {
           status: "sent",
-          sentAt: new Date(),
+          sentAt: now,
           lastError: null
         }
       }),
@@ -220,7 +655,7 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
         ? prisma.smtpAccount.update({
             where: { id: sender.id },
             data: {
-              lastSuccessAt: new Date(),
+              lastSuccessAt: now,
               errorStreak: 0,
               healthScore: { set: 100 }
             }
@@ -228,12 +663,39 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
         : prisma.domainSender.update({
             where: { id: sender.id },
             data: {
-              lastSuccessAt: new Date(),
+              lastSuccessAt: now,
               errorStreak: 0,
               healthScore: { set: 100 }
             }
           })
-    ]);
+    ];
+
+    if (message.campaignRecipient) {
+      updates.push(
+        prisma.campaignRecipient.update({
+          where: { id: message.campaignRecipient.id },
+          data: {
+            status: "sent",
+            sentAt: now,
+            lastError: null
+          }
+        })
+      );
+      updates.push(
+        prisma.campaign.update({
+          where: { id: message.campaignRecipient.campaignId },
+          data: {
+            sentCount: { increment: 1 },
+            queuedCount: { decrement: 1 }
+          }
+        })
+      );
+    }
+
+    await prisma.$transaction(updates);
+    if (message.campaignRecipient) {
+      await maybeCompleteCampaign(message.campaignRecipient.campaignId);
+    }
 
     if (reservedCount) {
       if (senderType === "gmail") {
@@ -315,8 +777,36 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
         lastError
       }
     });
+    const updates: Prisma.PrismaPromise<unknown>[] = [updateSender, updateMessage];
 
-    await prisma.$transaction([updateSender, updateMessage]);
+    if (message.campaignRecipient) {
+      const terminal = errorType === "permanent" || lastAttempt;
+      updates.push(
+        prisma.campaignRecipient.update({
+          where: { id: message.campaignRecipient.id },
+          data: {
+            status: terminal ? "failed" : "queued",
+            lastError
+          }
+        })
+      );
+      if (terminal) {
+        updates.push(
+          prisma.campaign.update({
+            where: { id: message.campaignRecipient.campaignId },
+            data: {
+              failedCount: { increment: 1 },
+              queuedCount: { decrement: 1 }
+            }
+          })
+        );
+      }
+    }
+
+    await prisma.$transaction(updates);
+    if (message.campaignRecipient && (errorType === "permanent" || lastAttempt)) {
+      await maybeCompleteCampaign(message.campaignRecipient.campaignId);
+    }
 
     if (errorType === "permanent" || errorType === "auth") {
       throw new UnrecoverableError(lastError);
@@ -347,13 +837,29 @@ async function start(): Promise<void> {
     );
   });
 
+  const campaignWorker = new Worker<CampaignDispatchJobData>(
+    CAMPAIGN_QUEUE_NAME,
+    processCampaignDispatchJob,
+    {
+      connection: redis,
+      concurrency: 1
+    }
+  );
+
+  campaignWorker.on("failed", (job, err) => {
+    log.error(
+      { campaignId: job?.data.campaignId, err: err.message, attempts: job?.attemptsMade },
+      "campaign dispatch failed"
+    );
+  });
+
   let shuttingDown = false;
   const shutdown = async (signal: string) => {
     if (shuttingDown) return;
     shuttingDown = true;
     log.info({ signal }, "worker shutdown initiated");
     try {
-      await worker.close();
+      await Promise.all([worker.close(), campaignWorker.close()]);
     } catch (error) {
       log.warn({ err: error }, "failed to close worker");
     }

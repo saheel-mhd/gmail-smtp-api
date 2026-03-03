@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { browserApi, invalidateBrowserCache } from "../lib/browser-api";
+import { parseApiError } from "../lib/api-errors";
 import {
   Dialog,
   DialogContent,
@@ -126,10 +127,15 @@ export function TemplateDialog({
       await onSaved();
       onOpenChange(false);
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: initial?.id ? "Template update unsuccessful" : "Template creation unsuccessful",
-        description: (err as Error).message || "Template save failed"
+        title: isAuth
+          ? "Session expired"
+          : initial?.id
+          ? "Template update unsuccessful"
+          : "Template creation unsuccessful",
+        description: message
       });
     } finally {
       setSubmitting(false);

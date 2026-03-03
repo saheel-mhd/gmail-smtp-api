@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TemplateDialog } from "../template-dialog";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { useToast } from "../ui/toast";
 import { browserApi, invalidateBrowserCache } from "../../lib/browser-api";
+import { parseApiError } from "../../lib/api-errors";
 
 export type TemplateRow = {
   id: string;
@@ -31,9 +32,15 @@ export function TemplatesClient({
   initialTemplates: TemplateRow[];
   initialError?: string;
 }) {
+  const initialParsed = useMemo(
+    () => (initialError ? parseApiError(initialError) : null),
+    [initialError]
+  );
   const [templates, setTemplates] = useState<TemplateRow[]>(initialTemplates);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(initialError ?? "");
+  const [error, setError] = useState(
+    initialParsed && !initialParsed.isAuth ? initialParsed.message : ""
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<TemplateRow | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -43,6 +50,16 @@ export function TemplatesClient({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (initialParsed?.isAuth) {
+      toast({
+        variant: "error",
+        title: "Session expired",
+        description: initialParsed.message
+      });
+    }
+  }, [initialParsed, toast]);
+
   async function loadTemplates() {
     setLoading(true);
     setError("");
@@ -50,11 +67,11 @@ export function TemplatesClient({
       const res = await browserApi<{ data: TemplateRow[] }>("/admin/v1/templates");
       setTemplates(res.data);
     } catch (err) {
-      const message = (err as Error).message || "Failed to load templates";
-      setError(message);
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
       toast({
         variant: "error",
-        title: "Templates load unsuccessful",
+        title: isAuth ? "Session expired" : "Templates load unsuccessful",
         description: message
       });
     } finally {
@@ -109,10 +126,11 @@ export function TemplatesClient({
       });
       await loadTemplates();
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "Template status update unsuccessful",
-        description: (err as Error).message || "Failed to update template"
+        title: isAuth ? "Session expired" : "Template status update unsuccessful",
+        description: message
       });
     } finally {
       setTogglingId(null);
@@ -133,10 +151,11 @@ export function TemplatesClient({
       });
       await loadTemplates();
     } catch (err) {
+      const { message, isAuth } = parseApiError(err);
       toast({
         variant: "error",
-        title: "Template delete unsuccessful",
-        description: (err as Error).message || "Failed to delete template"
+        title: isAuth ? "Session expired" : "Template delete unsuccessful",
+        description: message
       });
     } finally {
       setDeletingId(null);

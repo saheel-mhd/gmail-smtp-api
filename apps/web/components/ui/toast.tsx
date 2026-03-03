@@ -99,8 +99,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               style={{ bottom: offset, zIndex }}
             >
               <div className="flex items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+                <div className="flex min-w-0 flex-col gap-1 overflow-hidden">
                   <div className="font-semibold truncate">{item.title}</div>
+                  {item.description ? (
+                    <div className="text-xs opacity-80 line-clamp-2">
+                      {item.description}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

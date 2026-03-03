@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { browserApi } from "../../lib/browser-api";
 import { Pagination } from "../ui/pagination";
+import { useToast } from "../ui/toast";
+import { parseApiError } from "../../lib/api-errors";
 
 export type EmailLogRow = {
   status: "queued" | "sending" | "sent" | "failed";
@@ -29,10 +31,17 @@ export function EmailLogsClient({
   initialError?: string;
 }) {
   const pageSize = 10;
+  const initialParsed = useMemo(
+    () => (initialError ? parseApiError(initialError) : null),
+    [initialError]
+  );
   const [logs, setLogs] = useState<EmailLogRow[]>(initialLogs);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(initialError ?? "");
+  const [error, setError] = useState(
+    initialParsed && !initialParsed.isAuth ? initialParsed.message : ""
+  );
   const [page, setPage] = useState(1);
+  const { toast } = useToast();
 
   const totalPages = Math.max(1, Math.ceil(logs.length / pageSize));
   useEffect(() => {
@@ -41,6 +50,16 @@ export function EmailLogsClient({
     }
   }, [page, totalPages]);
 
+  useEffect(() => {
+    if (initialParsed?.isAuth) {
+      toast({
+        variant: "error",
+        title: "Session expired",
+        description: initialParsed.message
+      });
+    }
+  }, [initialParsed, toast]);
+
   async function load() {
     setLoading(true);
     setError("");
@@ -48,7 +67,13 @@ export function EmailLogsClient({
       const data = await browserApi<{ data: EmailLogRow[] }>("/admin/v1/email-logs?limit=100");
       setLogs(data.data);
     } catch (err) {
-      setError((err as Error).message || "Failed to load email logs");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "Email logs load unsuccessful",
+        description: message
+      });
     } finally {
       setLoading(false);
     }

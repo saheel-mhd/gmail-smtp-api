@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { browserApi } from "../../lib/browser-api";
 import { Pagination } from "../ui/pagination";
+import { useToast } from "../ui/toast";
+import { parseApiError } from "../../lib/api-errors";
 
 export type SystemLogRow = {
   id: string;
@@ -19,10 +21,17 @@ export function SystemLogsClient({
   initialError?: string;
 }) {
   const pageSize = 8;
+  const initialParsed = useMemo(
+    () => (initialError ? parseApiError(initialError) : null),
+    [initialError]
+  );
   const [logs, setLogs] = useState<SystemLogRow[]>(initialLogs);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(initialError ?? "");
+  const [error, setError] = useState(
+    initialParsed && !initialParsed.isAuth ? initialParsed.message : ""
+  );
   const [page, setPage] = useState(1);
+  const { toast } = useToast();
 
   const totalPages = Math.max(1, Math.ceil(logs.length / pageSize));
   useEffect(() => {
@@ -30,6 +39,16 @@ export function SystemLogsClient({
       setPage(totalPages);
     }
   }, [page, totalPages]);
+
+  useEffect(() => {
+    if (initialParsed?.isAuth) {
+      toast({
+        variant: "error",
+        title: "Session expired",
+        description: initialParsed.message
+      });
+    }
+  }, [initialParsed, toast]);
 
   const pagedLogs = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -43,7 +62,13 @@ export function SystemLogsClient({
       const data = await browserApi<{ data: SystemLogRow[] }>("/admin/v1/system-logs?limit=100");
       setLogs(data.data);
     } catch (err) {
-      setError((err as Error).message || "Failed to load system logs");
+      const { message, isAuth } = parseApiError(err);
+      if (!isAuth) setError(message);
+      toast({
+        variant: "error",
+        title: isAuth ? "Session expired" : "System logs load unsuccessful",
+        description: message
+      });
     } finally {
       setLoading(false);
     }

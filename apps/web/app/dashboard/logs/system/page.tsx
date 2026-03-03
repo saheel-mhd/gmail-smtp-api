@@ -3,6 +3,7 @@ import {
   type SystemLogRow
 } from "../../../../components/dashboard/system-logs-client";
 import { serverApi } from "../../../../lib/server-api";
+import { parseApiError } from "../../../../lib/api-errors";
 
 type SystemLogsResponse = { data: SystemLogRow[] };
 
@@ -15,7 +16,8 @@ export default async function SystemLogsPage() {
     });
     initialLogs = data.data;
   } catch (err) {
-    initialError = (err as Error).message || "Failed to load system logs.";
+    const parsed = parseApiError(err);
+    initialError = parsed.message;
   }
 
   return <SystemLogsClient initialLogs={initialLogs} initialError={initialError} />;

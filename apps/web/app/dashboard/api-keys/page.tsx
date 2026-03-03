@@ -4,6 +4,7 @@ import {
   type Sender
 } from "../../../components/dashboard/api-keys-client";
 import { serverApi } from "../../../lib/server-api";
+import { parseApiError } from "../../../lib/api-errors";
 
 type ApiKeyResponse = { data: ApiKeyRow[] };
 type SenderResponse = { data: Sender[] };
@@ -21,7 +22,8 @@ export default async function ApiKeysPage() {
     initialKeys = keyResponse.data;
     initialSenders = senderResponse.data;
   } catch (err) {
-    initialError = (err as Error).message || "Failed to load data.";
+    const parsed = parseApiError(err);
+    initialError = parsed.message;
   }
 
   return (

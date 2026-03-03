@@ -10,8 +10,11 @@ import { getSendQueue } from "../queue";
 import { writeAuditLog } from "../plugins/audit";
 import { renderTemplate } from "../lib/template";
 import { redis } from "../lib/redis";
+import { env } from "../env";
 
 export async function publicRoutes(app: FastifyInstance): Promise<void> {
+  const pixelGif = Buffer.from("R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==", "base64");
+
   function buildFailedIdempotencyKey(source: string) {
     const base = source.slice(0, 80);
     const suffix = `:fail:${Date.now().toString(36)}${randomUUID().slice(0, 6)}`;
@@ -79,6 +82,102 @@ export async function publicRoutes(app: FastifyInstance): Promise<void> {
       request.log.warn({ err: error }, "failed to record failed message");
     }
   }
+
+  app.get("/v1/track/open/:token", async (request, reply) => {
+    const params = request.params as { token: string };
+    const recipient = await prisma.campaignRecipient.findUnique({
+      where: { trackingToken: params.token },
+      select: { id: true, campaignId: true, openedAt: true }
+    });
+    if (recipient) {
+      const firstOpen = recipient.openedAt === null;
+      await prisma.campaignRecipient.update({
+        where: { id: recipient.id },
+        data: {
+          openedAt: recipient.openedAt ?? new Date(),
+          openCount: { increment: 1 }
+        }
+      });
+      if (firstOpen) {
+        await prisma.campaign.update({
+          where: { id: recipient.campaignId },
+          data: { openedCount: { increment: 1 } }
+        });
+      }
+    }
+
+    reply
+      .header("Content-Type", "image/gif")
+      .header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+      .header("Pragma", "no-cache")
+      .header("Expires", "0")
+      .send(pixelGif);
+  });
+
+  app.get("/v1/track/click/:token", async (request, reply) => {
+    const params = request.params as { token: string };
+    const query = request.query as { url?: string };
+    const rawUrl = query.url ? decodeURIComponent(query.url) : "";
+    if (!rawUrl || !/^https?:\/\//i.test(rawUrl)) {
+      return reply.badRequest("invalid url");
+    }
+
+    const recipient = await prisma.campaignRecipient.findUnique({
+      where: { trackingToken: params.token },
+      select: { id: true, campaignId: true, clickedAt: true }
+    });
+    if (recipient) {
+      const firstClick = recipient.clickedAt === null;
+      await prisma.campaignRecipient.update({
+        where: { id: recipient.id },
+        data: {
+          clickedAt: recipient.clickedAt ?? new Date(),
+          clickCount: { increment: 1 },
+          clickedUrl: rawUrl.slice(0, 500)
+        }
+      });
+      if (firstClick) {
+        await prisma.campaign.update({
+          where: { id: recipient.campaignId },
+          data: { clickedCount: { increment: 1 } }
+        });
+      }
+    }
+
+    return reply.redirect(rawUrl);
+  });
+
+  app.post("/v1/track/reply/:token", async (request, reply) => {
+    const params = request.params as { token: string };
+    const secret = env.REPLY_TRACKING_SECRET;
+    if (secret) {
+      const provided = request.headers["x-reply-secret"];
+      if (provided !== secret) return reply.forbidden("invalid secret");
+    }
+
+    const recipient = await prisma.campaignRecipient.findUnique({
+      where: { trackingToken: params.token },
+      select: { id: true, campaignId: true, repliedAt: true }
+    });
+    if (recipient) {
+      const firstReply = recipient.repliedAt === null;
+      await prisma.campaignRecipient.update({
+        where: { id: recipient.id },
+        data: {
+          repliedAt: recipient.repliedAt ?? new Date(),
+          replyCount: { increment: 1 }
+        }
+      });
+      if (firstReply) {
+        await prisma.campaign.update({
+          where: { id: recipient.campaignId },
+          data: { repliedCount: { increment: 1 } }
+        });
+      }
+    }
+
+    return reply.send({ ok: true });
+  });
 
   app.get(
     "/v1/senders",
