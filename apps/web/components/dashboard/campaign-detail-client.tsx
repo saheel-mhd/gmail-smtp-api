@@ -83,6 +83,7 @@ export function CampaignDetailClient({ campaignId }: { campaignId: string }) {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [actioning, setActioning] = useState(false);
+  const [showTrackingWarning, setShowTrackingWarning] = useState(false);
   const [error, setError] = useState("");
   const { toast } = useToast();
 
@@ -119,6 +120,14 @@ export function CampaignDetailClient({ campaignId }: { campaignId: string }) {
   useEffect(() => {
     void loadCampaign();
   }, [campaignId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const host = window.location.hostname;
+    const isLocal =
+      host === "localhost" || host === "127.0.0.1" || host === "::1";
+    setShowTrackingWarning(isLocal);
+  }, []);
 
   const rows = useMemo(() => recipients, [recipients]);
 
@@ -217,6 +226,13 @@ export function CampaignDetailClient({ campaignId }: { campaignId: string }) {
         {error ? (
           <p className="muted" style={{ marginTop: 10, color: "#9f1a1a" }}>
             {error}
+          </p>
+        ) : null}
+        {showTrackingWarning ? (
+          <p className="muted" style={{ marginTop: 10 }}>
+            Tracking is disabled on localhost. To test opens/clicks in dev, set
+            `APP_TRACKING_BASE_URL` to a public URL (ngrok/cloudflared) and
+            restart the worker.
           </p>
         ) : null}
       </section>

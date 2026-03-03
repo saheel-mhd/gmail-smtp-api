@@ -31,6 +31,7 @@ const envSchema = z.object({
   GMAIL_SMTP_SECURE: boolFromEnv.default(false),
   GMAIL_SMTP_REQUIRE_TLS: boolFromEnv.default(true),
   APP_BASE_URL: z.string().default("http://localhost:3000"),
+  APP_TRACKING_BASE_URL: z.string().optional(),
   WORKER_CONCURRENCY: z.coerce.number().default(10)
 });
 

@@ -257,31 +257,34 @@ export function CampaignCreateClient() {
     setImportProgress({ total: 0, uploaded: 0 });
 
     const seen = new Set<string>();
-    const recipients = sheetPreview.rows
-      .map((row) => {
-        const email = row[emailColumn]?.trim() ?? "";
-        if (!email || !isValidEmail(email)) return null;
-        const normalized = email.toLowerCase();
-        if (seen.has(normalized)) return null;
-        seen.add(normalized);
-        const variables: Record<string, string | number | boolean> = {};
-        for (const colIndex of variableColumns) {
-          const header = sheetPreview.columns.find((col) => col.index === colIndex)?.label;
-          if (!header) continue;
-          const value = row[colIndex];
-          if (value === undefined || value === null || value === "") continue;
-          variables[header] = value;
-        }
-        const name =
-          nameColumn !== null ? row[nameColumn]?.trim() || undefined : undefined;
-        return { email, name, variables };
-      })
-      .filter(
-        (
-          row
-        ): row is { email: string; name?: string; variables?: Record<string, string | number | boolean> } =>
-          Boolean(row)
-      );
+    type RecipientRow = {
+      email: string;
+      name?: string;
+      variables?: Record<string, string | number | boolean>;
+    };
+    const recipients = sheetPreview.rows.reduce<RecipientRow[]>((acc, row) => {
+      const email = row[emailColumn]?.trim() ?? "";
+      if (!email || !isValidEmail(email)) return acc;
+      const normalized = email.toLowerCase();
+      if (seen.has(normalized)) return acc;
+      seen.add(normalized);
+      const variables: Record<string, string | number | boolean> = {};
+      for (const colIndex of variableColumns) {
+        const header = sheetPreview.columns.find((col) => col.index === colIndex)?.label;
+        if (!header) continue;
+        const value = row[colIndex];
+        if (value === undefined || value === null || value === "") continue;
+        variables[header] = value;
+      }
+      const name =
+        nameColumn !== null ? row[nameColumn]?.trim() || undefined : undefined;
+      acc.push({
+        email,
+        name,
+        variables: Object.keys(variables).length ? variables : undefined
+      });
+      return acc;
+    }, []);
 
     if (!recipients.length) {
       setImporting(false);

@@ -10,7 +10,27 @@ import { env } from "./env";
 import { prisma } from "./lib/prisma";
 import { redis } from "./lib/redis";
 import { decryptSecret } from "./lib/crypto";
-import { renderTemplate } from "../../api/src/lib/template";
+type TemplateRenderResult = {
+  value: string;
+  missing: string[];
+};
+
+function renderTemplate(
+  template: string,
+  variables: Record<string, string | number | boolean>
+): TemplateRenderResult {
+  const tokenRegex = /{{\s*([a-zA-Z0-9_]+)\s*}}/g;
+  const missing = new Set<string>();
+  const value = template.replace(tokenRegex, (_match, key: string) => {
+    if (!(key in variables)) {
+      missing.add(key);
+      return "";
+    }
+    const raw = variables[key];
+    return raw === null || raw === undefined ? "" : String(raw);
+  });
+  return { value, missing: Array.from(missing) };
+}
 
 const log = pino({ name: "gmail-smtp-worker" });
 const QUEUE_NAME = "send_email_jobs";
@@ -251,7 +271,7 @@ async function scheduleCampaignDispatch(campaignId: string, delayMs: number): Pr
 async function processCampaignDispatchJob(job: Job<CampaignDispatchJobData>): Promise<void> {
   const { campaignId } = job.data;
   const lockKey = `lock:campaign:${campaignId}`;
-  const lock = await redis.set(lockKey, "1", "NX", "EX", 20);
+    const lock = await redis.set(lockKey, "1", "EX", 20, "NX");
   if (!lock) return;
 
   try {
@@ -326,14 +346,18 @@ async function processCampaignDispatchJob(job: Job<CampaignDispatchJobData>): Pr
       return;
     }
 
-    const baseUrl = normalizeBaseUrl(env.APP_BASE_URL);
+    const baseUrl = normalizeBaseUrl(env.APP_TRACKING_BASE_URL ?? env.APP_BASE_URL);
     const useTemplate = Boolean(campaign.templateId && campaign.template);
     const baseSubject = useTemplate ? campaign.template?.subject ?? "" : campaign.subject ?? "";
     const baseHtml = useTemplate ? campaign.template?.html ?? "" : campaign.html ?? "";
     const baseText = useTemplate ? campaign.template?.text ?? null : campaign.text ?? null;
 
     const now = new Date();
-    const messageCreates: Prisma.MessageCreateManyInput[] = [];
+    type QueuedMessage = Prisma.MessageCreateManyInput & {
+      id: string;
+      campaignRecipientId?: string | null;
+    };
+    const messageCreates: QueuedMessage[] = [];
     const recipientUpdates: Array<ReturnType<typeof prisma.campaignRecipient.update>> = [];
     let failedCount = 0;
 
@@ -618,7 +642,7 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
     });
 
     const now = new Date();
-    const updates = [
+    const updates: Prisma.PrismaPromise<unknown>[] = [
       prisma.message.update({
         where: { id: message.id },
         data: {
@@ -753,7 +777,7 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
         lastError
       }
     });
-    const updates = [updateSender, updateMessage];
+    const updates: Prisma.PrismaPromise<unknown>[] = [updateSender, updateMessage];
 
     if (message.campaignRecipient) {
       const terminal = errorType === "permanent" || lastAttempt;
