@@ -15,19 +15,20 @@ import { useToast } from "./ui/toast";
 type Sender = {
   id: string;
   label: string;
-  gmailAddress: string;
+  emailAddress: string;
+  type: "gmail" | "domain";
 };
 
 type CreateApiKeyPayload = {
   name: string;
-  smtpAccountIds: string[];
+  senderIds: string[];
   rateLimitPerMinute: number;
   allowedIps: string[];
 };
 
 const DEFAULT_FORM: CreateApiKeyPayload = {
   name: "",
-  smtpAccountIds: [],
+  senderIds: [],
   rateLimitPerMinute: 120,
   allowedIps: []
 };
@@ -62,7 +63,7 @@ export function AddApiKeyDialog({
     return (
       form.name.trim().length > 0 &&
       form.rateLimitPerMinute > 0 &&
-      form.smtpAccountIds.length > 0
+      form.senderIds.length > 0
     );
   }, [form]);
 
@@ -71,13 +72,25 @@ export function AddApiKeyDialog({
     if (!canSubmit) return;
     setSubmitting(true);
     try {
+      const smtpAccountIds = form.senderIds.filter(
+        (id) => senders.find((sender) => sender.id === id)?.type === "gmail"
+      );
+      const domainSenderIds = form.senderIds.filter(
+        (id) => senders.find((sender) => sender.id === id)?.type === "domain"
+      );
       const response = await browserApi<{ data: { key: string } }>(
         "/admin/v1/api-keys",
         {
           method: "POST",
           csrf: true,
           headers: { "content-type": "application/json" },
-          body: JSON.stringify(form)
+          body: JSON.stringify({
+            name: form.name,
+            smtpAccountIds,
+            domainSenderIds,
+            rateLimitPerMinute: form.rateLimitPerMinute,
+            allowedIps: form.allowedIps
+          })
         }
       );
       onNewKey(response.data.key);
@@ -135,20 +148,19 @@ export function AddApiKeyDialog({
             />
           </label>
           <label>
-            Allowed Sender Accounts
+            Sender Account
             <select
-              multiple
-              value={form.smtpAccountIds}
+              value={form.senderIds[0] ?? ""}
               onChange={(e) => {
-                const values = Array.from(e.target.selectedOptions).map((o) => o.value);
-                setForm((prev) => ({ ...prev, smtpAccountIds: values }));
+                const value = e.target.value;
+                setForm((prev) => ({ ...prev, senderIds: value ? [value] : [] }));
               }}
               required
-              style={{ minHeight: 120 }}
             >
+              <option value="">Select sender</option>
               {senders.map((sender) => (
                 <option value={sender.id} key={sender.id}>
-                  {sender.label} ({sender.gmailAddress})
+                  {sender.label} ({sender.emailAddress}) {sender.type === "domain" ? "[domain]" : "[gmail]"}
                 </option>
               ))}
             </select>

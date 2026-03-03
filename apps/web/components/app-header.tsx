@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { browserApi } from "../lib/browser-api";
 
 function Icon({
@@ -38,28 +38,68 @@ type MenuItem = {
 export function AppHeader() {
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
+  const appVersion = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    browserApi("/admin/v1/me", { cache: "no-store" })
+      .then(() => {
+        if (isMounted) setIsAuthed(true);
+      })
+      .catch(() => {
+        if (isMounted) setIsAuthed(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointerDown(event: PointerEvent) {
+      const target = event.target as Node;
+      if (menuRef.current?.contains(target)) return;
+      if (buttonRef.current?.contains(target)) return;
+      setOpen(false);
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown, true);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   async function onLogout() {
     setLoggingOut(true);
     setOpen(false);
 
-    // Fire-and-forget logout request so UX is instant.
-    void browserApi<{ ok: boolean }>("/admin/v1/auth/logout", {
-      method: "POST",
-      csrf: true
-    }).catch(() => {
+    try {
+      await browserApi<{ ok: boolean }>("/admin/v1/auth/logout", {
+        method: "POST",
+        csrf: true
+      });
+    } catch {
       // Ignore network/auth errors; we still force a client logout navigation.
-    });
-
-    // Force a full reload to avoid stale Next chunk runtime issues on client navigation.
-    window.location.replace("/login");
+    } finally {
+      // Force a full reload to avoid stale Next chunk runtime issues on client navigation.
+      window.location.replace("/login");
+    }
   }
 
   const menuItems = useMemo<MenuItem[]>(
     () => [
-      { href: "/dashboard/company", label: "Create Company", iconPath: "M3 21h18M5 21V7l7-4 7 4v14" },
-      { href: "/dashboard/members", label: "Manage Members", iconPath: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.13a4 4 0 0 1 0 7.75M22 21v-2a4 4 0 0 0-3-3.87M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8" },
-      { href: "/dashboard/transactions", label: "Transaction Logs", iconPath: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2" },
+      { href: "/dashboard/company", label: "Company", iconPath: "M3 21h18M5 21V7l7-4 7 4v14" },
+      { href: "/dashboard/domains", label: "Domains", iconPath: "M3 7h18M3 12h18M3 17h18" },
       { href: "/dashboard/account", label: "Account", iconPath: "M20 21a8 8 0 1 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8" },
       { label: loggingOut ? "Logging out..." : "Logout", iconPath: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9", action: onLogout }
     ],
@@ -67,21 +107,23 @@ export function AppHeader() {
   );
 
   return (
-    <header className="app-header-wrap">
-      <div className="app-header">
-        <div className="left">
-          <div className="account-menu">
+    <>
+      <header className="app-header-wrap">
+        <div className="app-header">
+          <div className="left">
+            <div className="account-menu">
             <button
               type="button"
               className="icon-btn"
               onClick={() => setOpen((v) => !v)}
               aria-label="Open account menu"
               aria-expanded={open}
+              ref={buttonRef}
             >
               <Icon path="M20 21a8 8 0 1 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8" size={18} />
             </button>
             {open ? (
-              <div className="dropdown">
+              <div className="dropdown" ref={menuRef}>
                 {menuItems.map((item) =>
                   item.href ? (
                     <Link
@@ -111,8 +153,11 @@ export function AppHeader() {
             ) : null}
           </div>
           <Link href="/dashboard" className="brand">
-            GMAIL SMTP API GENERATOR
+            Mailler
           </Link>
+          <span className="badge version-pill" title={`Build ${appVersion}`}>
+            v{appVersion}
+          </span>
         </div>
 
         <nav className="right">
@@ -124,8 +169,16 @@ export function AppHeader() {
             <Icon path="M22 12a10 10 0 1 1-4-8M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01" />
             Support
           </Link>
+          {isAuthed === false ? (
+            <Link href="/login" className="nav-link">
+              <Icon path="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10M10 17l5-5-5-5M15 12H3" />
+              Login
+            </Link>
+          ) : null}
         </nav>
-      </div>
-    </header>
+        </div>
+      </header>
+      <div className="app-header-spacer" aria-hidden="true" />
+    </>
   );
 }

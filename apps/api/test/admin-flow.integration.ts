@@ -69,10 +69,10 @@ async function run() {
         "x-csrf-token": csrfValue
       },
       payload: {
+        type: "gmail",
         label: "Primary",
         gmailAddress: "sender@example.com",
         appPassword: "app-password-1234",
-        perMinuteLimit: 60,
         perDayLimit: 1000
       }
     })) as inject.Response;

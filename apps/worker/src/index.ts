@@ -71,29 +71,80 @@ function classifyError(error: unknown): "transient" | "permanent" | "auth" {
   return "transient";
 }
 
-async function senderThrottle(senderId: string, perMinuteLimit: number): Promise<void> {
-  const key = `worker:sender:${senderId}:${Math.floor(Date.now() / 60000)}`;
+function currentDayKey(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function dayStartUtc(dayKey: string): Date {
+  return new Date(`${dayKey}T00:00:00.000Z`);
+}
+
+async function reserveDailySlot(
+  senderId: string,
+  perDayLimit: number,
+  existingCount: number,
+  existingResetAt: Date | null
+): Promise<number> {
+  const dayKey = currentDayKey();
+  const key = `quota:sender:${senderId}:${dayKey}`;
+  const dayStart = dayStartUtc(dayKey);
+  const initialCount = existingResetAt && existingResetAt >= dayStart ? existingCount : 0;
+  await redis.set(key, String(initialCount), "EX", 24 * 60 * 60, "NX");
   const count = await redis.incr(key);
-  if (count === 1) await redis.expire(key, 60);
-  if (count > perMinuteLimit) {
-    throw new Error("sender minute throttle exceeded");
+  if (count > perDayLimit) {
+    await redis.decr(key);
+    throw new Error("sender daily limit reached");
   }
+  return count;
 }
 
 async function processSendJob(job: Job<SendJobData>): Promise<void> {
   const message = await prisma.message.findUnique({
     where: { id: job.data.messageId },
     include: {
-      smtpAccount: true
+      smtpAccount: true,
+      domainSender: {
+        include: {
+          domain: true
+        }
+      }
     }
   });
   if (!message) throw new UnrecoverableError("message not found");
   if (message.status === "sent") return;
-  if (message.smtpAccount.status !== "active") {
-    throw new UnrecoverableError("sender is not active");
+  if (!message.smtpAccount && !message.domainSender) {
+    throw new UnrecoverableError("sender is missing");
   }
 
-  await senderThrottle(message.smtpAccount.id, message.smtpAccount.perMinuteLimit);
+  const senderType = message.smtpAccount ? "gmail" : "domain";
+  const sender = message.smtpAccount ?? message.domainSender;
+  if (!sender || sender.status !== "active") {
+    throw new UnrecoverableError("sender is not active");
+  }
+  if (senderType === "domain" && !message.domainSender?.domain?.smtpHost) {
+    throw new UnrecoverableError("domain smtp settings are missing");
+  }
+
+  const dayKey = currentDayKey();
+  const quotaKey = `quota:sender:${sender.id}:${dayKey}`;
+  let reservedCount: number | null = null;
+  try {
+    reservedCount = await reserveDailySlot(
+      sender.id,
+      sender.perDayLimit,
+      sender.sentTodayCount ?? 0,
+      sender.sentTodayResetAt
+    );
+  } catch (error) {
+    await prisma.message.update({
+      where: { id: message.id },
+      data: {
+        status: "failed",
+        lastError: "sender daily limit reached"
+      }
+    });
+    throw new UnrecoverableError((error as Error).message);
+  }
 
   await prisma.message.update({
     where: { id: message.id },
@@ -104,26 +155,48 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
   });
 
   try {
-    const appPassword = decryptSecret({
-      encrypted: message.smtpAccount.encryptedAppPassword,
-      iv: message.smtpAccount.iv,
-      authTag: message.smtpAccount.authTag
-    });
+    let transporter: nodemailer.Transporter;
+    let fromEmail = "";
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: message.smtpAccount.gmailAddress,
-        pass: appPassword
-      }
-    });
+    if (senderType === "gmail" && message.smtpAccount) {
+      const appPassword = decryptSecret({
+        encrypted: message.smtpAccount.encryptedAppPassword,
+        iv: message.smtpAccount.iv,
+        authTag: message.smtpAccount.authTag
+      });
+      transporter = nodemailer.createTransport({
+        host: env.GMAIL_SMTP_HOST,
+        port: env.GMAIL_SMTP_PORT,
+        secure: env.GMAIL_SMTP_SECURE,
+        requireTLS: env.GMAIL_SMTP_REQUIRE_TLS,
+        auth: {
+          user: message.smtpAccount.gmailAddress,
+          pass: appPassword
+        }
+      });
+      fromEmail = message.smtpAccount.gmailAddress;
+    } else if (message.domainSender?.domain?.smtpHost) {
+      const password = decryptSecret({
+        encrypted: message.domainSender.encryptedPassword,
+        iv: message.domainSender.iv,
+        authTag: message.domainSender.authTag
+      });
+      transporter = nodemailer.createTransport({
+        host: message.domainSender.domain.smtpHost,
+        port: message.domainSender.domain.smtpPort,
+        secure: message.domainSender.domain.smtpSecure,
+        auth: {
+          user: message.domainSender.username,
+          pass: password
+        }
+      });
+      fromEmail = message.domainSender.emailAddress;
+    } else {
+      throw new UnrecoverableError("sender is not configured");
+    }
 
     await transporter.sendMail({
-      from: message.fromName
-        ? `"${message.fromName}" <${message.smtpAccount.gmailAddress}>`
-        : message.smtpAccount.gmailAddress,
+      from: message.fromName ? `"${message.fromName}" <${fromEmail}>` : fromEmail,
       to: message.to as string[],
       cc: message.cc as string[],
       bcc: message.bcc as string[],
@@ -143,37 +216,97 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
           lastError: null
         }
       }),
-      prisma.smtpAccount.update({
-        where: { id: message.smtpAccount.id },
-        data: {
-          lastSuccessAt: new Date(),
-          errorStreak: 0,
-          healthScore: {
-            set: Math.min((message.smtpAccount.healthScore ?? 100) + 3, 100)
-          }
-        }
-      })
+      senderType === "gmail"
+        ? prisma.smtpAccount.update({
+            where: { id: sender.id },
+            data: {
+              lastSuccessAt: new Date(),
+              errorStreak: 0,
+              healthScore: { set: 100 }
+            }
+          })
+        : prisma.domainSender.update({
+            where: { id: sender.id },
+            data: {
+              lastSuccessAt: new Date(),
+              errorStreak: 0,
+              healthScore: { set: 100 }
+            }
+          })
     ]);
+
+    if (reservedCount) {
+      if (senderType === "gmail") {
+        await prisma.smtpAccount.updateMany({
+          where: {
+            id: sender.id,
+            OR: [
+              { sentTodayResetAt: null },
+              { sentTodayResetAt: { lt: dayStartUtc(dayKey) } },
+              { sentTodayCount: { lt: reservedCount } }
+            ]
+          },
+          data: {
+            sentTodayCount: reservedCount,
+            sentTodayResetAt: dayStartUtc(dayKey)
+          }
+        });
+      } else {
+        await prisma.domainSender.updateMany({
+          where: {
+            id: sender.id,
+            OR: [
+              { sentTodayResetAt: null },
+              { sentTodayResetAt: { lt: dayStartUtc(dayKey) } },
+              { sentTodayCount: { lt: reservedCount } }
+            ]
+          },
+          data: {
+            sentTodayCount: reservedCount,
+            sentTodayResetAt: dayStartUtc(dayKey)
+          }
+        });
+      }
+    }
   } catch (error) {
+    if (reservedCount) {
+      await redis.decr(quotaKey);
+    }
     const errorType = classifyError(error);
     const nextAttempt = job.attemptsMade + 1;
     const lastAttempt = nextAttempt >= retryDelaysMs.length;
     const lastError = (error as Error).message;
 
-    const updateSender = prisma.smtpAccount.update({
-      where: { id: message.smtpAccount.id },
-      data: {
-        lastErrorAt: new Date(),
-        errorStreak: { increment: 1 },
-        healthScore: {
-          set: Math.max((message.smtpAccount.healthScore ?? 100) - 15, 0)
-        },
-        status:
-          errorType === "auth" && message.smtpAccount.errorStreak + 1 >= 3
-            ? "needs_attention"
-            : undefined
-      }
-    });
+    const updateSender =
+      senderType === "gmail"
+        ? prisma.smtpAccount.update({
+            where: { id: sender.id },
+            data: {
+              lastErrorAt: new Date(),
+              errorStreak: { increment: 1 },
+              healthScore: {
+                set: Math.max((sender.healthScore ?? 100) - 15, 0)
+              },
+              status:
+                errorType === "auth" && sender.errorStreak + 1 >= 3
+                  ? "needs_attention"
+                  : undefined
+            }
+          })
+        : prisma.domainSender.update({
+            where: { id: sender.id },
+            data: {
+              lastErrorAt: new Date(),
+              errorStreak: { increment: 1 },
+              healthScore: {
+                set: Math.max((sender.healthScore ?? 100) - 15, 0)
+              },
+              status:
+                errorType === "auth" && sender.errorStreak + 1 >= 3
+                  ? "needs_attention"
+                  : undefined
+            }
+          });
 
     const updateMessage = prisma.message.update({
       where: { id: message.id },

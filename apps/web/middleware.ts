@@ -6,10 +6,7 @@ export default function middleware(req: NextRequest) {
   const sessionCookie = req.cookies.get("gmail_smtp_session")?.value;
   const isLoggedIn = Boolean(sessionCookie);
 
-  if (pathname === "/login") {
-    if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-    }
+  if (pathname === "/login" || pathname === "/register") {
     return NextResponse.next();
   }
 
@@ -23,5 +20,5 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"]
+  matcher: ["/((?!api|admin|v1|_next/static|_next/image|favicon.ico).*)"]
 };

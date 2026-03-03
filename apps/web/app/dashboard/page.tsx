@@ -1,6 +1,11 @@
+import { LoginSuccessToast } from "../../components/login-success-toast";
+
+import { FeatureTile } from "../../components/dashboard/feature-tile";
+
 export default function DashboardHomePage() {
   return (
     <main className="container">
+      <LoginSuccessToast />
       <section className="panel">
         <h1>Gmail SMTP Admin</h1>
         <p className="muted">
@@ -35,6 +40,35 @@ export default function DashboardHomePage() {
             </ul>
           </div>
         </div>
+      </section>
+      <section
+        style={{
+          marginTop: 16,
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 12
+        }}
+      >
+        <FeatureTile
+          title="Bulk Mail"
+          description="Queue large batches."
+          icon={
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M2 7h12a2 2 0 0 1 2 2v8H4a2 2 0 0 1-2-2V7Z" />
+              <path d="m2 7 7 5 7-5" />
+              <path d="M16 5h4a2 2 0 0 1 2 2v8h-4" />
+            </svg>
+          }
+        />
       </section>
     </main>
   );

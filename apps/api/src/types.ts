@@ -5,6 +5,7 @@ export type ActorContext =
       tenantId: string;
       apiKeyId: string;
       allowedSmtpAccountIds: string[];
+      allowedDomainSenderIds: string[];
       rateLimitPerMinute: number;
       allowedIps: string[];
     }

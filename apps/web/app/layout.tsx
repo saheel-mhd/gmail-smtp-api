@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { ToastProvider } from "../components/ui/toast";
+import { TopLoader } from "../components/ui/top-loader";
+import { PageTransition } from "../components/page-transition";
 
 export const metadata: Metadata = {
   title: "Gmail SMTP API",
@@ -13,7 +16,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <Suspense fallback={null}>
+            <TopLoader />
+          </Suspense>
+          <Suspense fallback={null}>
+            <PageTransition>{children}</PageTransition>
+          </Suspense>
+        </ToastProvider>
       </body>
     </html>
   );
