@@ -59,7 +59,9 @@ export function SystemLogsClient({
     setLoading(true);
     setError("");
     try {
-      const data = await browserApi<{ data: SystemLogRow[] }>("/admin/v1/system-logs?limit=100");
+      const data = await browserApi<{ data: SystemLogRow[] }>("/admin/v1/system-logs?limit=100", {
+        cache: "no-store"
+      });
       setLogs(data.data);
     } catch (err) {
       const { message, isAuth } = parseApiError(err);
