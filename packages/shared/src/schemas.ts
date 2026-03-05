@@ -97,7 +97,8 @@ export const createSenderSchema = z.discriminatedUnion("type", [
 export const patchSenderSchema = z.object({
   label: z.string().min(1).max(80).optional(),
   status: z.enum(["active", "disabled", "needs_attention"]).optional(),
-  perDayLimit: z.number().int().positive().max(1000000).optional()
+  perDayLimit: z.number().int().positive().max(1000000).optional(),
+  password: z.string().min(4).max(128).optional()
 });
 
 export const createApiKeySchema = z
