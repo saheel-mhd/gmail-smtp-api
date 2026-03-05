@@ -26,6 +26,7 @@ type SenderResponse = { data: Sender[] };
 type UpdateSenderPayload = {
   label: string;
   perDayLimit: number;
+  password: string;
 };
 
 function healthBadge(status: Sender["status"], healthScore: number) {
@@ -38,7 +39,8 @@ function healthBadge(status: Sender["status"], healthScore: number) {
 
 const DEFAULT_EDIT_FORM: UpdateSenderPayload = {
   label: "",
-  perDayLimit: 2000
+  perDayLimit: 2000,
+  password: ""
 };
 
 export function SendersClient({
@@ -125,13 +127,18 @@ export function SendersClient({
     if (!editingId) return;
     setUpdatingId(editingId);
     try {
+      const payload = {
+        label: editForm.label,
+        perDayLimit: editForm.perDayLimit,
+        ...(editForm.password.trim() ? { password: editForm.password } : {})
+      };
       await browserApi(`/admin/v1/senders/${editingId}`, {
         method: "PATCH",
         csrf: true,
         headers: {
           "content-type": "application/json"
         },
-        body: JSON.stringify(editForm)
+        body: JSON.stringify(payload)
       });
       invalidateBrowserCache("/admin/v1/senders");
       toast({
@@ -196,7 +203,8 @@ export function SendersClient({
     setEditingId(sender.id);
     setEditForm({
       label: sender.label,
-      perDayLimit: sender.perDayLimit
+      perDayLimit: sender.perDayLimit,
+      password: ""
     });
   }
 
@@ -414,6 +422,20 @@ export function SendersClient({
                                       }))
                                     }
                                     required
+                                  />
+                                </label>
+                                <label>
+                                  New Password
+                                  <input
+                                    type="password"
+                                    value={editForm.password}
+                                    onChange={(e) =>
+                                      setEditForm((prev) => ({
+                                        ...prev,
+                                        password: e.target.value
+                                      }))
+                                    }
+                                    placeholder="Leave blank to keep current"
                                   />
                                 </label>
                                 <div className="actions">

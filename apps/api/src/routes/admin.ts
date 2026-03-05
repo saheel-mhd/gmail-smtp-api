@@ -1494,6 +1494,23 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         return reply.badRequest("domain smtp settings are missing");
       }
 
+      if (!env.SKIP_SMTP_VERIFY) {
+        try {
+          const transporter = nodemailer.createTransport({
+            host: domain.smtpHost,
+            port: domain.smtpPort,
+            secure: domain.smtpSecure,
+            auth: { user: parsed.data.username, pass: parsed.data.password }
+          });
+          await transporter.verify();
+        } catch (error) {
+          request.log.warn({ err: error }, "domain sender credential verification failed");
+          return reply.badRequest(
+            "domain smtp credentials could not be verified. check the username and password."
+          );
+        }
+      }
+
       const emailDomain = parsed.data.emailAddress.split("@")[1]?.toLowerCase();
       if (!emailDomain || emailDomain !== domain.domain.toLowerCase()) {
         return reply.badRequest("email must match selected domain");
@@ -1569,15 +1586,77 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       const parsed = patchSenderSchema.safeParse(request.body);
       if (!parsed.success) return reply.badRequest(parsed.error.message);
 
+      const { password, ...rest } = parsed.data;
       const resetOnActivate =
         parsed.data.status === "active"
           ? { errorStreak: 0, lastErrorAt: null, healthScore: 100 }
           : {};
+      const encryptedPassword = password ? encryptSecret(password) : null;
+
+      if (password) {
+        const smtpSender = await prisma.smtpAccount.findFirst({
+          where: { id: params.id, tenantId: user.tenantId },
+          select: { gmailAddress: true }
+        });
+        if (smtpSender) {
+          if (!env.SKIP_SMTP_VERIFY) {
+            try {
+              await verifyGmailCredentials(smtpSender.gmailAddress, password);
+            } catch (error) {
+              request.log.warn({ err: error }, "gmail credential verification failed");
+              return reply.badRequest(
+                "gmail credentials could not be verified. check the address and app password."
+              );
+            }
+          }
+        } else {
+          const domainSender = await prisma.domainSender.findFirst({
+            where: {
+              id: params.id,
+              tenantId: user.tenantId,
+              domain: { userId: user.actorId }
+            },
+            select: {
+              username: true,
+              domain: { select: { smtpHost: true, smtpPort: true, smtpSecure: true } }
+            }
+          });
+          if (domainSender?.domain?.smtpHost) {
+            if (!env.SKIP_SMTP_VERIFY) {
+              try {
+                const transporter = nodemailer.createTransport({
+                  host: domainSender.domain.smtpHost,
+                  port: domainSender.domain.smtpPort,
+                  secure: domainSender.domain.smtpSecure,
+                  auth: { user: domainSender.username, pass: password }
+                });
+                await transporter.verify();
+              } catch (error) {
+                request.log.warn({ err: error }, "domain sender credential verification failed");
+                return reply.badRequest(
+                  "domain smtp credentials could not be verified. check the username and password."
+                );
+              }
+            }
+          } else if (domainSender) {
+            return reply.badRequest("domain smtp settings are missing");
+          }
+        }
+      }
+
       const sender = await prisma.smtpAccount.updateMany({
         where: { id: params.id, tenantId: user.tenantId },
         data: {
-          ...parsed.data,
-          ...resetOnActivate
+          ...rest,
+          ...resetOnActivate,
+          ...(encryptedPassword
+            ? {
+                encryptedAppPassword: encryptedPassword.encrypted,
+                iv: encryptedPassword.iv,
+                authTag: encryptedPassword.authTag,
+                keyVersion: encryptedPassword.keyVersion
+              }
+            : {})
         }
       });
       if (sender.count) {
@@ -1610,8 +1689,16 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           domain: { userId: user.actorId }
         },
         data: {
-          ...parsed.data,
-          ...resetOnActivate
+          ...rest,
+          ...resetOnActivate,
+          ...(encryptedPassword
+            ? {
+                encryptedPassword: encryptedPassword.encrypted,
+                iv: encryptedPassword.iv,
+                authTag: encryptedPassword.authTag,
+                keyVersion: encryptedPassword.keyVersion
+              }
+            : {})
         }
       });
       if (!domainSender.count) return reply.notFound("sender not found");

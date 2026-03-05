@@ -59,7 +59,9 @@ export function ActionLogsClient({
     setLoading(true);
     setError("");
     try {
-      const data = await browserApi<{ data: AuditRow[] }>("/admin/v1/logs?limit=100");
+      const data = await browserApi<{ data: AuditRow[] }>("/admin/v1/logs?limit=100", {
+        cache: "no-store"
+      });
       setLogs(data.data);
     } catch (err) {
       const { message, isAuth } = parseApiError(err);
