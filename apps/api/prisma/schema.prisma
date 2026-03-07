@@ -333,6 +333,7 @@ model Campaign {
   replyTo                String?
   headers                Json?
   perMinuteLimit         Int?
+  perMessageDelaySeconds Int          @default(0)
   warmupEnabled          Boolean            @default(false)
   warmupStartPerMinute   Int                @default(20)
   warmupStep             Int                @default(10)

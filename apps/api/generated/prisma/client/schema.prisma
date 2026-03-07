@@ -317,41 +317,42 @@ model Template {
 }
 
 model Campaign {
-  id                    String             @id @default(cuid())
-  tenantId              String
-  userId                String
-  name                  String
-  status                CampaignStatus     @default(draft)
-  senderType            CampaignSenderType
-  smtpAccountId         String?
-  domainSenderId        String?
-  templateId            String?
-  subject               String?
-  html                  String?
-  text                  String?
-  fromName              String?
-  replyTo               String?
-  headers               Json?
-  perMinuteLimit        Int?
-  warmupEnabled         Boolean            @default(false)
-  warmupStartPerMinute  Int                @default(20)
-  warmupStep            Int                @default(10)
-  warmupIntervalMinutes Int                @default(60)
-  warmupMaxPerMinute    Int                @default(200)
-  trackOpens            Boolean            @default(true)
-  trackClicks           Boolean            @default(true)
-  trackReplies          Boolean            @default(false)
-  totalRecipients       Int                @default(0)
-  queuedCount           Int                @default(0)
-  sentCount             Int                @default(0)
-  failedCount           Int                @default(0)
-  openedCount           Int                @default(0)
-  clickedCount          Int                @default(0)
-  repliedCount          Int                @default(0)
-  startedAt             DateTime?
-  completedAt           DateTime?
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  id                     String             @id @default(cuid())
+  tenantId               String
+  userId                 String
+  name                   String
+  status                 CampaignStatus     @default(draft)
+  senderType             CampaignSenderType
+  smtpAccountId          String?
+  domainSenderId         String?
+  templateId             String?
+  subject                String?
+  html                   String?
+  text                   String?
+  fromName               String?
+  replyTo                String?
+  headers                Json?
+  perMinuteLimit         Int?
+  perMessageDelaySeconds Int                @default(0)
+  warmupEnabled          Boolean            @default(false)
+  warmupStartPerMinute   Int                @default(20)
+  warmupStep             Int                @default(10)
+  warmupIntervalMinutes  Int                @default(60)
+  warmupMaxPerMinute     Int                @default(200)
+  trackOpens             Boolean            @default(true)
+  trackClicks            Boolean            @default(true)
+  trackReplies           Boolean            @default(false)
+  totalRecipients        Int                @default(0)
+  queuedCount            Int                @default(0)
+  sentCount              Int                @default(0)
+  failedCount            Int                @default(0)
+  openedCount            Int                @default(0)
+  clickedCount           Int                @default(0)
+  repliedCount           Int                @default(0)
+  startedAt              DateTime?
+  completedAt            DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
 
   tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)

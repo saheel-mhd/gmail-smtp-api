@@ -305,6 +305,7 @@ exports.Prisma.CampaignScalarFieldEnum = {
   replyTo: 'replyTo',
   headers: 'headers',
   perMinuteLimit: 'perMinuteLimit',
+  perMessageDelaySeconds: 'perMessageDelaySeconds',
   warmupEnabled: 'warmupEnabled',
   warmupStartPerMinute: 'warmupStartPerMinute',
   warmupStep: 'warmupStep',

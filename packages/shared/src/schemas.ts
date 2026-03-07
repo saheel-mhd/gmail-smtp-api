@@ -126,6 +126,7 @@ export const createCampaignSchema = z
     fromName: z.string().max(120).optional(),
     replyTo: recipientSchema.optional(),
     headers: headersSchema,
+    perMessageDelaySeconds: z.number().int().min(0).max(3600).optional(),
     perMinuteLimit: z.number().int().positive().max(10000).optional(),
     warmupEnabled: z.boolean().optional(),
     warmupStartPerMinute: z.number().int().positive().max(10000).optional(),

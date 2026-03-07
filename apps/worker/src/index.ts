@@ -307,6 +307,11 @@ async function processCampaignDispatchJob(job: Job<CampaignDispatchJobData>): Pr
       senderLimit && senderLimit > 0
         ? Math.min(warmupLimit || senderLimit, senderLimit)
         : warmupLimit;
+    const perMessageDelaySeconds = Math.max(0, campaign.perMessageDelaySeconds ?? 0);
+    const dispatchBatchLimit =
+      perMessageDelaySeconds > 0
+        ? 1
+        : Math.min(MAX_DISPATCH_BATCH, effectiveLimit ?? MAX_DISPATCH_BATCH);
 
     if (!effectiveLimit || effectiveLimit <= 0) {
       await scheduleCampaignDispatch(campaign.id, 60_000);
@@ -314,11 +319,7 @@ async function processCampaignDispatchJob(job: Job<CampaignDispatchJobData>): Pr
     }
 
     const perMinuteKey = `rl:campaign:${campaign.id}:${minutesKey()}`;
-    const allowance = await consumeRateLimit(
-      perMinuteKey,
-      effectiveLimit,
-      Math.min(MAX_DISPATCH_BATCH, effectiveLimit)
-    );
+    const allowance = await consumeRateLimit(perMinuteKey, effectiveLimit, dispatchBatchLimit);
     if (!allowance) {
       await scheduleCampaignDispatch(campaign.id, 15_000);
       return;
@@ -507,7 +508,9 @@ async function processCampaignDispatchJob(job: Job<CampaignDispatchJobData>): Pr
       await redis.decrby(perMinuteKey, allowance - queuedSuccessCount);
     }
 
-    if (messageCreates.length >= allowance) {
+    if (perMessageDelaySeconds > 0) {
+      await scheduleCampaignDispatch(campaign.id, perMessageDelaySeconds * 1000);
+    } else if (messageCreates.length >= allowance) {
       await scheduleCampaignDispatch(campaign.id, 5_000);
     } else {
       await scheduleCampaignDispatch(campaign.id, 10_000);
