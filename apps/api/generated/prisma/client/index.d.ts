@@ -16337,6 +16337,7 @@ export namespace Prisma {
 
   export type CampaignAvgAggregateOutputType = {
     perMinuteLimit: number | null
+    perMessageDelaySeconds: number | null
     warmupStartPerMinute: number | null
     warmupStep: number | null
     warmupIntervalMinutes: number | null
@@ -16352,6 +16353,7 @@ export namespace Prisma {
 
   export type CampaignSumAggregateOutputType = {
     perMinuteLimit: number | null
+    perMessageDelaySeconds: number | null
     warmupStartPerMinute: number | null
     warmupStep: number | null
     warmupIntervalMinutes: number | null
@@ -16381,6 +16383,7 @@ export namespace Prisma {
     fromName: string | null
     replyTo: string | null
     perMinuteLimit: number | null
+    perMessageDelaySeconds: number | null
     warmupEnabled: boolean | null
     warmupStartPerMinute: number | null
     warmupStep: number | null
@@ -16418,6 +16421,7 @@ export namespace Prisma {
     fromName: string | null
     replyTo: string | null
     perMinuteLimit: number | null
+    perMessageDelaySeconds: number | null
     warmupEnabled: boolean | null
     warmupStartPerMinute: number | null
     warmupStep: number | null
@@ -16456,6 +16460,7 @@ export namespace Prisma {
     replyTo: number
     headers: number
     perMinuteLimit: number
+    perMessageDelaySeconds: number
     warmupEnabled: number
     warmupStartPerMinute: number
     warmupStep: number
@@ -16481,6 +16486,7 @@ export namespace Prisma {
 
   export type CampaignAvgAggregateInputType = {
     perMinuteLimit?: true
+    perMessageDelaySeconds?: true
     warmupStartPerMinute?: true
     warmupStep?: true
     warmupIntervalMinutes?: true
@@ -16496,6 +16502,7 @@ export namespace Prisma {
 
   export type CampaignSumAggregateInputType = {
     perMinuteLimit?: true
+    perMessageDelaySeconds?: true
     warmupStartPerMinute?: true
     warmupStep?: true
     warmupIntervalMinutes?: true
@@ -16525,6 +16532,7 @@ export namespace Prisma {
     fromName?: true
     replyTo?: true
     perMinuteLimit?: true
+    perMessageDelaySeconds?: true
     warmupEnabled?: true
     warmupStartPerMinute?: true
     warmupStep?: true
@@ -16562,6 +16570,7 @@ export namespace Prisma {
     fromName?: true
     replyTo?: true
     perMinuteLimit?: true
+    perMessageDelaySeconds?: true
     warmupEnabled?: true
     warmupStartPerMinute?: true
     warmupStep?: true
@@ -16600,6 +16609,7 @@ export namespace Prisma {
     replyTo?: true
     headers?: true
     perMinuteLimit?: true
+    perMessageDelaySeconds?: true
     warmupEnabled?: true
     warmupStartPerMinute?: true
     warmupStep?: true
@@ -16725,6 +16735,7 @@ export namespace Prisma {
     replyTo: string | null
     headers: JsonValue | null
     perMinuteLimit: number | null
+    perMessageDelaySeconds: number
     warmupEnabled: boolean
     warmupStartPerMinute: number
     warmupStep: number
@@ -16782,6 +16793,7 @@ export namespace Prisma {
     replyTo?: boolean
     headers?: boolean
     perMinuteLimit?: boolean
+    perMessageDelaySeconds?: boolean
     warmupEnabled?: boolean
     warmupStartPerMinute?: boolean
     warmupStep?: boolean
@@ -16827,6 +16839,7 @@ export namespace Prisma {
     replyTo?: boolean
     headers?: boolean
     perMinuteLimit?: boolean
+    perMessageDelaySeconds?: boolean
     warmupEnabled?: boolean
     warmupStartPerMinute?: boolean
     warmupStep?: boolean
@@ -16870,6 +16883,7 @@ export namespace Prisma {
     replyTo?: boolean
     headers?: boolean
     perMinuteLimit?: boolean
+    perMessageDelaySeconds?: boolean
     warmupEnabled?: boolean
     warmupStartPerMinute?: boolean
     warmupStep?: boolean
@@ -16913,6 +16927,7 @@ export namespace Prisma {
     replyTo?: boolean
     headers?: boolean
     perMinuteLimit?: boolean
+    perMessageDelaySeconds?: boolean
     warmupEnabled?: boolean
     warmupStartPerMinute?: boolean
     warmupStep?: boolean
@@ -16934,7 +16949,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type CampaignOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "name" | "status" | "senderType" | "smtpAccountId" | "domainSenderId" | "templateId" | "subject" | "html" | "text" | "fromName" | "replyTo" | "headers" | "perMinuteLimit" | "warmupEnabled" | "warmupStartPerMinute" | "warmupStep" | "warmupIntervalMinutes" | "warmupMaxPerMinute" | "trackOpens" | "trackClicks" | "trackReplies" | "totalRecipients" | "queuedCount" | "sentCount" | "failedCount" | "openedCount" | "clickedCount" | "repliedCount" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
+  export type CampaignOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "name" | "status" | "senderType" | "smtpAccountId" | "domainSenderId" | "templateId" | "subject" | "html" | "text" | "fromName" | "replyTo" | "headers" | "perMinuteLimit" | "perMessageDelaySeconds" | "warmupEnabled" | "warmupStartPerMinute" | "warmupStep" | "warmupIntervalMinutes" | "warmupMaxPerMinute" | "trackOpens" | "trackClicks" | "trackReplies" | "totalRecipients" | "queuedCount" | "sentCount" | "failedCount" | "openedCount" | "clickedCount" | "repliedCount" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
   export type CampaignInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -16986,6 +17001,7 @@ export namespace Prisma {
       replyTo: string | null
       headers: Prisma.JsonValue | null
       perMinuteLimit: number | null
+      perMessageDelaySeconds: number
       warmupEnabled: boolean
       warmupStartPerMinute: number
       warmupStep: number
@@ -17450,6 +17466,7 @@ export namespace Prisma {
     readonly replyTo: FieldRef<"Campaign", 'String'>
     readonly headers: FieldRef<"Campaign", 'Json'>
     readonly perMinuteLimit: FieldRef<"Campaign", 'Int'>
+    readonly perMessageDelaySeconds: FieldRef<"Campaign", 'Int'>
     readonly warmupEnabled: FieldRef<"Campaign", 'Boolean'>
     readonly warmupStartPerMinute: FieldRef<"Campaign", 'Int'>
     readonly warmupStep: FieldRef<"Campaign", 'Int'>
@@ -20627,6 +20644,7 @@ export namespace Prisma {
     replyTo: 'replyTo',
     headers: 'headers',
     perMinuteLimit: 'perMinuteLimit',
+    perMessageDelaySeconds: 'perMessageDelaySeconds',
     warmupEnabled: 'warmupEnabled',
     warmupStartPerMinute: 'warmupStartPerMinute',
     warmupStep: 'warmupStep',
@@ -22120,6 +22138,7 @@ export namespace Prisma {
     replyTo?: StringNullableFilter<"Campaign"> | string | null
     headers?: JsonNullableFilter<"Campaign">
     perMinuteLimit?: IntNullableFilter<"Campaign"> | number | null
+    perMessageDelaySeconds?: IntFilter<"Campaign"> | number
     warmupEnabled?: BoolFilter<"Campaign"> | boolean
     warmupStartPerMinute?: IntFilter<"Campaign"> | number
     warmupStep?: IntFilter<"Campaign"> | number
@@ -22164,6 +22183,7 @@ export namespace Prisma {
     replyTo?: SortOrderInput | SortOrder
     headers?: SortOrderInput | SortOrder
     perMinuteLimit?: SortOrderInput | SortOrder
+    perMessageDelaySeconds?: SortOrder
     warmupEnabled?: SortOrder
     warmupStartPerMinute?: SortOrder
     warmupStep?: SortOrder
@@ -22211,6 +22231,7 @@ export namespace Prisma {
     replyTo?: StringNullableFilter<"Campaign"> | string | null
     headers?: JsonNullableFilter<"Campaign">
     perMinuteLimit?: IntNullableFilter<"Campaign"> | number | null
+    perMessageDelaySeconds?: IntFilter<"Campaign"> | number
     warmupEnabled?: BoolFilter<"Campaign"> | boolean
     warmupStartPerMinute?: IntFilter<"Campaign"> | number
     warmupStep?: IntFilter<"Campaign"> | number
@@ -22255,6 +22276,7 @@ export namespace Prisma {
     replyTo?: SortOrderInput | SortOrder
     headers?: SortOrderInput | SortOrder
     perMinuteLimit?: SortOrderInput | SortOrder
+    perMessageDelaySeconds?: SortOrder
     warmupEnabled?: SortOrder
     warmupStartPerMinute?: SortOrder
     warmupStep?: SortOrder
@@ -22301,6 +22323,7 @@ export namespace Prisma {
     replyTo?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
     headers?: JsonNullableWithAggregatesFilter<"Campaign">
     perMinuteLimit?: IntNullableWithAggregatesFilter<"Campaign"> | number | null
+    perMessageDelaySeconds?: IntWithAggregatesFilter<"Campaign"> | number
     warmupEnabled?: BoolWithAggregatesFilter<"Campaign"> | boolean
     warmupStartPerMinute?: IntWithAggregatesFilter<"Campaign"> | number
     warmupStep?: IntWithAggregatesFilter<"Campaign"> | number
@@ -23800,6 +23823,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -23844,6 +23868,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -23878,6 +23903,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -23922,6 +23948,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -23961,6 +23988,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -23994,6 +24022,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -24032,6 +24061,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -25508,6 +25538,7 @@ export namespace Prisma {
     replyTo?: SortOrder
     headers?: SortOrder
     perMinuteLimit?: SortOrder
+    perMessageDelaySeconds?: SortOrder
     warmupEnabled?: SortOrder
     warmupStartPerMinute?: SortOrder
     warmupStep?: SortOrder
@@ -25531,6 +25562,7 @@ export namespace Prisma {
 
   export type CampaignAvgOrderByAggregateInput = {
     perMinuteLimit?: SortOrder
+    perMessageDelaySeconds?: SortOrder
     warmupStartPerMinute?: SortOrder
     warmupStep?: SortOrder
     warmupIntervalMinutes?: SortOrder
@@ -25560,6 +25592,7 @@ export namespace Prisma {
     fromName?: SortOrder
     replyTo?: SortOrder
     perMinuteLimit?: SortOrder
+    perMessageDelaySeconds?: SortOrder
     warmupEnabled?: SortOrder
     warmupStartPerMinute?: SortOrder
     warmupStep?: SortOrder
@@ -25597,6 +25630,7 @@ export namespace Prisma {
     fromName?: SortOrder
     replyTo?: SortOrder
     perMinuteLimit?: SortOrder
+    perMessageDelaySeconds?: SortOrder
     warmupEnabled?: SortOrder
     warmupStartPerMinute?: SortOrder
     warmupStep?: SortOrder
@@ -25620,6 +25654,7 @@ export namespace Prisma {
 
   export type CampaignSumOrderByAggregateInput = {
     perMinuteLimit?: SortOrder
+    perMessageDelaySeconds?: SortOrder
     warmupStartPerMinute?: SortOrder
     warmupStep?: SortOrder
     warmupIntervalMinutes?: SortOrder
@@ -28232,6 +28267,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -28274,6 +28310,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -28672,6 +28709,7 @@ export namespace Prisma {
     replyTo?: StringNullableFilter<"Campaign"> | string | null
     headers?: JsonNullableFilter<"Campaign">
     perMinuteLimit?: IntNullableFilter<"Campaign"> | number | null
+    perMessageDelaySeconds?: IntFilter<"Campaign"> | number
     warmupEnabled?: BoolFilter<"Campaign"> | boolean
     warmupStartPerMinute?: IntFilter<"Campaign"> | number
     warmupStep?: IntFilter<"Campaign"> | number
@@ -28837,6 +28875,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -28879,6 +28918,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -29600,6 +29640,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -29642,6 +29683,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -29965,6 +30007,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -30007,6 +30050,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -31386,6 +31430,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -31428,6 +31473,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -32109,6 +32155,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -32152,6 +32199,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -32259,6 +32307,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -32302,6 +32351,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -32601,6 +32651,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -33112,6 +33163,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33154,6 +33206,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33192,6 +33245,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33251,6 +33305,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -33352,6 +33407,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33394,6 +33450,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33432,6 +33489,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33591,6 +33649,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -33708,6 +33767,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33750,6 +33810,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33788,6 +33849,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -33853,6 +33915,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -33970,6 +34033,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -34012,6 +34076,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -34050,6 +34115,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -34215,6 +34281,7 @@ export namespace Prisma {
     replyTo?: string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: number | null
+    perMessageDelaySeconds?: number
     warmupEnabled?: boolean
     warmupStartPerMinute?: number
     warmupStep?: number
@@ -34248,6 +34315,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -34290,6 +34358,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number
@@ -34328,6 +34397,7 @@ export namespace Prisma {
     replyTo?: NullableStringFieldUpdateOperationsInput | string | null
     headers?: NullableJsonNullValueInput | InputJsonValue
     perMinuteLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    perMessageDelaySeconds?: IntFieldUpdateOperationsInput | number
     warmupEnabled?: BoolFieldUpdateOperationsInput | boolean
     warmupStartPerMinute?: IntFieldUpdateOperationsInput | number
     warmupStep?: IntFieldUpdateOperationsInput | number

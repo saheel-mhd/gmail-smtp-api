@@ -131,6 +131,7 @@ export function CampaignCreateClient() {
   const [text, setText] = useState("");
   const [fromName, setFromName] = useState("");
   const [replyTo, setReplyTo] = useState("");
+  const [perMessageDelaySeconds, setPerMessageDelaySeconds] = useState(0);
   const [trackOpens, setTrackOpens] = useState(true);
   const [trackClicks, setTrackClicks] = useState(true);
   const [trackReplies, setTrackReplies] = useState(false);
@@ -332,6 +333,9 @@ export function CampaignCreateClient() {
         trackClicks,
         trackReplies
       };
+      if (perMessageDelaySeconds > 0) {
+        payload.perMessageDelaySeconds = perMessageDelaySeconds;
+      }
 
       if (useTemplate) {
         payload.templateId = templateId;
@@ -492,6 +496,17 @@ export function CampaignCreateClient() {
             <label>
               Reply To (optional)
               <input value={replyTo} onChange={(e) => setReplyTo(e.target.value)} />
+            </label>
+            <label>
+              Delay Between Emails (seconds)
+              <input
+                type="number"
+                min={0}
+                max={3600}
+                value={perMessageDelaySeconds}
+                onChange={(e) => setPerMessageDelaySeconds(Number(e.target.value))}
+                placeholder="0"
+              />
             </label>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
