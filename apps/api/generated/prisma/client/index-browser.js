@@ -327,6 +327,16 @@ exports.Prisma.CampaignScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CampaignAttachmentScalarFieldEnum = {
+  id: 'id',
+  campaignId: 'campaignId',
+  filename: 'filename',
+  contentType: 'contentType',
+  size: 'size',
+  data: 'data',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.CampaignRecipientScalarFieldEnum = {
   id: 'id',
   campaignId: 'campaignId',
@@ -473,6 +483,7 @@ exports.Prisma.ModelName = {
   Message: 'Message',
   Template: 'Template',
   Campaign: 'Campaign',
+  CampaignAttachment: 'CampaignAttachment',
   CampaignRecipient: 'CampaignRecipient',
   AuditLog: 'AuditLog'
 };

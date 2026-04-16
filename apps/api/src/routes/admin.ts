@@ -39,12 +39,20 @@ function getUserContext(request: Parameters<typeof authenticateUserSession>[0]) 
   return request.actor;
 }
 
+const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+const ATTACHMENT_UPLOAD_BODY_LIMIT = 8 * 1024 * 1024;
+
 export async function adminRoutes(app: FastifyInstance): Promise<void> {
   const testApiSendSchema = z.object({
     apiKeyId: z.string().min(1),
     toEmail: z.string().email(),
     subject: z.string().min(1).max(250).optional(),
     templateName: z.string().min(1).max(80).optional()
+  });
+  const attachmentUploadSchema = z.object({
+    filename: z.string().min(1).max(255),
+    contentType: z.string().min(1).max(255),
+    data: z.string().min(1)
   });
   const companySchema = z.object({
     name: z.string().min(1).max(120),
@@ -738,6 +746,18 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           : {})
       });
 
+      const attachments = await prisma.campaignAttachment.findMany({
+        where: { campaignId: campaign.id },
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          filename: true,
+          contentType: true,
+          size: true,
+          createdAt: true
+        }
+      });
+
       const nextCursor =
         recipients.length === limit ? recipients[recipients.length - 1]?.id ?? null : null;
 
@@ -779,6 +799,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           completedAt: campaign.completedAt
         },
         recipients,
+        attachments,
         nextCursor
       });
     }
@@ -1037,6 +1058,141 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       });
 
       return reply.send({ data: { added: inserted.count } });
+    }
+  );
+
+  app.get(
+    "/admin/v1/campaigns/:id/attachments",
+    { preHandler: [authenticateUserSession] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const campaign = await prisma.campaign.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId },
+        select: { id: true }
+      });
+      if (!campaign) return reply.notFound("campaign not found");
+
+      const attachments = await prisma.campaignAttachment.findMany({
+        where: { campaignId: campaign.id },
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          filename: true,
+          contentType: true,
+          size: true,
+          createdAt: true
+        }
+      });
+      return reply.send({ data: attachments });
+    }
+  );
+
+  app.post(
+    "/admin/v1/campaigns/:id/attachments",
+    {
+      bodyLimit: ATTACHMENT_UPLOAD_BODY_LIMIT,
+      preHandler: [...mutatingPreHandlers]
+    },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string };
+      const parsed = attachmentUploadSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const campaign = await prisma.campaign.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId },
+        select: { id: true, status: true }
+      });
+      if (!campaign) return reply.notFound("campaign not found");
+      if (campaign.status === "running") {
+        return reply.badRequest("pause the campaign before changing attachments");
+      }
+      if (campaign.status === "completed" || campaign.status === "cancelled") {
+        return reply.badRequest("campaign is completed");
+      }
+
+      let bytes: Buffer;
+      try {
+        bytes = Buffer.from(parsed.data.data, "base64");
+      } catch {
+        return reply.badRequest("invalid base64 data");
+      }
+      if (!bytes.length) return reply.badRequest("empty file");
+      if (bytes.length > MAX_ATTACHMENT_BYTES) {
+        return reply.badRequest("attachment exceeds 5MB limit");
+      }
+
+      const attachment = await prisma.campaignAttachment.create({
+        data: {
+          campaignId: campaign.id,
+          filename: parsed.data.filename.slice(0, 255),
+          contentType: parsed.data.contentType.slice(0, 255),
+          size: bytes.length,
+          data: Uint8Array.from(bytes)
+        },
+        select: {
+          id: true,
+          filename: true,
+          contentType: true,
+          size: true,
+          createdAt: true
+        }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.campaign.attachment.add",
+        metadata: {
+          campaignId: campaign.id,
+          attachmentId: attachment.id,
+          filename: attachment.filename,
+          size: attachment.size
+        }
+      });
+
+      return reply.code(201).send({ data: attachment });
+    }
+  );
+
+  app.delete(
+    "/admin/v1/campaigns/:id/attachments/:attachmentId",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const params = request.params as { id: string; attachmentId: string };
+      const campaign = await prisma.campaign.findFirst({
+        where: { id: params.id, tenantId: user.tenantId, userId: user.actorId },
+        select: { id: true, status: true }
+      });
+      if (!campaign) return reply.notFound("campaign not found");
+      if (campaign.status === "running") {
+        return reply.badRequest("pause the campaign before changing attachments");
+      }
+
+      const attachment = await prisma.campaignAttachment.findFirst({
+        where: { id: params.attachmentId, campaignId: campaign.id },
+        select: { id: true, filename: true }
+      });
+      if (!attachment) return reply.notFound("attachment not found");
+
+      await prisma.campaignAttachment.delete({ where: { id: attachment.id } });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.campaign.attachment.remove",
+        metadata: {
+          campaignId: campaign.id,
+          attachmentId: attachment.id,
+          filename: attachment.filename
+        }
+      });
+
+      return reply.send({ ok: true });
     }
   );
 

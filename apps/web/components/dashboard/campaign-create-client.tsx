@@ -103,6 +103,31 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
+const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        reject(new Error("unexpected reader result"));
+        return;
+      }
+      const comma = result.indexOf(",");
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("file read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+
 export function CampaignCreateClient() {
   const router = useRouter();
   const { toast } = useToast();
@@ -135,6 +160,10 @@ export function CampaignCreateClient() {
   const [trackOpens, setTrackOpens] = useState(true);
   const [trackClicks, setTrackClicks] = useState(true);
   const [trackReplies, setTrackReplies] = useState(false);
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachmentError, setAttachmentError] = useState("");
+  const [attachmentProgress, setAttachmentProgress] = useState({ total: 0, uploaded: 0 });
+  const [uploadingAttachments, setUploadingAttachments] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -252,6 +281,58 @@ export function CampaignCreateClient() {
     );
   }
 
+  function onAttachmentsSelected(event: React.ChangeEvent<HTMLInputElement>) {
+    const picked = Array.from(event.target.files ?? []);
+    const rejected: string[] = [];
+    const accepted: File[] = [];
+    for (const file of picked) {
+      if (file.size > MAX_ATTACHMENT_BYTES) {
+        rejected.push(`${file.name} exceeds 5MB`);
+        continue;
+      }
+      const duplicate = attachments.some(
+        (existing) => existing.name === file.name && existing.size === file.size
+      );
+      if (duplicate) continue;
+      accepted.push(file);
+    }
+    if (accepted.length) {
+      setAttachments((prev) => [...prev, ...accepted]);
+    }
+    setAttachmentError(rejected.join(", "));
+    event.target.value = "";
+  }
+
+  function removeAttachment(index: number) {
+    setAttachments((prev) => prev.filter((_, idx) => idx !== index));
+  }
+
+  async function uploadAttachments(campaignId: string) {
+    if (!attachments.length) return;
+    setUploadingAttachments(true);
+    setAttachmentProgress({ total: attachments.length, uploaded: 0 });
+    try {
+      let uploaded = 0;
+      for (const file of attachments) {
+        const data = await fileToBase64(file);
+        await browserApi(`/admin/v1/campaigns/${campaignId}/attachments`, {
+          method: "POST",
+          csrf: true,
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            filename: file.name,
+            contentType: file.type || "application/octet-stream",
+            data
+          })
+        });
+        uploaded += 1;
+        setAttachmentProgress({ total: attachments.length, uploaded });
+      }
+    } finally {
+      setUploadingAttachments(false);
+    }
+  }
+
   async function importRecipients(campaignId: string) {
     if (!sheetPreview || emailColumn === null) return;
     setImporting(true);
@@ -355,6 +436,10 @@ export function CampaignCreateClient() {
       newCampaignId = res.data.id;
       setCreatedCampaignId(res.data.id);
 
+      if (attachments.length) {
+        await uploadAttachments(res.data.id);
+      }
+
       if (sheetPreview && emailColumn !== null) {
         await importRecipients(res.data.id);
       }
@@ -368,13 +453,16 @@ export function CampaignCreateClient() {
     } catch (err) {
       const { message, isAuth } = parseApiError(err);
       if (!isAuth) setError(message);
+      const uploadingAttachmentsNow = uploadingAttachments || attachmentProgress.total > 0;
       toast({
         variant: "error",
         title: isAuth
           ? "Session expired"
-          : newCampaignId
-          ? "Recipient import unsuccessful"
-          : "Campaign create unsuccessful",
+          : !newCampaignId
+          ? "Campaign create unsuccessful"
+          : uploadingAttachmentsNow
+          ? "Attachment upload unsuccessful"
+          : "Recipient import unsuccessful",
         description: message
       });
     } finally {
@@ -508,6 +596,60 @@ export function CampaignCreateClient() {
                 placeholder="0"
               />
             </label>
+
+            <div>
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>Attachments</div>
+              <div className="muted" style={{ marginBottom: 8 }}>
+                Attach files from your computer. Max 5MB per file. Multiple files allowed.
+              </div>
+              <input
+                type="file"
+                multiple
+                onChange={onAttachmentsSelected}
+                disabled={saving}
+              />
+              {attachmentError ? (
+                <p className="muted" style={{ marginTop: 6, color: "#9f1a1a" }}>
+                  {attachmentError}
+                </p>
+              ) : null}
+              {attachments.length ? (
+                <ul style={{ marginTop: 10, paddingLeft: 0, listStyle: "none" }}>
+                  {attachments.map((file, index) => (
+                    <li
+                      key={`${file.name}-${file.size}-${index}`}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        padding: "6px 0",
+                        borderBottom: "1px solid rgba(0,0,0,0.08)"
+                      }}
+                    >
+                      <span style={{ flex: 1 }}>
+                        {file.name}{" "}
+                        <span className="muted" style={{ fontSize: 12 }}>
+                          ({formatBytes(file.size)})
+                        </span>
+                      </span>
+                      <button
+                        type="button"
+                        className="btn small ghost"
+                        onClick={() => removeAttachment(index)}
+                        disabled={saving}
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              {uploadingAttachments ? (
+                <p className="muted" style={{ marginTop: 8 }}>
+                  Uploading attachments... {attachmentProgress.uploaded}/{attachmentProgress.total}
+                </p>
+              ) : null}
+            </div>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               <button className="btn" type="submit" disabled={!canSubmit || saving}>
