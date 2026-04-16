@@ -360,9 +360,24 @@ model Campaign {
   domainSender  DomainSender? @relation(fields: [domainSenderId], references: [id], onDelete: SetNull)
   template      Template?    @relation(fields: [templateId], references: [id], onDelete: SetNull)
   recipients    CampaignRecipient[]
+  attachments   CampaignAttachment[]
 
   @@index([tenantId, createdAt])
   @@index([status, createdAt])
+}
+
+model CampaignAttachment {
+  id          String   @id @default(cuid())
+  campaignId  String
+  filename    String
+  contentType String
+  size        Int
+  data        Bytes
+  createdAt   DateTime @default(now())
+
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
 }
 
 model CampaignRecipient {

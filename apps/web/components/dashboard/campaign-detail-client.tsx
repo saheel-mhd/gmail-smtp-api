@@ -52,11 +52,26 @@ type CampaignRecipientRow = {
   replyCount: number;
 };
 
+type CampaignAttachmentRow = {
+  id: string;
+  filename: string;
+  contentType: string;
+  size: number;
+  createdAt: string;
+};
+
 type CampaignResponse = {
   data: CampaignSummary;
   recipients: CampaignRecipientRow[];
+  attachments: CampaignAttachmentRow[];
   nextCursor: string | null;
 };
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
 
 function statusBadge(status: CampaignSummary["status"]) {
   const label = status.replace("_", " ");
@@ -79,6 +94,7 @@ function recipientBadge(status: CampaignRecipientRow["status"]) {
 export function CampaignDetailClient({ campaignId }: { campaignId: string }) {
   const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
   const [recipients, setRecipients] = useState<CampaignRecipientRow[]>([]);
+  const [attachments, setAttachments] = useState<CampaignAttachmentRow[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -103,6 +119,9 @@ export function CampaignDetailClient({ campaignId }: { campaignId: string }) {
       setCampaign(res.data);
       setNextCursor(res.nextCursor);
       setRecipients((prev) => (cursor ? [...prev, ...res.recipients] : res.recipients));
+      if (!cursor) {
+        setAttachments(res.attachments ?? []);
+      }
     } catch (err) {
       const { message, isAuth } = parseApiError(err);
       if (!isAuth) setError(message);
@@ -287,6 +306,36 @@ export function CampaignDetailClient({ campaignId }: { campaignId: string }) {
               </div>
             </div>
           </div>
+        </section>
+      ) : null}
+
+      {attachments.length ? (
+        <section className="panel" style={{ marginTop: 16 }}>
+          <h2>Attachments</h2>
+          <p className="muted">
+            These files are attached to every email sent by this campaign.
+          </p>
+          <ul style={{ marginTop: 10, paddingLeft: 0, listStyle: "none" }}>
+            {attachments.map((attachment) => (
+              <li
+                key={attachment.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "6px 0",
+                  borderBottom: "1px solid rgba(0,0,0,0.08)"
+                }}
+              >
+                <span style={{ flex: 1 }}>
+                  {attachment.filename}{" "}
+                  <span className="muted" style={{ fontSize: 12 }}>
+                    ({formatBytes(attachment.size)} - {attachment.contentType})
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 

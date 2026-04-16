@@ -37,6 +37,75 @@ const QUEUE_NAME = "send_email_jobs";
 const CAMPAIGN_QUEUE_NAME = "campaign_dispatch_jobs";
 const MAX_DISPATCH_BATCH = 200;
 const retryDelaysMs = [30_000, 120_000, 600_000, 1_800_000, 7_200_000];
+const ATTACHMENT_CACHE_TTL_MS = 10 * 60 * 1000;
+const ATTACHMENT_CACHE_MAX_CAMPAIGNS = 50;
+
+type CachedAttachment = {
+  filename: string;
+  contentType: string;
+  content: Buffer;
+};
+
+type AttachmentCacheEntry = {
+  idsKey: string;
+  attachments: CachedAttachment[];
+  expiresAt: number;
+};
+
+const attachmentCache = new Map<string, AttachmentCacheEntry>();
+
+function computeAttachmentIdsKey(ids: string[]): string {
+  return [...ids].sort().join(",");
+}
+
+async function loadCampaignAttachments(
+  campaignId: string,
+  expectedIds: string[]
+): Promise<CachedAttachment[]> {
+  const idsKey = computeAttachmentIdsKey(expectedIds);
+  if (!idsKey) {
+    attachmentCache.delete(campaignId);
+    return [];
+  }
+
+  const now = Date.now();
+  const cached = attachmentCache.get(campaignId);
+  if (cached && cached.expiresAt > now && cached.idsKey === idsKey) {
+    attachmentCache.delete(campaignId);
+    attachmentCache.set(campaignId, cached);
+    return cached.attachments;
+  }
+
+  const rows = await prisma.campaignAttachment.findMany({
+    where: { campaignId },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, filename: true, contentType: true, data: true }
+  });
+
+  const attachments: CachedAttachment[] = rows.map((row) => ({
+    filename: row.filename,
+    contentType: row.contentType,
+    content: Buffer.isBuffer(row.data)
+      ? row.data
+      : Buffer.from(row.data as unknown as Uint8Array)
+  }));
+  const freshIdsKey = computeAttachmentIdsKey(rows.map((row) => row.id));
+
+  if (
+    attachmentCache.size >= ATTACHMENT_CACHE_MAX_CAMPAIGNS &&
+    !attachmentCache.has(campaignId)
+  ) {
+    const oldest = attachmentCache.keys().next().value;
+    if (oldest) attachmentCache.delete(oldest);
+  }
+  attachmentCache.set(campaignId, {
+    idsKey: freshIdsKey,
+    attachments,
+    expiresAt: now + ATTACHMENT_CACHE_TTL_MS
+  });
+
+  return attachments;
+}
 
 type SendJobData = {
   messageId: string;
@@ -533,7 +602,15 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
       campaignRecipient: {
         select: {
           id: true,
-          campaignId: true
+          campaignId: true,
+          campaign: {
+            select: {
+              attachments: {
+                select: { id: true },
+                orderBy: { createdAt: "asc" }
+              }
+            }
+          }
         }
       }
     }
@@ -632,6 +709,16 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
       throw new UnrecoverableError("sender is not configured");
     }
 
+    const campaignAttachmentIds =
+      message.campaignRecipient?.campaign?.attachments?.map((row) => row.id) ?? [];
+    const mailAttachments =
+      message.campaignRecipient && campaignAttachmentIds.length
+        ? await loadCampaignAttachments(
+            message.campaignRecipient.campaignId,
+            campaignAttachmentIds
+          )
+        : [];
+
     await transporter.sendMail({
       from: message.fromName ? `"${message.fromName}" <${fromEmail}>` : fromEmail,
       to: message.to as string[],
@@ -641,7 +728,8 @@ async function processSendJob(job: Job<SendJobData>): Promise<void> {
       text: message.text ?? undefined,
       html: message.html ?? undefined,
       replyTo: message.replyTo ?? undefined,
-      headers: (message.headers ?? {}) as Record<string, string>
+      headers: (message.headers ?? {}) as Record<string, string>,
+      attachments: mailAttachments.length ? mailAttachments : undefined
     });
 
     const now = new Date();

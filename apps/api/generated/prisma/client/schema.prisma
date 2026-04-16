@@ -354,15 +354,30 @@ model Campaign {
   createdAt              DateTime           @default(now())
   updatedAt              DateTime           @updatedAt
 
-  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  smtpAccount  SmtpAccount?        @relation(fields: [smtpAccountId], references: [id], onDelete: SetNull)
-  domainSender DomainSender?       @relation(fields: [domainSenderId], references: [id], onDelete: SetNull)
-  template     Template?           @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  tenant       Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  smtpAccount  SmtpAccount?         @relation(fields: [smtpAccountId], references: [id], onDelete: SetNull)
+  domainSender DomainSender?        @relation(fields: [domainSenderId], references: [id], onDelete: SetNull)
+  template     Template?            @relation(fields: [templateId], references: [id], onDelete: SetNull)
   recipients   CampaignRecipient[]
+  attachments  CampaignAttachment[]
 
   @@index([tenantId, createdAt])
   @@index([status, createdAt])
+}
+
+model CampaignAttachment {
+  id          String   @id @default(cuid())
+  campaignId  String
+  filename    String
+  contentType String
+  size        Int
+  data        Bytes
+  createdAt   DateTime @default(now())
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
 }
 
 model CampaignRecipient {
