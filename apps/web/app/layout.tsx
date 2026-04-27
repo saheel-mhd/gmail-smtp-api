@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import { ToastProvider } from "../components/ui/toast";
@@ -8,6 +8,13 @@ import { PageTransition } from "../components/page-transition";
 export const metadata: Metadata = {
   title: "Gmail SMTP API",
   description: "Fast queue-backed Gmail SMTP API"
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#f5f7fb"
 };
 
 export default function RootLayout({

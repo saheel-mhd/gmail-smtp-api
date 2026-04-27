@@ -6692,6 +6692,12 @@ export namespace Prisma {
     email: string | null
     address: string | null
     website: string | null
+    industry: string | null
+    companySize: string | null
+    country: string | null
+    timezone: string | null
+    logoUrl: string | null
+    about: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6706,6 +6712,12 @@ export namespace Prisma {
     email: string | null
     address: string | null
     website: string | null
+    industry: string | null
+    companySize: string | null
+    country: string | null
+    timezone: string | null
+    logoUrl: string | null
+    about: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6720,6 +6732,12 @@ export namespace Prisma {
     email: number
     address: number
     website: number
+    industry: number
+    companySize: number
+    country: number
+    timezone: number
+    logoUrl: number
+    about: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6736,6 +6754,12 @@ export namespace Prisma {
     email?: true
     address?: true
     website?: true
+    industry?: true
+    companySize?: true
+    country?: true
+    timezone?: true
+    logoUrl?: true
+    about?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6750,6 +6774,12 @@ export namespace Prisma {
     email?: true
     address?: true
     website?: true
+    industry?: true
+    companySize?: true
+    country?: true
+    timezone?: true
+    logoUrl?: true
+    about?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6764,6 +6794,12 @@ export namespace Prisma {
     email?: true
     address?: true
     website?: true
+    industry?: true
+    companySize?: true
+    country?: true
+    timezone?: true
+    logoUrl?: true
+    about?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6851,6 +6887,12 @@ export namespace Prisma {
     email: string
     address: string
     website: string | null
+    industry: string | null
+    companySize: string | null
+    country: string | null
+    timezone: string | null
+    logoUrl: string | null
+    about: string | null
     createdAt: Date
     updatedAt: Date
     _count: CompanyCountAggregateOutputType | null
@@ -6882,6 +6924,12 @@ export namespace Prisma {
     email?: boolean
     address?: boolean
     website?: boolean
+    industry?: boolean
+    companySize?: boolean
+    country?: boolean
+    timezone?: boolean
+    logoUrl?: boolean
+    about?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -6898,6 +6946,12 @@ export namespace Prisma {
     email?: boolean
     address?: boolean
     website?: boolean
+    industry?: boolean
+    companySize?: boolean
+    country?: boolean
+    timezone?: boolean
+    logoUrl?: boolean
+    about?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -6914,6 +6968,12 @@ export namespace Prisma {
     email?: boolean
     address?: boolean
     website?: boolean
+    industry?: boolean
+    companySize?: boolean
+    country?: boolean
+    timezone?: boolean
+    logoUrl?: boolean
+    about?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -6930,11 +6990,17 @@ export namespace Prisma {
     email?: boolean
     address?: boolean
     website?: boolean
+    industry?: boolean
+    companySize?: boolean
+    country?: boolean
+    timezone?: boolean
+    logoUrl?: boolean
+    about?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "name" | "service" | "phone" | "email" | "address" | "website" | "createdAt" | "updatedAt", ExtArgs["result"]["company"]>
+  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "userId" | "name" | "service" | "phone" | "email" | "address" | "website" | "industry" | "companySize" | "country" | "timezone" | "logoUrl" | "about" | "createdAt" | "updatedAt", ExtArgs["result"]["company"]>
   export type CompanyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -6964,6 +7030,12 @@ export namespace Prisma {
       email: string
       address: string
       website: string | null
+      industry: string | null
+      companySize: string | null
+      country: string | null
+      timezone: string | null
+      logoUrl: string | null
+      about: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["company"]>
@@ -7400,6 +7472,12 @@ export namespace Prisma {
     readonly email: FieldRef<"Company", 'String'>
     readonly address: FieldRef<"Company", 'String'>
     readonly website: FieldRef<"Company", 'String'>
+    readonly industry: FieldRef<"Company", 'String'>
+    readonly companySize: FieldRef<"Company", 'String'>
+    readonly country: FieldRef<"Company", 'String'>
+    readonly timezone: FieldRef<"Company", 'String'>
+    readonly logoUrl: FieldRef<"Company", 'String'>
+    readonly about: FieldRef<"Company", 'String'>
     readonly createdAt: FieldRef<"Company", 'DateTime'>
     readonly updatedAt: FieldRef<"Company", 'DateTime'>
   }
@@ -21740,6 +21818,12 @@ export namespace Prisma {
     email: 'email',
     address: 'address',
     website: 'website',
+    industry: 'industry',
+    companySize: 'companySize',
+    country: 'country',
+    timezone: 'timezone',
+    logoUrl: 'logoUrl',
+    about: 'about',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -22621,6 +22705,12 @@ export namespace Prisma {
     email?: StringFilter<"Company"> | string
     address?: StringFilter<"Company"> | string
     website?: StringNullableFilter<"Company"> | string | null
+    industry?: StringNullableFilter<"Company"> | string | null
+    companySize?: StringNullableFilter<"Company"> | string | null
+    country?: StringNullableFilter<"Company"> | string | null
+    timezone?: StringNullableFilter<"Company"> | string | null
+    logoUrl?: StringNullableFilter<"Company"> | string | null
+    about?: StringNullableFilter<"Company"> | string | null
     createdAt?: DateTimeFilter<"Company"> | Date | string
     updatedAt?: DateTimeFilter<"Company"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
@@ -22637,6 +22727,12 @@ export namespace Prisma {
     email?: SortOrder
     address?: SortOrder
     website?: SortOrderInput | SortOrder
+    industry?: SortOrderInput | SortOrder
+    companySize?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
+    timezone?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    about?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenant?: TenantOrderByWithRelationInput
@@ -22656,6 +22752,12 @@ export namespace Prisma {
     email?: StringFilter<"Company"> | string
     address?: StringFilter<"Company"> | string
     website?: StringNullableFilter<"Company"> | string | null
+    industry?: StringNullableFilter<"Company"> | string | null
+    companySize?: StringNullableFilter<"Company"> | string | null
+    country?: StringNullableFilter<"Company"> | string | null
+    timezone?: StringNullableFilter<"Company"> | string | null
+    logoUrl?: StringNullableFilter<"Company"> | string | null
+    about?: StringNullableFilter<"Company"> | string | null
     createdAt?: DateTimeFilter<"Company"> | Date | string
     updatedAt?: DateTimeFilter<"Company"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
@@ -22672,6 +22774,12 @@ export namespace Prisma {
     email?: SortOrder
     address?: SortOrder
     website?: SortOrderInput | SortOrder
+    industry?: SortOrderInput | SortOrder
+    companySize?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
+    timezone?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    about?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: CompanyCountOrderByAggregateInput
@@ -22692,6 +22800,12 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"Company"> | string
     address?: StringWithAggregatesFilter<"Company"> | string
     website?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    industry?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    companySize?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    country?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    timezone?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    logoUrl?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    about?: StringNullableWithAggregatesFilter<"Company"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
   }
@@ -24303,6 +24417,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutCompaniesInput
@@ -24319,6 +24439,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -24331,6 +24457,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutCompaniesNestedInput
@@ -24347,6 +24479,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24361,6 +24499,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -24373,6 +24517,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24387,6 +24537,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26258,6 +26414,12 @@ export namespace Prisma {
     email?: SortOrder
     address?: SortOrder
     website?: SortOrder
+    industry?: SortOrder
+    companySize?: SortOrder
+    country?: SortOrder
+    timezone?: SortOrder
+    logoUrl?: SortOrder
+    about?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26272,6 +26434,12 @@ export namespace Prisma {
     email?: SortOrder
     address?: SortOrder
     website?: SortOrder
+    industry?: SortOrder
+    companySize?: SortOrder
+    country?: SortOrder
+    timezone?: SortOrder
+    logoUrl?: SortOrder
+    about?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26286,6 +26454,12 @@ export namespace Prisma {
     email?: SortOrder
     address?: SortOrder
     website?: SortOrder
+    industry?: SortOrder
+    companySize?: SortOrder
+    country?: SortOrder
+    timezone?: SortOrder
+    logoUrl?: SortOrder
+    about?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29729,6 +29903,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutCompanyInput
@@ -29743,6 +29923,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -30187,6 +30373,12 @@ export namespace Prisma {
     email?: StringFilter<"Company"> | string
     address?: StringFilter<"Company"> | string
     website?: StringNullableFilter<"Company"> | string | null
+    industry?: StringNullableFilter<"Company"> | string | null
+    companySize?: StringNullableFilter<"Company"> | string | null
+    country?: StringNullableFilter<"Company"> | string | null
+    timezone?: StringNullableFilter<"Company"> | string | null
+    logoUrl?: StringNullableFilter<"Company"> | string | null
+    about?: StringNullableFilter<"Company"> | string | null
     createdAt?: DateTimeFilter<"Company"> | Date | string
     updatedAt?: DateTimeFilter<"Company"> | Date | string
   }
@@ -30344,6 +30536,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutCompaniesInput
@@ -30358,6 +30556,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -30583,6 +30787,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutCompaniesNestedInput
@@ -30597,6 +30807,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34414,6 +34630,12 @@ export namespace Prisma {
     email: string
     address: string
     website?: string | null
+    industry?: string | null
+    companySize?: string | null
+    country?: string | null
+    timezone?: string | null
+    logoUrl?: string | null
+    about?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34857,6 +35079,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutCompanyNestedInput
@@ -34871,6 +35099,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34884,6 +35118,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
