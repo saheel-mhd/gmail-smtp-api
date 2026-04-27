@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { browserApi } from "../lib/browser-api";
+import { useMobileDrawer } from "./mobile-drawer";
+
+const HELP_CARD_DISMISS_KEY = "sidebar:helpCard:dismissed";
 
 function Icon({ path, size = 16 }: { path: string; size?: number }) {
   return (
@@ -33,6 +36,25 @@ const navItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const drawer = useMobileDrawer();
+  const [helpDismissed, setHelpDismissed] = useState(true);
+
+  useEffect(() => {
+    try {
+      setHelpDismissed(localStorage.getItem(HELP_CARD_DISMISS_KEY) === "1");
+    } catch {
+      setHelpDismissed(false);
+    }
+  }, []);
+
+  function dismissHelp() {
+    setHelpDismissed(true);
+    try {
+      localStorage.setItem(HELP_CARD_DISMISS_KEY, "1");
+    } catch {
+      // Ignore storage failures (private mode, disabled storage).
+    }
+  }
 
   useEffect(() => {
     const prefetch = [
@@ -49,11 +71,12 @@ export function DashboardSidebar() {
   }, []);
 
   return (
-    <aside className="dashboard-sidebar">
+    <aside className={`dashboard-sidebar${drawer.open ? " mobile-open" : ""}`}>
       <div>
         <div className="sidebar-title">Mailer SMTP</div>
         <div className="sidebar-subtitle">Manage senders, templates, and access.</div>
       </div>
+      <div className="sidebar-section-label">Workspace</div>
       <nav className="sidebar-nav">
         {navItems.map((item) => {
           const active = pathname === item.href;
@@ -77,6 +100,79 @@ export function DashboardSidebar() {
           );
         })}
       </nav>
+      {helpDismissed ? null : (
+        <div className="sidebar-card">
+          <button
+            type="button"
+            onClick={dismissHelp}
+            aria-label="Dismiss help card"
+            title="Dismiss"
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              width: 26,
+              height: 26,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.18)",
+              background: "rgba(255,255,255,0.08)",
+              color: "rgba(241, 245, 251, 0.85)",
+              cursor: "pointer",
+              padding: 0,
+              zIndex: 1,
+              transition: "background 0.15s ease, color 0.15s ease, border-color 0.15s ease"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.16)";
+              e.currentTarget.style.color = "#ffffff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+              e.currentTarget.style.color = "rgba(241, 245, 251, 0.85)";
+            }}
+          >
+            <Icon path="M6 6l12 12M6 18L18 6" size={14} />
+          </button>
+          <div className="sidebar-card-title">Need a hand?</div>
+          <div className="sidebar-card-text">
+            Read the API docs or reach support — we usually reply within an hour.
+          </div>
+          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            <Link
+              href="/docs"
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                padding: "6px 12px",
+                borderRadius: 999,
+                background: "rgba(255,255,255,0.14)",
+                color: "#f1f5fb",
+                border: "1px solid rgba(255,255,255,0.18)"
+              }}
+            >
+              Docs
+            </Link>
+            <Link
+              href="/support"
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                padding: "6px 12px",
+                borderRadius: 999,
+                background: "rgba(20, 184, 130, 0.95)",
+                color: "#ffffff",
+                border: "1px solid rgba(255,255,255,0.18)",
+                boxShadow: "0 6px 14px rgba(20, 184, 130, 0.45)"
+              }}
+            >
+              Support
+            </Link>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

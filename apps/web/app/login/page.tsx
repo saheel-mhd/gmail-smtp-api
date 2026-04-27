@@ -65,20 +65,40 @@ export default function LoginPage() {
   }
 
   return (
-    <main
-      className="container"
-      style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}
-    >
-      <div className="panel" style={{ width: "100%", maxWidth: 540 }}>
-        <h1>GMAIL SMTP API GENERATOR</h1>
-        <p className="muted">Sign in to continue.</p>
-        <form onSubmit={onSubmit} className="grid" style={{ marginTop: 12 }}>
+    <main className="auth-shell">
+      <div className="auth-card">
+        <div className="auth-logo">
+          <span className="auth-logo-mark" aria-hidden="true">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M22 6 12 13 2 6" />
+              <path d="M2 6v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6" />
+              <path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2" />
+            </svg>
+          </span>
+          Mailler Console
+        </div>
+        <h1>Welcome back</h1>
+        <p className="muted" style={{ marginTop: 0, fontSize: 14 }}>
+          Sign in to manage senders, keys, and delivery activity.
+        </p>
+        <form onSubmit={onSubmit} className="grid" style={{ marginTop: 22, gap: 14 }}>
           <label>
             Email
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
               required
             />
           </label>
@@ -88,22 +108,48 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               required
             />
           </label>
           <label>
-            MFA Code (optional unless owner requires it)
-            <input value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} />
+            MFA Code <span className="muted" style={{ fontWeight: 400 }}>(optional unless required)</span>
+            <input
+              value={mfaCode}
+              onChange={(e) => setMfaCode(e.target.value)}
+              placeholder="123 456"
+              inputMode="numeric"
+            />
           </label>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <button className="btn" type="submit" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-            <Link href="/register" className="btn ghost">
-              Create account
-            </Link>
-          </div>
+          <button
+            className="btn"
+            type="submit"
+            disabled={loading}
+            style={{ marginTop: 6, width: "100%", padding: "12px 18px", fontSize: 15 }}
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
         </form>
+        <div
+          style={{
+            marginTop: 20,
+            paddingTop: 18,
+            borderTop: "1px solid var(--line-soft)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            fontSize: 13,
+            color: "var(--muted)"
+          }}
+        >
+          <span>New to Mailler?</span>
+          <Link
+            href="/register"
+            style={{ color: "var(--brand-strong)", fontWeight: 600 }}
+          >
+            Create an account →
+          </Link>
+        </div>
       </div>
     </main>
   );

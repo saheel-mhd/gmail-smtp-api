@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { browserApi } from "../lib/browser-api";
+import { useMobileDrawer } from "./mobile-drawer";
 
 function Icon({
   path,
@@ -42,6 +43,7 @@ export function AppHeader() {
   const appVersion = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
   const menuRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const drawer = useMobileDrawer();
 
   useEffect(() => {
     let isMounted = true;
@@ -111,6 +113,24 @@ export function AppHeader() {
       <header className="app-header-wrap">
         <div className="app-header">
           <div className="left">
+            {drawer.available ? (
+              <button
+                type="button"
+                className="icon-btn hamburger-btn"
+                onClick={drawer.toggle}
+                aria-label={drawer.open ? "Close menu" : "Open menu"}
+                aria-expanded={drawer.open}
+              >
+                <Icon
+                  path={
+                    drawer.open
+                      ? "M6 6l12 12M6 18L18 6"
+                      : "M3 6h18 M3 12h18 M3 18h18"
+                  }
+                  size={18}
+                />
+              </button>
+            ) : null}
             <div className="account-menu">
             <button
               type="button"
@@ -152,7 +172,8 @@ export function AppHeader() {
               </div>
             ) : null}
           </div>
-          <Link href="/dashboard" className="brand">
+          <Link href="/dashboard" className="brand" aria-label="Mailler home">
+            <span className="brand-dot" aria-hidden="true" />
             Mailler
           </Link>
           <span className="badge version-pill" title={`Build ${appVersion}`}>

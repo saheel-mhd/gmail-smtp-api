@@ -60,7 +60,13 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     phone: z.string().min(3).max(40),
     email: z.string().email().max(160),
     address: z.string().min(3).max(240),
-    website: z.string().max(200).optional()
+    website: z.string().max(200).optional(),
+    industry: z.string().max(80).optional(),
+    companySize: z.string().max(40).optional(),
+    country: z.string().max(80).optional(),
+    timezone: z.string().max(80).optional(),
+    logoUrl: z.string().max(500).optional(),
+    about: z.string().max(2000).optional()
   });
   const blockedCompanyDomains = new Set(["gmail.com", "yahoo.com", "yahoo.co.uk", "yahoo.in"]);
   const isBlockedCompanyEmail = (email: string) => {
@@ -323,11 +329,402 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           email: true,
           role: true,
           mfaEnabled: true,
-          tenant: { select: { id: true, name: true, plan: true, status: true } }
+          lastLogin: true,
+          createdAt: true,
+          tenant: { select: { id: true, name: true, plan: true, status: true, createdAt: true } }
         }
       });
       if (!row) return reply.unauthorized();
       return reply.send({ data: row });
+    }
+  );
+
+  const passwordChangeSchema = z.object({
+    currentPassword: z.string().min(1),
+    newPassword: z.string().min(8).max(128)
+  });
+
+  app.post(
+    "/admin/v1/account/password",
+    { preHandler: [authenticateUserSession, enforceCsrf] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = passwordChangeSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+      if (parsed.data.currentPassword === parsed.data.newPassword) {
+        return reply.badRequest("new password must differ from current");
+      }
+
+      const userRow = await prisma.user.findUnique({
+        where: { id: user.actorId },
+        select: { passwordHash: true }
+      });
+      if (!userRow) return reply.unauthorized();
+
+      const valid = await bcrypt.compare(parsed.data.currentPassword, userRow.passwordHash);
+      if (!valid) return reply.unauthorized("current password incorrect");
+
+      const passwordHash = await bcrypt.hash(parsed.data.newPassword, 12);
+      await prisma.user.update({
+        where: { id: user.actorId },
+        data: { passwordHash }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.account.password_change"
+      });
+      return reply.send({ ok: true });
+    }
+  );
+
+  app.post(
+    "/admin/v1/account/mfa/init",
+    { preHandler: [authenticateUserSession, enforceCsrf] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const userRow = await prisma.user.findUnique({
+        where: { id: user.actorId },
+        select: { email: true, mfaEnabled: true }
+      });
+      if (!userRow) return reply.unauthorized();
+      if (userRow.mfaEnabled) return reply.badRequest("mfa already enabled");
+
+      const secret = authenticator.generateSecret();
+      const encrypted = encryptSecret(secret);
+
+      await prisma.user.update({
+        where: { id: user.actorId },
+        data: {
+          mfaSecretEnc: encrypted.encrypted,
+          mfaSecretIv: encrypted.iv,
+          mfaSecretTag: encrypted.authTag,
+          mfaEnabled: false
+        }
+      });
+
+      const otpauthUri = authenticator.keyuri(userRow.email, "Mailler", secret);
+      return reply.send({ data: { secret, otpauthUri } });
+    }
+  );
+
+  const mfaCodeSchema = z.object({
+    code: z.string().regex(/^\d{6,8}$/, "code must be 6-8 digits")
+  });
+
+  app.post(
+    "/admin/v1/account/mfa/enable",
+    { preHandler: [authenticateUserSession, enforceCsrf] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = mfaCodeSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const userRow = await prisma.user.findUnique({
+        where: { id: user.actorId },
+        select: {
+          mfaEnabled: true,
+          mfaSecretEnc: true,
+          mfaSecretIv: true,
+          mfaSecretTag: true
+        }
+      });
+      if (!userRow) return reply.unauthorized();
+      if (userRow.mfaEnabled) return reply.badRequest("mfa already enabled");
+      if (!userRow.mfaSecretEnc || !userRow.mfaSecretIv || !userRow.mfaSecretTag) {
+        return reply.badRequest("mfa not initialized — call /mfa/init first");
+      }
+
+      const secret = decryptSecret({
+        encrypted: userRow.mfaSecretEnc,
+        iv: userRow.mfaSecretIv,
+        authTag: userRow.mfaSecretTag,
+        keyVersion: env.ENCRYPTION_KEY_VERSION
+      });
+      const valid = authenticator.check(parsed.data.code, secret);
+      if (!valid) return reply.badRequest("invalid code");
+
+      await prisma.user.update({
+        where: { id: user.actorId },
+        data: { mfaEnabled: true }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.account.mfa_enable"
+      });
+      return reply.send({ ok: true });
+    }
+  );
+
+  const mfaDisableSchema = z.object({
+    currentPassword: z.string().min(1),
+    code: z.string().regex(/^\d{6,8}$/, "code must be 6-8 digits")
+  });
+
+  app.post(
+    "/admin/v1/account/mfa/disable",
+    { preHandler: [authenticateUserSession, enforceCsrf] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = mfaDisableSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const userRow = await prisma.user.findUnique({
+        where: { id: user.actorId },
+        select: {
+          passwordHash: true,
+          mfaEnabled: true,
+          mfaSecretEnc: true,
+          mfaSecretIv: true,
+          mfaSecretTag: true
+        }
+      });
+      if (!userRow) return reply.unauthorized();
+      if (!userRow.mfaEnabled) return reply.badRequest("mfa not enabled");
+      if (!userRow.mfaSecretEnc || !userRow.mfaSecretIv || !userRow.mfaSecretTag) {
+        return reply.badRequest("mfa state missing — contact support");
+      }
+
+      const validPw = await bcrypt.compare(parsed.data.currentPassword, userRow.passwordHash);
+      if (!validPw) return reply.unauthorized("current password incorrect");
+
+      const secret = decryptSecret({
+        encrypted: userRow.mfaSecretEnc,
+        iv: userRow.mfaSecretIv,
+        authTag: userRow.mfaSecretTag,
+        keyVersion: env.ENCRYPTION_KEY_VERSION
+      });
+      const validOtp = authenticator.check(parsed.data.code, secret);
+      if (!validOtp) return reply.unauthorized("invalid mfa code");
+
+      await prisma.user.update({
+        where: { id: user.actorId },
+        data: {
+          mfaEnabled: false,
+          mfaSecretEnc: null,
+          mfaSecretIv: null,
+          mfaSecretTag: null
+        }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.account.mfa_disable"
+      });
+      return reply.send({ ok: true });
+    }
+  );
+
+  // ---------- Members management ----------
+
+  const memberRoleSchema = z.enum(["owner", "admin", "readonly"]);
+  const createMemberSchema = z.object({
+    email: z.string().email().max(160),
+    password: z.string().min(8).max(128),
+    role: memberRoleSchema
+  });
+  const patchMemberRoleSchema = z.object({ role: memberRoleSchema });
+  const resetPasswordSchema = z.object({ newPassword: z.string().min(8).max(128) });
+
+  app.get(
+    "/admin/v1/members",
+    { preHandler: [authenticateUserSession] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const members = await prisma.user.findMany({
+        where: { tenantId: user.tenantId },
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          mfaEnabled: true,
+          lastLogin: true,
+          createdAt: true
+        },
+        orderBy: [{ role: "asc" }, { createdAt: "asc" }]
+      });
+      return reply.send({ data: members });
+    }
+  );
+
+  app.post(
+    "/admin/v1/members",
+    { preHandler: [authenticateUserSession, enforceCsrf, requireRole("owner", "admin")] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = createMemberSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      // Admins can't promote to owner
+      if (user.role === "admin" && parsed.data.role === "owner") {
+        return reply.forbidden("admins cannot create owners");
+      }
+
+      const email = parsed.data.email.toLowerCase().trim();
+      const existing = await prisma.user.findFirst({
+        where: { tenantId: user.tenantId, email }
+      });
+      if (existing) return reply.badRequest("user with this email already exists");
+
+      const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+      const created = await prisma.user.create({
+        data: {
+          tenantId: user.tenantId,
+          email,
+          passwordHash,
+          role: parsed.data.role
+        },
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          mfaEnabled: true,
+          lastLogin: true,
+          createdAt: true
+        }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.members.create",
+        metadata: { memberId: created.id, role: created.role }
+      });
+      return reply.send({ data: created });
+    }
+  );
+
+  app.patch(
+    "/admin/v1/members/:id/role",
+    { preHandler: [authenticateUserSession, enforceCsrf, requireRole("owner")] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const { id } = request.params as { id: string };
+      const parsed = patchMemberRoleSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const target = await prisma.user.findFirst({
+        where: { id, tenantId: user.tenantId },
+        select: { id: true, role: true }
+      });
+      if (!target) return reply.notFound("member not found");
+
+      // Don't let an owner demote themselves if they're the last owner
+      if (target.id === user.actorId && target.role === "owner" && parsed.data.role !== "owner") {
+        const ownerCount = await prisma.user.count({
+          where: { tenantId: user.tenantId, role: "owner" }
+        });
+        if (ownerCount <= 1) {
+          return reply.badRequest("cannot demote the last owner — promote another member first");
+        }
+      }
+
+      const updated = await prisma.user.update({
+        where: { id },
+        data: { role: parsed.data.role },
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          mfaEnabled: true,
+          lastLogin: true,
+          createdAt: true
+        }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.members.role_change",
+        metadata: { memberId: id, previousRole: target.role, newRole: parsed.data.role }
+      });
+      return reply.send({ data: updated });
+    }
+  );
+
+  app.post(
+    "/admin/v1/members/:id/reset-password",
+    { preHandler: [authenticateUserSession, enforceCsrf, requireRole("owner")] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const { id } = request.params as { id: string };
+      const parsed = resetPasswordSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const target = await prisma.user.findFirst({
+        where: { id, tenantId: user.tenantId },
+        select: { id: true }
+      });
+      if (!target) return reply.notFound("member not found");
+
+      const passwordHash = await bcrypt.hash(parsed.data.newPassword, 12);
+      await prisma.user.update({
+        where: { id },
+        data: { passwordHash }
+      });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.members.password_reset",
+        metadata: { memberId: id }
+      });
+      return reply.send({ ok: true });
+    }
+  );
+
+  app.delete(
+    "/admin/v1/members/:id",
+    { preHandler: [authenticateUserSession, enforceCsrf, requireRole("owner", "admin")] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const { id } = request.params as { id: string };
+
+      if (id === user.actorId) {
+        return reply.badRequest("you cannot remove yourself — ask another owner");
+      }
+
+      const target = await prisma.user.findFirst({
+        where: { id, tenantId: user.tenantId },
+        select: { id: true, role: true, email: true }
+      });
+      if (!target) return reply.notFound("member not found");
+
+      // Admins cannot remove owners or other admins
+      if (user.role === "admin" && (target.role === "owner" || target.role === "admin")) {
+        return reply.forbidden("admins can only remove readonly members");
+      }
+
+      // Prevent deleting the last owner
+      if (target.role === "owner") {
+        const ownerCount = await prisma.user.count({
+          where: { tenantId: user.tenantId, role: "owner" }
+        });
+        if (ownerCount <= 1) {
+          return reply.badRequest("cannot remove the last owner — promote another member first");
+        }
+      }
+
+      await prisma.user.delete({ where: { id } });
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.members.delete",
+        metadata: { memberId: id, role: target.role, email: target.email }
+      });
+      return reply.send({ ok: true });
     }
   );
 
@@ -354,26 +751,30 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         return reply.badRequest("company email only");
       }
 
+      const optional = (value: string | undefined) => (value?.trim() ? value.trim() : null);
+      const fields = {
+        name: parsed.data.name,
+        service: parsed.data.service,
+        phone: parsed.data.phone,
+        email: parsed.data.email,
+        address: parsed.data.address,
+        website: optional(parsed.data.website),
+        industry: optional(parsed.data.industry),
+        companySize: optional(parsed.data.companySize),
+        country: optional(parsed.data.country),
+        timezone: optional(parsed.data.timezone),
+        logoUrl: optional(parsed.data.logoUrl),
+        about: optional(parsed.data.about)
+      };
+
       const company = await prisma.company.upsert({
         where: { userId: user.actorId },
         create: {
           tenantId: user.tenantId,
           userId: user.actorId,
-          name: parsed.data.name,
-          service: parsed.data.service,
-          phone: parsed.data.phone,
-          email: parsed.data.email,
-          address: parsed.data.address,
-          website: parsed.data.website?.trim() || null
+          ...fields
         },
-        update: {
-          name: parsed.data.name,
-          service: parsed.data.service,
-          phone: parsed.data.phone,
-          email: parsed.data.email,
-          address: parsed.data.address,
-          website: parsed.data.website?.trim() || null
-        }
+        update: fields
       });
 
       await writeAuditLog(request, {
