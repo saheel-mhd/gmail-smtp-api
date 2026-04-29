@@ -6,7 +6,14 @@ export default function middleware(req: NextRequest) {
   const sessionCookie = req.cookies.get("gmail_smtp_session")?.value;
   const isLoggedIn = Boolean(sessionCookie);
 
-  if (pathname === "/login" || pathname === "/register") {
+  if (
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password" ||
+    pathname === "/terms" ||
+    pathname === "/privacy"
+  ) {
     return NextResponse.next();
   }
 

@@ -129,6 +129,14 @@ export default function LoginPage() {
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
+          <div style={{ textAlign: "center", marginTop: -2 }}>
+            <Link
+              href="/forgot-password"
+              style={{ color: "var(--brand-strong)", fontWeight: 500, fontSize: 13 }}
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </form>
         <div
           style={{

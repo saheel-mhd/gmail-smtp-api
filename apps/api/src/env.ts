@@ -40,7 +40,13 @@ const envSchema = z.object({
   APP_DOMAIN: z.string().default("mailer.example.com"),
   APP_COOKIE_DOMAIN: z.string().optional().default(""),
   REPLY_TRACKING_SECRET: z.string().optional(),
-  SKIP_SMTP_VERIFY: boolFromEnv.default(false)
+  SKIP_SMTP_VERIFY: boolFromEnv.default(false),
+  // System SMTP (auth emails: password resets, MFA backup). Optional in dev — flow falls back to console logging.
+  SYSTEM_SMTP_HOST: z.string().optional(),
+  SYSTEM_SMTP_PORT: z.coerce.number().optional(),
+  SYSTEM_SMTP_USER: z.string().optional(),
+  SYSTEM_SMTP_PASSWORD: z.string().optional(),
+  SYSTEM_SMTP_FROM: z.string().optional()
 });
 
 export const env = envSchema.parse(process.env);

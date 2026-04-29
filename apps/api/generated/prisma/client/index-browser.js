@@ -146,6 +146,16 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  requestIp: 'requestIp',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.DomainScalarFieldEnum = {
   id: 'id',
   tenantId: 'tenantId',
@@ -479,6 +489,7 @@ exports.ActorType = exports.$Enums.ActorType = {
 exports.Prisma.ModelName = {
   Tenant: 'Tenant',
   User: 'User',
+  PasswordResetToken: 'PasswordResetToken',
   Domain: 'Domain',
   Company: 'Company',
   SmtpAccount: 'SmtpAccount',

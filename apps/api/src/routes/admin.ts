@@ -1,11 +1,18 @@
 import { FastifyInstance } from "fastify";
 import { Prisma } from "../../generated/prisma/client";
-import { randomUUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { promises as dns } from "node:dns";
 import bcrypt from "bcryptjs";
 import { authenticator } from "otplib";
 import nodemailer from "nodemailer";
 import { z } from "zod";
+import { redis } from "../lib/redis";
+import {
+  sendPasswordChangedNotification,
+  sendRegistrationOtp,
+  sendSystemMail,
+  sendWelcomeEmail
+} from "../lib/system-mail";
 import {
   campaignRecipientsSchema,
   createApiKeySchema,
@@ -292,6 +299,183 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
     });
   });
 
+  // ---------- Email-verified registration (2-step) ----------
+
+  const REGISTER_OTP_TTL_SECONDS = 600; // 10 min
+  const REGISTER_OTP_MAX_ATTEMPTS = 5;
+  const REGISTER_RATE_PER_MIN = 1;
+  const REGISTER_RATE_PER_HOUR = 5;
+
+  const registerStartSchema = registerSchema; // same shape: tenantName, email, password
+  const registerVerifySchema = z.object({
+    email: z.string().email().max(160),
+    otp: z.string().regex(/^\d{6}$/, "code must be 6 digits")
+  });
+
+  type PendingRegistration = {
+    tenantName: string;
+    email: string;
+    passwordHash: string;
+    otp: string;
+    attempts: number;
+  };
+
+  function registerKey(email: string) {
+    return `register:pending:${email}`;
+  }
+
+  app.post("/admin/v1/auth/register/start", async (request, reply) => {
+    const parsed = registerStartSchema.safeParse(request.body);
+    if (!parsed.success) return reply.badRequest("invalid registration payload");
+
+    const email = parsed.data.email.toLowerCase().trim();
+    const tenantName = parsed.data.tenantName.trim();
+
+    // Reject if a real account already exists.
+    const existing = await prisma.user.findFirst({ where: { email } });
+    if (existing) return reply.conflict("an account with this email already exists");
+
+    // Rate limit per email.
+    try {
+      const minuteKey = `register:rate:min:${email}`;
+      const hourKey = `register:rate:hour:${email}`;
+      const minuteCount = await redis.incr(minuteKey);
+      if (minuteCount === 1) await redis.expire(minuteKey, 60);
+      const hourCount = await redis.incr(hourKey);
+      if (hourCount === 1) await redis.expire(hourKey, 3600);
+      if (minuteCount > REGISTER_RATE_PER_MIN) {
+        return reply.tooManyRequests("please wait a minute before requesting another code");
+      }
+      if (hourCount > REGISTER_RATE_PER_HOUR) {
+        return reply.tooManyRequests("too many requests for this email — try again later");
+      }
+    } catch (err) {
+      request.log.warn({ err }, "register start: rate limit redis error");
+    }
+
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+
+    const payload: PendingRegistration = {
+      tenantName,
+      email,
+      passwordHash,
+      otp,
+      attempts: 0
+    };
+
+    await redis.set(registerKey(email), JSON.stringify(payload), "EX", REGISTER_OTP_TTL_SECONDS);
+
+    const sendResult = await sendRegistrationOtp({
+      to: email,
+      otp,
+      tenantName,
+      ttlMinutes: Math.floor(REGISTER_OTP_TTL_SECONDS / 60)
+    });
+
+    request.log.info(
+      { email, delivered: sendResult.delivered, reason: sendResult.reason },
+      "register start: verification code sent"
+    );
+
+    return reply.send({
+      ok: true,
+      email,
+      expiresInSeconds: REGISTER_OTP_TTL_SECONDS,
+      maxAttempts: REGISTER_OTP_MAX_ATTEMPTS
+    });
+  });
+
+  app.post("/admin/v1/auth/register/verify", async (request, reply) => {
+    const parsed = registerVerifySchema.safeParse(request.body);
+    if (!parsed.success) return reply.badRequest("invalid email or code");
+
+    const email = parsed.data.email.toLowerCase().trim();
+    const key = registerKey(email);
+    const raw = await redis.get(key);
+    if (!raw) {
+      return reply.badRequest("verification expired — please request a new code");
+    }
+
+    let pending: PendingRegistration;
+    try {
+      pending = JSON.parse(raw) as PendingRegistration;
+    } catch {
+      await redis.del(key);
+      return reply.badRequest("verification expired — please request a new code");
+    }
+
+    if (pending.attempts >= REGISTER_OTP_MAX_ATTEMPTS) {
+      await redis.del(key);
+      return reply.badRequest("too many incorrect attempts — please request a new code");
+    }
+
+    if (pending.otp !== parsed.data.otp) {
+      pending.attempts += 1;
+      const ttl = await redis.ttl(key);
+      await redis.set(key, JSON.stringify(pending), "EX", Math.max(ttl, 1));
+      const remaining = REGISTER_OTP_MAX_ATTEMPTS - pending.attempts;
+      return reply.badRequest(
+        remaining > 0
+          ? `incorrect code — ${remaining} attempt${remaining === 1 ? "" : "s"} left`
+          : "incorrect code — please request a new code"
+      );
+    }
+
+    // Race-condition guard: someone else may have grabbed this email during the OTP window.
+    const collision = await prisma.user.findFirst({ where: { email } });
+    if (collision) {
+      await redis.del(key);
+      return reply.conflict("an account with this email already exists");
+    }
+
+    const tenant = await prisma.tenant.create({
+      data: {
+        name: pending.tenantName,
+        users: {
+          create: {
+            email: pending.email,
+            passwordHash: pending.passwordHash,
+            role: "owner"
+          }
+        }
+      },
+      include: { users: true }
+    });
+
+    const user = tenant.users[0];
+    const csrfToken = setSessionCookies(request, reply, {
+      sub: user.id,
+      tenantId: tenant.id,
+      role: user.role
+    });
+
+    await redis.del(key);
+
+    await writeAuditLog(request, {
+      tenantId: tenant.id,
+      actorType: "user",
+      actorId: user.id,
+      action: "admin.auth.register_verified"
+    });
+
+    // Fire-and-forget welcome email — never block sign-in on it.
+    void sendWelcomeEmail({
+      to: user.email,
+      tenantName: tenant.name
+    });
+
+    return reply.send({
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        tenantId: tenant.id
+      },
+      csrfToken
+    });
+  });
+
   app.post(
     "/admin/v1/auth/logout",
     { preHandler: [authenticateUserSession, enforceCsrf] },
@@ -316,6 +500,196 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       return reply.send({ ok: true });
     }
   );
+
+  // ---------- Password reset ----------
+
+  const forgotPasswordSchema = z.object({
+    email: z.string().email().max(160)
+  });
+  const resetPasswordWithTokenSchema = z.object({
+    token: z.string().min(20).max(200),
+    newPassword: z.string().min(8).max(128)
+  });
+
+  const PASSWORD_RESET_TTL_MIN = 30;
+  const RESET_RATE_LIMIT_PER_MIN = 1;
+  const RESET_RATE_LIMIT_PER_HOUR = 5;
+
+  function hashToken(raw: string): string {
+    return createHash("sha256").update(raw).digest("hex");
+  }
+
+  app.post("/admin/v1/auth/forgot-password", async (request, reply) => {
+    const parsed = forgotPasswordSchema.safeParse(request.body);
+    // Always behave as if accepted, even on bad input — prevents enumeration timing.
+    if (!parsed.success) {
+      request.log.info("password reset: invalid email payload");
+      return reply.send({ ok: true });
+    }
+    const email = parsed.data.email.toLowerCase().trim();
+    request.log.info({ email }, "password reset: request received");
+
+    // Rate limit by email — Redis counters with TTL.
+    try {
+      const minuteKey = `pwreset:min:${email}`;
+      const hourKey = `pwreset:hour:${email}`;
+      const minuteCount = await redis.incr(minuteKey);
+      if (minuteCount === 1) await redis.expire(minuteKey, 60);
+      const hourCount = await redis.incr(hourKey);
+      if (hourCount === 1) await redis.expire(hourKey, 3600);
+      if (minuteCount > RESET_RATE_LIMIT_PER_MIN || hourCount > RESET_RATE_LIMIT_PER_HOUR) {
+        request.log.warn({ email, minuteCount, hourCount }, "password reset: rate-limited");
+        // Silently no-op so attackers can't probe rate-limit state.
+        return reply.send({ ok: true });
+      }
+    } catch (err) {
+      request.log.warn({ err }, "password reset rate limit redis error");
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { email },
+      select: { id: true, email: true, tenantId: true }
+    });
+
+    if (!user) {
+      request.log.info({ email }, "password reset: no user with this email — silently noop");
+    }
+
+    if (user) {
+      request.log.info({ userId: user.id, email }, "password reset: user found, sending email");
+      // Invalidate any prior unused tokens for this user.
+      await prisma.passwordResetToken.deleteMany({
+        where: { userId: user.id, usedAt: null }
+      });
+
+      const rawToken = randomBytes(32).toString("base64url");
+      const tokenHash = hashToken(rawToken);
+      const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MIN * 60_000);
+
+      await prisma.passwordResetToken.create({
+        data: {
+          userId: user.id,
+          tokenHash,
+          expiresAt,
+          requestIp: request.ip ?? null
+        }
+      });
+
+      const resetUrl = `${env.APP_BASE_URL.replace(/\/$/, "")}/reset-password?token=${rawToken}`;
+
+      const sendResult = await sendSystemMail({
+        to: user.email,
+        subject: "Reset your Mailler password",
+        text: [
+          "Hi,",
+          "",
+          "We received a request to reset the password for your Mailler account.",
+          "Click the link below to set a new password. This link expires in 30 minutes and can only be used once.",
+          "",
+          resetUrl,
+          "",
+          "If you didn't request this, you can safely ignore this email — your password will stay the same.",
+          "",
+          "— Mailler"
+        ].join("\n"),
+        html: `
+          <div style="font-family:Inter,Segoe UI,Arial,sans-serif;background:#f5f7fb;padding:32px 16px;color:#0e1726">
+            <div style="max-width:520px;margin:0 auto;background:#fff;border:1px solid #e2e8f1;border-radius:18px;padding:28px;box-shadow:0 14px 32px rgba(15,23,42,.08)">
+              <h1 style="margin:0 0 8px;font-size:20px">Reset your password</h1>
+              <p style="color:#5a6577;margin:0 0 20px;font-size:14px;line-height:1.55">
+                We received a request to reset the password for your Mailler account.
+                The link below expires in <strong>30 minutes</strong> and can only be used once.
+              </p>
+              <p style="margin:24px 0">
+                <a href="${resetUrl}" style="display:inline-block;background:linear-gradient(135deg,#0a7f51,#14b882);color:#fff;font-weight:600;padding:11px 20px;border-radius:10px;text-decoration:none;font-size:14px">
+                  Reset password
+                </a>
+              </p>
+              <p style="color:#5a6577;margin:0;font-size:12px;line-height:1.55">
+                If the button doesn't work, copy and paste this URL into your browser:<br>
+                <span style="font-family:ui-monospace,SFMono-Regular,monospace;color:#055f3c;word-break:break-all">${resetUrl}</span>
+              </p>
+              <hr style="border:0;border-top:1px solid #ecf0f7;margin:24px 0">
+              <p style="color:#94a3b8;margin:0;font-size:12px">
+                If you didn't request this, you can safely ignore this email — your password will stay the same.
+              </p>
+            </div>
+          </div>
+        `
+      });
+
+      request.log.info(
+        { email, delivered: sendResult.delivered, reason: sendResult.reason },
+        "password reset: send attempt complete"
+      );
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "system",
+        actorId: user.id,
+        action: "admin.auth.password_reset_request",
+        metadata: { delivered: sendResult.delivered, reason: sendResult.reason ?? null }
+      });
+    }
+
+    // Always return generic success — never leak whether the email exists.
+    return reply.send({ ok: true });
+  });
+
+  app.post("/admin/v1/auth/reset-password", async (request, reply) => {
+    const parsed = resetPasswordWithTokenSchema.safeParse(request.body);
+    if (!parsed.success) return reply.badRequest("invalid token or password");
+
+    const tokenHash = hashToken(parsed.data.token);
+    const record = await prisma.passwordResetToken.findUnique({
+      where: { tokenHash },
+      select: {
+        id: true,
+        userId: true,
+        usedAt: true,
+        expiresAt: true,
+        user: { select: { id: true, tenantId: true, email: true } }
+      }
+    });
+
+    if (!record || record.usedAt || record.expiresAt < new Date()) {
+      return reply.badRequest("token is invalid or has expired");
+    }
+
+    const passwordHash = await bcrypt.hash(parsed.data.newPassword, 12);
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: record.userId },
+        data: { passwordHash }
+      }),
+      prisma.passwordResetToken.update({
+        where: { id: record.id },
+        data: { usedAt: new Date() }
+      }),
+      // Invalidate any other unused tokens for this user.
+      prisma.passwordResetToken.deleteMany({
+        where: { userId: record.userId, id: { not: record.id }, usedAt: null }
+      })
+    ]);
+
+    await writeAuditLog(request, {
+      tenantId: record.user.tenantId,
+      actorType: "system",
+      actorId: record.userId,
+      action: "admin.auth.password_reset_complete",
+      metadata: { ip: request.ip, userAgent: request.headers["user-agent"] ?? null }
+    });
+
+    void sendPasswordChangedNotification({
+      to: record.user.email,
+      method: "via the reset link",
+      ip: request.ip ?? null,
+      userAgent: (request.headers["user-agent"] as string) ?? null
+    });
+
+    return reply.send({ ok: true });
+  });
 
   app.get(
     "/admin/v1/me",
@@ -357,7 +731,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
 
       const userRow = await prisma.user.findUnique({
         where: { id: user.actorId },
-        select: { passwordHash: true }
+        select: { passwordHash: true, email: true }
       });
       if (!userRow) return reply.unauthorized();
 
@@ -374,8 +748,18 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         tenantId: user.tenantId,
         actorType: "user",
         actorId: user.actorId,
-        action: "admin.account.password_change"
+        action: "admin.account.password_change",
+        metadata: { ip: request.ip, userAgent: request.headers["user-agent"] ?? null }
       });
+
+      // Fire-and-forget notification — don't block the response on email delivery.
+      void sendPasswordChangedNotification({
+        to: userRow.email,
+        method: "from your account settings",
+        ip: request.ip ?? null,
+        userAgent: (request.headers["user-agent"] as string) ?? null
+      });
+
       return reply.send({ ok: true });
     }
   );
@@ -662,7 +1046,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
 
       const target = await prisma.user.findFirst({
         where: { id, tenantId: user.tenantId },
-        select: { id: true }
+        select: { id: true, email: true }
       });
       if (!target) return reply.notFound("member not found");
 
@@ -677,8 +1061,16 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         actorType: "user",
         actorId: user.actorId,
         action: "admin.members.password_reset",
-        metadata: { memberId: id }
+        metadata: { memberId: id, ip: request.ip, userAgent: request.headers["user-agent"] ?? null }
       });
+
+      void sendPasswordChangedNotification({
+        to: target.email,
+        method: "by an owner of your tenant",
+        ip: request.ip ?? null,
+        userAgent: (request.headers["user-agent"] as string) ?? null
+      });
+
       return reply.send({ ok: true });
     }
   );
