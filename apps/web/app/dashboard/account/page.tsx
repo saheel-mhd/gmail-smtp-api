@@ -54,24 +54,7 @@ function formatDate(value: string | null | undefined) {
   }
 }
 
-function passwordStrength(pw: string): { label: string; score: number; color: string } {
-  if (!pw) return { label: "—", score: 0, color: "#94a3b8" };
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (pw.length >= 12) score++;
-  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  const tiers = [
-    { label: "Too short", color: "#b3261e" },
-    { label: "Weak", color: "#d97706" },
-    { label: "Fair", color: "#d97706" },
-    { label: "Good", color: "#0ea5e9" },
-    { label: "Strong", color: "#14b882" },
-    { label: "Excellent", color: "#057a55" }
-  ];
-  return { ...tiers[Math.min(score, tiers.length - 1)], score };
-}
+import { passwordStrength } from "../../../lib/password-strength";
 
 export default function AccountPage() {
   const router = useRouter();

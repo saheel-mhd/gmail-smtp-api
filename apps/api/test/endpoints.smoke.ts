@@ -13,6 +13,13 @@ const cases: Case[] = [
   { method: "POST", url: "/v1/send", payload: {}, expectedStatus: 401 },
   { method: "GET", url: "/v1/messages/abc", expectedStatus: 401 },
   { method: "POST", url: "/admin/v1/auth/login", payload: {}, expectedStatus: 400 },
+  // forgot-password is intentionally public + always returns 200 to avoid email enumeration
+  { method: "POST", url: "/admin/v1/auth/forgot-password", payload: { email: "nope@example.com" }, expectedStatus: 200 },
+  { method: "POST", url: "/admin/v1/auth/reset-password", payload: {}, expectedStatus: 400 },
+  // register/start: invalid payload → 400
+  { method: "POST", url: "/admin/v1/auth/register/start", payload: {}, expectedStatus: 400 },
+  // register/verify: missing payload → 400
+  { method: "POST", url: "/admin/v1/auth/register/verify", payload: {}, expectedStatus: 400 },
   { method: "GET", url: "/admin/v1/me", expectedStatus: 401 },
   { method: "POST", url: "/admin/v1/account/password", payload: {}, expectedStatus: 401 },
   { method: "POST", url: "/admin/v1/account/mfa/init", payload: {}, expectedStatus: 401 },
