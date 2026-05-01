@@ -12,6 +12,10 @@ function buildTransport(): Transporter | null {
       host: env.SYSTEM_SMTP_HOST,
       port: env.SYSTEM_SMTP_PORT,
       secure: env.SYSTEM_SMTP_PORT === 465,
+      // Fail fast instead of hanging the request when SMTP is slow/blocked.
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 12000,
       auth: {
         user: env.SYSTEM_SMTP_USER,
         pass: env.SYSTEM_SMTP_PASSWORD

@@ -366,17 +366,19 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
 
     await redis.set(registerKey(email), JSON.stringify(payload), "EX", REGISTER_OTP_TTL_SECONDS);
 
-    const sendResult = await sendRegistrationOtp({
+    // Fire-and-forget — don't block the HTTP response on SMTP delivery.
+    // Errors are logged via system-mail's own logger; user can hit "Resend code" if it doesn't arrive.
+    void sendRegistrationOtp({
       to: email,
       otp,
       tenantName,
       ttlMinutes: Math.floor(REGISTER_OTP_TTL_SECONDS / 60)
+    }).then((sendResult) => {
+      request.log.info(
+        { email, delivered: sendResult.delivered, reason: sendResult.reason },
+        "register start: verification code dispatch result"
+      );
     });
-
-    request.log.info(
-      { email, delivered: sendResult.delivered, reason: sendResult.reason },
-      "register start: verification code sent"
-    );
 
     return reply.send({
       ok: true,
@@ -577,7 +579,8 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
 
       const resetUrl = `${env.APP_BASE_URL.replace(/\/$/, "")}/reset-password?token=${rawToken}`;
 
-      const sendResult = await sendSystemMail({
+      // Fire-and-forget — don't block the HTTP response on SMTP delivery.
+      const sendPromise = sendSystemMail({
         to: user.email,
         subject: "Reset your Mailler password",
         text: [
@@ -618,17 +621,18 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
         `
       });
 
-      request.log.info(
-        { email, delivered: sendResult.delivered, reason: sendResult.reason },
-        "password reset: send attempt complete"
-      );
+      void sendPromise.then((sendResult) => {
+        request.log.info(
+          { email, delivered: sendResult.delivered, reason: sendResult.reason },
+          "password reset: send attempt complete"
+        );
+      });
 
       await writeAuditLog(request, {
         tenantId: user.tenantId,
         actorType: "system",
         actorId: user.id,
-        action: "admin.auth.password_reset_request",
-        metadata: { delivered: sendResult.delivered, reason: sendResult.reason ?? null }
+        action: "admin.auth.password_reset_request"
       });
     }
 
