@@ -307,6 +307,7 @@ model Message {
   status         MessageStatus @default(queued)
   attempts       Int           @default(0)
   lastError      String?
+  isTest         Boolean       @default(false)
   createdAt      DateTime      @default(now())
   queuedAt       DateTime      @default(now())
   sentAt         DateTime?

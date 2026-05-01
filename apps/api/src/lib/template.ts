@@ -29,3 +29,20 @@ export function extractTemplateKeys(template: string): string[] {
   }
   return Array.from(keys);
 }
+
+/**
+ * Extract every unique {{var}} token across multiple template parts (subject, html, text).
+ * Returns them sorted alphabetically for stable UI rendering. Uses matchAll to avoid the
+ * stateful lastIndex pitfall of a shared global regex.
+ */
+export function extractTemplateVariables(parts: Array<string | null | undefined>): string[] {
+  const re = /{{\s*([a-zA-Z0-9_]+)\s*}}/g;
+  const keys = new Set<string>();
+  for (const part of parts) {
+    if (!part) continue;
+    for (const match of part.matchAll(re)) {
+      keys.add(match[1]);
+    }
+  }
+  return Array.from(keys).sort();
+}

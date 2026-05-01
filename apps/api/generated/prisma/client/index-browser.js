@@ -287,6 +287,7 @@ exports.Prisma.MessageScalarFieldEnum = {
   status: 'status',
   attempts: 'attempts',
   lastError: 'lastError',
+  isTest: 'isTest',
   createdAt: 'createdAt',
   queuedAt: 'queuedAt',
   sentAt: 'sentAt'

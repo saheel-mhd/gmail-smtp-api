@@ -28,7 +28,7 @@ import { decryptSecret, encryptSecret } from "../lib/crypto";
 import { generateApiKey, hashApiKey } from "../lib/api-key";
 import { writeAuditLog } from "../plugins/audit";
 import { createGmailTransport, verifyGmailCredentials } from "../lib/smtp";
-import { renderTemplate } from "../lib/template";
+import { extractTemplateVariables, renderTemplate } from "../lib/template";
 import { assertSafeHeaders } from "../lib/validation";
 import { env } from "../env";
 import { getCampaignQueue, getSendQueue } from "../queue";
@@ -2189,7 +2189,8 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
           subject,
           text,
           html,
-          status: "queued"
+          status: "queued",
+          isTest: true
         },
         select: { id: true, status: true }
       });
@@ -3020,6 +3021,180 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
       });
 
       return reply.send({ ok: true });
+    }
+  );
+
+  // ---------- Template preview & test-send ----------
+
+  const templatePreviewSchema = z.object({
+    subject: z.string().max(500).optional(),
+    html: z.string().max(200_000).optional(),
+    text: z.string().max(200_000).optional(),
+    variables: z.record(z.string(), z.string()).optional()
+  });
+
+  app.post(
+    "/admin/v1/templates/preview",
+    { preHandler: [authenticateUserSession, enforceCsrf] },
+    async (request, reply) => {
+      const parsed = templatePreviewSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      const { subject = "", html = "", text = "", variables = {} } = parsed.data;
+      const detected = extractTemplateVariables([subject, html, text]);
+
+      const subjectRendered = renderTemplate(subject, variables);
+      const htmlRendered = renderTemplate(html, variables);
+      const textRendered = renderTemplate(text, variables);
+
+      const missing = Array.from(
+        new Set([
+          ...subjectRendered.missing,
+          ...htmlRendered.missing,
+          ...textRendered.missing
+        ])
+      );
+
+      return reply.send({
+        data: {
+          subject: subjectRendered.value,
+          html: htmlRendered.value,
+          text: textRendered.value,
+          detectedVariables: detected,
+          missingVariables: missing
+        }
+      });
+    }
+  );
+
+  const TEMPLATE_TEST_RATE_PER_MIN = 10;
+
+  const templateTestSendSchema = z.object({
+    senderType: z.enum(["gmail", "domain"]),
+    senderId: z.string().min(1),
+    to: z.string().email().max(160),
+    subject: z.string().min(1).max(500),
+    html: z.string().max(200_000).optional(),
+    text: z.string().max(200_000).optional(),
+    variables: z.record(z.string(), z.string()).optional(),
+    templateId: z.string().optional() // optional, just for audit metadata
+  });
+
+  app.post(
+    "/admin/v1/templates/test-send",
+    { preHandler: [...mutatingPreHandlers] },
+    async (request, reply) => {
+      const user = getUserContext(request);
+      const parsed = templateTestSendSchema.safeParse(request.body);
+      if (!parsed.success) return reply.badRequest(parsed.error.message);
+
+      // Per-user rate limit so people don't bombard their own inbox.
+      try {
+        const minuteKey = `tpltest:${user.actorId}:${Math.floor(Date.now() / 60_000)}`;
+        const count = await redis.incr(minuteKey);
+        if (count === 1) await redis.expire(minuteKey, 60);
+        if (count > TEMPLATE_TEST_RATE_PER_MIN) {
+          return reply.tooManyRequests(
+            `you can send ${TEMPLATE_TEST_RATE_PER_MIN} test emails per minute`
+          );
+        }
+      } catch (err) {
+        request.log.warn({ err }, "template test-send: rate limit redis error");
+      }
+
+      const variables = parsed.data.variables ?? {};
+
+      // Resolve sender (must belong to tenant + be active).
+      let senderId: string | null = null;
+      let senderLabel = "";
+      let senderEmail = "";
+      if (parsed.data.senderType === "gmail") {
+        const sender = await prisma.smtpAccount.findFirst({
+          where: { id: parsed.data.senderId, tenantId: user.tenantId, status: "active" },
+          select: { id: true, label: true, gmailAddress: true }
+        });
+        if (!sender) return reply.badRequest("sender unavailable or inactive");
+        senderId = sender.id;
+        senderLabel = sender.label;
+        senderEmail = sender.gmailAddress;
+      } else {
+        const sender = await prisma.domainSender.findFirst({
+          where: {
+            id: parsed.data.senderId,
+            tenantId: user.tenantId,
+            status: "active",
+            domain: { userId: user.actorId }
+          },
+          select: { id: true, label: true, emailAddress: true }
+        });
+        if (!sender) return reply.badRequest("sender unavailable or inactive");
+        senderId = sender.id;
+        senderLabel = sender.label;
+        senderEmail = sender.emailAddress;
+      }
+
+      // Render in case the editor sent raw template content with {{vars}}.
+      const subjectRendered = renderTemplate(parsed.data.subject, variables);
+      const htmlRendered = renderTemplate(parsed.data.html ?? "", variables);
+      const textRendered = renderTemplate(parsed.data.text ?? "", variables);
+
+      const message = await prisma.message.create({
+        data: {
+          tenantId: user.tenantId,
+          smtpAccountId: parsed.data.senderType === "gmail" ? senderId : null,
+          domainSenderId: parsed.data.senderType === "domain" ? senderId : null,
+          idempotencyKey: `template-test-${randomUUID()}`,
+          to: [parsed.data.to],
+          cc: [],
+          bcc: [],
+          subject: subjectRendered.value,
+          text: textRendered.value || null,
+          html: htmlRendered.value || null,
+          status: "queued",
+          isTest: true
+        },
+        select: { id: true, status: true }
+      });
+
+      try {
+        await getSendQueue().add(
+          "send-email",
+          { messageId: message.id },
+          { jobId: message.id }
+        );
+      } catch (error) {
+        await prisma.message.update({
+          where: { id: message.id },
+          data: { status: "failed", lastError: "queue unavailable" }
+        });
+        request.log.error({ err: error }, "failed to enqueue template test-send");
+        return reply.code(503).send({
+          error: "queue_unavailable",
+          message: "Redis queue is unavailable. Start Redis and worker, then retry."
+        });
+      }
+
+      await writeAuditLog(request, {
+        tenantId: user.tenantId,
+        actorType: "user",
+        actorId: user.actorId,
+        action: "admin.templates.test_send",
+        metadata: {
+          messageId: message.id,
+          templateId: parsed.data.templateId ?? null,
+          to: parsed.data.to,
+          senderLabel,
+          senderEmail
+        }
+      });
+
+      return reply.code(202).send({
+        data: {
+          messageId: message.id,
+          status: message.status,
+          to: parsed.data.to
+        }
+      });
     }
   );
 
