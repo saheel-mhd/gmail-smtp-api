@@ -179,13 +179,15 @@ export async function sendRegistrationOtp(opts: {
 export async function sendPasswordChangedNotification(opts: {
   to: string;
   method: string;
-  ip: string | null;
+  ip?: string | null;
   userAgent: string | null;
   when?: Date;
 }): Promise<{ delivered: boolean; reason?: string }> {
+  // `ip` is captured by the audit log but no longer shown in the email — behind a proxy
+  // (Render, etc.) it usually shows the load-balancer IP and isn't useful to end-users.
+  void opts.ip;
   const when = opts.when ?? new Date();
   const formattedTime = when.toUTCString();
-  const ip = opts.ip ?? "unknown";
   const userAgent = opts.userAgent ?? "unknown";
   const supportUrl = `${(env.APP_BASE_URL || "").replace(/\/$/, "")}/support`;
 
@@ -196,9 +198,8 @@ export async function sendPasswordChangedNotification(opts: {
     "",
     `Your Mailler account password was just changed ${opts.method}.`,
     "",
-    `When:        ${formattedTime}`,
-    `IP address:  ${ip}`,
-    `Device:      ${userAgent}`,
+    `When:    ${formattedTime}`,
+    `Device:  ${userAgent}`,
     "",
     "If this was you, no further action is needed.",
     "",
@@ -224,10 +225,6 @@ export async function sendPasswordChangedNotification(opts: {
           <tr>
             <td style="padding:8px 12px;background:#f7f9fc;border:1px solid #ecf0f7;border-radius:8px 0 0 8px;color:#5a6577;width:120px">When</td>
             <td style="padding:8px 12px;background:#fff;border:1px solid #ecf0f7;border-left:0;border-radius:0 8px 8px 0;font-family:ui-monospace,SFMono-Regular,monospace">${escapeHtml(formattedTime)}</td>
-          </tr>
-          <tr>
-            <td style="padding:8px 12px;background:#f7f9fc;border:1px solid #ecf0f7;border-radius:8px 0 0 8px;color:#5a6577">IP address</td>
-            <td style="padding:8px 12px;background:#fff;border:1px solid #ecf0f7;border-left:0;border-radius:0 8px 8px 0;font-family:ui-monospace,SFMono-Regular,monospace">${escapeHtml(ip)}</td>
           </tr>
           <tr>
             <td style="padding:8px 12px;background:#f7f9fc;border:1px solid #ecf0f7;border-radius:8px 0 0 8px;color:#5a6577">Device</td>
