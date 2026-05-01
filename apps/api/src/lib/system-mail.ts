@@ -1,29 +1,5 @@
-import nodemailer, { Transporter } from "nodemailer";
 import { env } from "../env";
-
-let cachedTransport: Transporter | null = null;
-
-function buildTransport(): Transporter | null {
-  if (!env.SYSTEM_SMTP_HOST || !env.SYSTEM_SMTP_PORT || !env.SYSTEM_SMTP_USER || !env.SYSTEM_SMTP_PASSWORD) {
-    return null;
-  }
-  if (!cachedTransport) {
-    cachedTransport = nodemailer.createTransport({
-      host: env.SYSTEM_SMTP_HOST,
-      port: env.SYSTEM_SMTP_PORT,
-      secure: env.SYSTEM_SMTP_PORT === 465,
-      // Fail fast instead of hanging the request when SMTP is slow/blocked.
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 12000,
-      auth: {
-        user: env.SYSTEM_SMTP_USER,
-        pass: env.SYSTEM_SMTP_PASSWORD
-      }
-    });
-  }
-  return cachedTransport;
-}
+import { getSystemEmailQueue } from "../queue";
 
 export type SystemMail = {
   to: string;
@@ -33,45 +9,23 @@ export type SystemMail = {
 };
 
 /**
- * Send a transactional system email (password reset, account auth).
- * Returns true if delivered (or logged in dev fallback). Never throws —
- * upstream callers should not surface transport failures to the user
- * to avoid leaking whether an account exists.
+ * Enqueue a transactional system email (password reset, account auth) for
+ * the worker to deliver. The worker holds the SMTP transport so we can run
+ * on hosts (Render free tier) that block outbound SMTP from the web service.
+ *
+ * Returns immediately; SMTP success/failure is logged in the worker.
+ * Never throws — upstream callers should not surface transport failures to the user.
  */
 export async function sendSystemMail(mail: SystemMail): Promise<{ delivered: boolean; reason?: string }> {
-  const transport = buildTransport();
-  // Pick the most valid From: header. SYSTEM_SMTP_FROM accepts either "email@addr"
-  // or "Display Name <email@addr>". If it's malformed (no @), fall back to USER.
-  const fromCandidate = env.SYSTEM_SMTP_FROM?.trim();
-  const from =
-    fromCandidate && fromCandidate.includes("@")
-      ? fromCandidate
-      : env.SYSTEM_SMTP_USER || "noreply@localhost";
-
-  if (!transport) {
-    // Dev fallback: print to console so we can copy the link manually.
-    // eslint-disable-next-line no-console
-    console.warn(
-      "\n[system-mail] SYSTEM_SMTP_* not configured — printing email instead of sending:\n" +
-        `  to:      ${mail.to}\n` +
-        `  subject: ${mail.subject}\n` +
-        `  ----\n${mail.text.replace(/^/gm, "  ")}\n  ----\n`
-    );
-    return { delivered: true, reason: "console-fallback" };
-  }
-
   try {
-    await transport.sendMail({
-      from,
-      to: mail.to,
-      subject: mail.subject,
-      text: mail.text,
-      html: mail.html
+    await getSystemEmailQueue().add("system-mail", mail, {
+      // Don't keep the OTP hanging in the queue if delivery is permanently broken.
+      removeOnFail: 200
     });
-    return { delivered: true };
+    return { delivered: true, reason: "queued" };
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error("[system-mail] send failed:", err);
+    console.error("[system-mail] enqueue failed:", err);
     return { delivered: false, reason: (err as Error).message };
   }
 }

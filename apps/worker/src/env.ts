@@ -32,7 +32,13 @@ const envSchema = z.object({
   GMAIL_SMTP_REQUIRE_TLS: boolFromEnv.default(true),
   APP_BASE_URL: z.string().default("http://localhost:3000"),
   APP_TRACKING_BASE_URL: z.string().optional(),
-  WORKER_CONCURRENCY: z.coerce.number().default(10)
+  WORKER_CONCURRENCY: z.coerce.number().default(10),
+  // System SMTP (auth emails sent on behalf of the API). Optional — falls back to console log.
+  SYSTEM_SMTP_HOST: z.string().optional(),
+  SYSTEM_SMTP_PORT: z.coerce.number().optional(),
+  SYSTEM_SMTP_USER: z.string().optional(),
+  SYSTEM_SMTP_PASSWORD: z.string().optional(),
+  SYSTEM_SMTP_FROM: z.string().optional()
 });
 
 export const env = envSchema.parse(process.env);

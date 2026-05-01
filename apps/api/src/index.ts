@@ -12,7 +12,7 @@ import { publicRoutes } from "./routes/public";
 import { adminRoutes } from "./routes/admin";
 import { prisma } from "./lib/prisma";
 import { redis } from "./lib/redis";
-import { closeSendQueue } from "./queue";
+import { closeSendQueue, closeSystemEmailQueue } from "./queue";
 
 export function buildApp() {
   const app = Fastify({
@@ -34,6 +34,7 @@ export function buildApp() {
 
   app.addHook("onClose", async () => {
     await closeSendQueue();
+    await closeSystemEmailQueue();
     try {
       await writeSystemEvent("system.api.stopped");
     } catch (error) {

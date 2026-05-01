@@ -3,6 +3,7 @@ import { redis } from "./lib/redis";
 
 export const SEND_QUEUE_NAME = "send_email_jobs";
 export const CAMPAIGN_QUEUE_NAME = "campaign_dispatch_jobs";
+export const SYSTEM_EMAIL_QUEUE_NAME = "system_email_jobs";
 
 export type SendEmailJob = {
   messageId: string;
@@ -13,6 +14,14 @@ export type CampaignDispatchJob = {
   campaignId: string;
 };
 let campaignQueue: Queue<CampaignDispatchJob> | null = null;
+
+export type SystemEmailJob = {
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+};
+let systemEmailQueue: Queue<SystemEmailJob> | null = null;
 
 export function getSendQueue(): Queue<SendEmailJob> {
   if (queue) return queue;
@@ -41,10 +50,30 @@ export function getCampaignQueue(): Queue<CampaignDispatchJob> {
   return campaignQueue;
 }
 
+export function getSystemEmailQueue(): Queue<SystemEmailJob> {
+  if (systemEmailQueue) return systemEmailQueue;
+  systemEmailQueue = new Queue<SystemEmailJob>(SYSTEM_EMAIL_QUEUE_NAME, {
+    connection: redis,
+    defaultJobOptions: {
+      attempts: 3,
+      removeOnComplete: 200,
+      removeOnFail: 200,
+      backoff: { type: "exponential", delay: 5000 }
+    }
+  });
+  return systemEmailQueue;
+}
+
 export async function closeSendQueue(): Promise<void> {
   if (!queue) return;
-  await queue.close();  
+  await queue.close();
   queue = null;
+}
+
+export async function closeSystemEmailQueue(): Promise<void> {
+  if (!systemEmailQueue) return;
+  await systemEmailQueue.close();
+  systemEmailQueue = null;
 }
 
 export const retryDelaysMs = [30_000, 120_000, 600_000, 1_800_000, 7_200_000];

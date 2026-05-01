@@ -304,7 +304,7 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
   const REGISTER_OTP_TTL_SECONDS = 600; // 10 min
   const REGISTER_OTP_MAX_ATTEMPTS = 5;
   const REGISTER_RATE_PER_MIN = 1;
-  const REGISTER_RATE_PER_HOUR = 5;
+  const REGISTER_RATE_PER_HOUR = 10;
 
   const registerStartSchema = registerSchema; // same shape: tenantName, email, password
   const registerVerifySchema = z.object({

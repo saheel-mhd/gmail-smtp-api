@@ -10,6 +10,7 @@ import { env } from "./env";
 import { prisma } from "./lib/prisma";
 import { redis } from "./lib/redis";
 import { decryptSecret } from "./lib/crypto";
+import { deliverSystemMail, SystemMail } from "./lib/system-mail";
 type TemplateRenderResult = {
   value: string;
   missing: string[];
@@ -35,6 +36,7 @@ function renderTemplate(
 const log = pino({ name: "gmail-smtp-worker" });
 const QUEUE_NAME = "send_email_jobs";
 const CAMPAIGN_QUEUE_NAME = "campaign_dispatch_jobs";
+const SYSTEM_EMAIL_QUEUE_NAME = "system_email_jobs";
 const MAX_DISPATCH_BATCH = 200;
 const retryDelaysMs = [30_000, 120_000, 600_000, 1_800_000, 7_200_000];
 const ATTACHMENT_CACHE_TTL_MS = 10 * 60 * 1000;
@@ -944,13 +946,43 @@ async function start(): Promise<void> {
     );
   });
 
+  // Auth / system emails (password reset, OTPs, password-changed notifications, welcome).
+  const systemEmailWorker = new Worker<SystemMail>(
+    SYSTEM_EMAIL_QUEUE_NAME,
+    async (job) => {
+      await deliverSystemMail(job.data);
+    },
+    {
+      connection: redis,
+      concurrency: 4
+    }
+  );
+
+  systemEmailWorker.on("completed", (job) => {
+    log.info(
+      { to: job.data.to, subject: job.data.subject },
+      "system email delivered"
+    );
+  });
+  systemEmailWorker.on("failed", (job, err) => {
+    log.error(
+      {
+        to: job?.data.to,
+        subject: job?.data.subject,
+        attempts: job?.attemptsMade,
+        err: err.message
+      },
+      "system email failed"
+    );
+  });
+
   let shuttingDown = false;
   const shutdown = async (signal: string) => {
     if (shuttingDown) return;
     shuttingDown = true;
     log.info({ signal }, "worker shutdown initiated");
     try {
-      await Promise.all([worker.close(), campaignWorker.close()]);
+      await Promise.all([worker.close(), campaignWorker.close(), systemEmailWorker.close()]);
     } catch (error) {
       log.warn({ err: error }, "failed to close worker");
     }
