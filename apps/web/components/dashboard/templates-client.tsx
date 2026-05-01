@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { TemplateDialog } from "../template-dialog";
+import { TemplatePreviewDialog } from "./template-preview-dialog";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +44,8 @@ export function TemplatesClient({
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<TemplateRow | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewing, setPreviewing] = useState<TemplateRow | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [copyingId, setCopyingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -217,6 +220,23 @@ export function TemplatesClient({
         onSaved={loadTemplates}
       />
 
+      {previewing ? (
+        <TemplatePreviewDialog
+          open={previewOpen}
+          onOpenChange={(open) => {
+            setPreviewOpen(open);
+            if (!open) setPreviewing(null);
+          }}
+          template={{
+            id: previewing.id,
+            name: previewing.name,
+            subject: previewing.subject,
+            html: previewing.html,
+            text: previewing.text
+          }}
+        />
+      ) : null}
+
       <Dialog
         open={confirmOpen}
         onOpenChange={(open) => {
@@ -343,6 +363,17 @@ export function TemplatesClient({
                       </TableCell>
                       <TableCell>
                         <div className="table-actions">
+                          <button
+                            className="btn small ghost"
+                            type="button"
+                            onClick={() => {
+                              setPreviewing(template);
+                              setPreviewOpen(true);
+                            }}
+                            title="Preview & test send"
+                          >
+                            Preview
+                          </button>
                           <button
                             className="btn small secondary"
                             type="button"

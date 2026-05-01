@@ -15204,6 +15204,7 @@ export namespace Prisma {
     status: $Enums.MessageStatus | null
     attempts: number | null
     lastError: string | null
+    isTest: boolean | null
     createdAt: Date | null
     queuedAt: Date | null
     sentAt: Date | null
@@ -15225,6 +15226,7 @@ export namespace Prisma {
     status: $Enums.MessageStatus | null
     attempts: number | null
     lastError: string | null
+    isTest: boolean | null
     createdAt: Date | null
     queuedAt: Date | null
     sentAt: Date | null
@@ -15250,6 +15252,7 @@ export namespace Prisma {
     status: number
     attempts: number
     lastError: number
+    isTest: number
     createdAt: number
     queuedAt: number
     sentAt: number
@@ -15281,6 +15284,7 @@ export namespace Prisma {
     status?: true
     attempts?: true
     lastError?: true
+    isTest?: true
     createdAt?: true
     queuedAt?: true
     sentAt?: true
@@ -15302,6 +15306,7 @@ export namespace Prisma {
     status?: true
     attempts?: true
     lastError?: true
+    isTest?: true
     createdAt?: true
     queuedAt?: true
     sentAt?: true
@@ -15327,6 +15332,7 @@ export namespace Prisma {
     status?: true
     attempts?: true
     lastError?: true
+    isTest?: true
     createdAt?: true
     queuedAt?: true
     sentAt?: true
@@ -15439,6 +15445,7 @@ export namespace Prisma {
     status: $Enums.MessageStatus
     attempts: number
     lastError: string | null
+    isTest: boolean
     createdAt: Date
     queuedAt: Date
     sentAt: Date | null
@@ -15483,6 +15490,7 @@ export namespace Prisma {
     status?: boolean
     attempts?: boolean
     lastError?: boolean
+    isTest?: boolean
     createdAt?: boolean
     queuedAt?: boolean
     sentAt?: boolean
@@ -15513,6 +15521,7 @@ export namespace Prisma {
     status?: boolean
     attempts?: boolean
     lastError?: boolean
+    isTest?: boolean
     createdAt?: boolean
     queuedAt?: boolean
     sentAt?: boolean
@@ -15543,6 +15552,7 @@ export namespace Prisma {
     status?: boolean
     attempts?: boolean
     lastError?: boolean
+    isTest?: boolean
     createdAt?: boolean
     queuedAt?: boolean
     sentAt?: boolean
@@ -15573,12 +15583,13 @@ export namespace Prisma {
     status?: boolean
     attempts?: boolean
     lastError?: boolean
+    isTest?: boolean
     createdAt?: boolean
     queuedAt?: boolean
     sentAt?: boolean
   }
 
-  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "apiKeyId" | "smtpAccountId" | "domainSenderId" | "campaignRecipientId" | "idempotencyKey" | "to" | "cc" | "bcc" | "subject" | "text" | "html" | "fromName" | "replyTo" | "headers" | "status" | "attempts" | "lastError" | "createdAt" | "queuedAt" | "sentAt", ExtArgs["result"]["message"]>
+  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "apiKeyId" | "smtpAccountId" | "domainSenderId" | "campaignRecipientId" | "idempotencyKey" | "to" | "cc" | "bcc" | "subject" | "text" | "html" | "fromName" | "replyTo" | "headers" | "status" | "attempts" | "lastError" | "isTest" | "createdAt" | "queuedAt" | "sentAt", ExtArgs["result"]["message"]>
   export type MessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     apiKey?: boolean | Message$apiKeyArgs<ExtArgs>
@@ -15630,6 +15641,7 @@ export namespace Prisma {
       status: $Enums.MessageStatus
       attempts: number
       lastError: string | null
+      isTest: boolean
       createdAt: Date
       queuedAt: Date
       sentAt: Date | null
@@ -16080,6 +16092,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Message", 'MessageStatus'>
     readonly attempts: FieldRef<"Message", 'Int'>
     readonly lastError: FieldRef<"Message", 'String'>
+    readonly isTest: FieldRef<"Message", 'Boolean'>
     readonly createdAt: FieldRef<"Message", 'DateTime'>
     readonly queuedAt: FieldRef<"Message", 'DateTime'>
     readonly sentAt: FieldRef<"Message", 'DateTime'>
@@ -23159,6 +23172,7 @@ export namespace Prisma {
     status: 'status',
     attempts: 'attempts',
     lastError: 'lastError',
+    isTest: 'isTest',
     createdAt: 'createdAt',
     queuedAt: 'queuedAt',
     sentAt: 'sentAt'
@@ -24587,6 +24601,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFilter<"Message"> | $Enums.MessageStatus
     attempts?: IntFilter<"Message"> | number
     lastError?: StringNullableFilter<"Message"> | string | null
+    isTest?: BoolFilter<"Message"> | boolean
     createdAt?: DateTimeFilter<"Message"> | Date | string
     queuedAt?: DateTimeFilter<"Message"> | Date | string
     sentAt?: DateTimeNullableFilter<"Message"> | Date | string | null
@@ -24617,6 +24632,7 @@ export namespace Prisma {
     status?: SortOrder
     attempts?: SortOrder
     lastError?: SortOrderInput | SortOrder
+    isTest?: SortOrder
     createdAt?: SortOrder
     queuedAt?: SortOrder
     sentAt?: SortOrderInput | SortOrder
@@ -24651,6 +24667,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFilter<"Message"> | $Enums.MessageStatus
     attempts?: IntFilter<"Message"> | number
     lastError?: StringNullableFilter<"Message"> | string | null
+    isTest?: BoolFilter<"Message"> | boolean
     createdAt?: DateTimeFilter<"Message"> | Date | string
     queuedAt?: DateTimeFilter<"Message"> | Date | string
     sentAt?: DateTimeNullableFilter<"Message"> | Date | string | null
@@ -24681,6 +24698,7 @@ export namespace Prisma {
     status?: SortOrder
     attempts?: SortOrder
     lastError?: SortOrderInput | SortOrder
+    isTest?: SortOrder
     createdAt?: SortOrder
     queuedAt?: SortOrder
     sentAt?: SortOrderInput | SortOrder
@@ -24714,6 +24732,7 @@ export namespace Prisma {
     status?: EnumMessageStatusWithAggregatesFilter<"Message"> | $Enums.MessageStatus
     attempts?: IntWithAggregatesFilter<"Message"> | number
     lastError?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    isTest?: BoolWithAggregatesFilter<"Message"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Message"> | Date | string
     queuedAt?: DateTimeWithAggregatesFilter<"Message"> | Date | string
     sentAt?: DateTimeNullableWithAggregatesFilter<"Message"> | Date | string | null
@@ -26434,6 +26453,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -26464,6 +26484,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -26484,6 +26505,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26514,6 +26536,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26539,6 +26562,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -26559,6 +26583,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26584,6 +26609,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28328,6 +28354,7 @@ export namespace Prisma {
     status?: SortOrder
     attempts?: SortOrder
     lastError?: SortOrder
+    isTest?: SortOrder
     createdAt?: SortOrder
     queuedAt?: SortOrder
     sentAt?: SortOrder
@@ -28353,6 +28380,7 @@ export namespace Prisma {
     status?: SortOrder
     attempts?: SortOrder
     lastError?: SortOrder
+    isTest?: SortOrder
     createdAt?: SortOrder
     queuedAt?: SortOrder
     sentAt?: SortOrder
@@ -28374,6 +28402,7 @@ export namespace Prisma {
     status?: SortOrder
     attempts?: SortOrder
     lastError?: SortOrder
+    isTest?: SortOrder
     createdAt?: SortOrder
     queuedAt?: SortOrder
     sentAt?: SortOrder
@@ -31284,6 +31313,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -31312,6 +31342,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -31772,6 +31803,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFilter<"Message"> | $Enums.MessageStatus
     attempts?: IntFilter<"Message"> | number
     lastError?: StringNullableFilter<"Message"> | string | null
+    isTest?: BoolFilter<"Message"> | boolean
     createdAt?: DateTimeFilter<"Message"> | Date | string
     queuedAt?: DateTimeFilter<"Message"> | Date | string
     sentAt?: DateTimeNullableFilter<"Message"> | Date | string | null
@@ -32980,6 +33012,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -33008,6 +33041,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -33331,6 +33365,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -33359,6 +33394,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -33742,6 +33778,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -33770,6 +33807,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -35881,6 +35919,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -35909,6 +35948,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -36226,6 +36266,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -36604,6 +36645,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -36632,6 +36674,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -36656,6 +36699,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37336,6 +37380,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -37406,6 +37451,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37434,6 +37480,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37458,6 +37505,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37600,6 +37648,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -37662,6 +37711,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37690,6 +37740,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37714,6 +37765,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37876,6 +37928,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -37920,6 +37973,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37948,6 +38002,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37972,6 +38027,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38278,6 +38334,7 @@ export namespace Prisma {
     status?: $Enums.MessageStatus
     attempts?: number
     lastError?: string | null
+    isTest?: boolean
     createdAt?: Date | string
     queuedAt?: Date | string
     sentAt?: Date | string | null
@@ -38298,6 +38355,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38326,6 +38384,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38350,6 +38409,7 @@ export namespace Prisma {
     status?: EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
     attempts?: IntFieldUpdateOperationsInput | number
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    isTest?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

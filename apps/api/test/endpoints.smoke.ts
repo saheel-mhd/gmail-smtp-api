@@ -20,6 +20,9 @@ const cases: Case[] = [
   { method: "POST", url: "/admin/v1/auth/register/start", payload: {}, expectedStatus: 400 },
   // register/verify: missing payload → 400
   { method: "POST", url: "/admin/v1/auth/register/verify", payload: {}, expectedStatus: 400 },
+  // template preview / test-send (auth required)
+  { method: "POST", url: "/admin/v1/templates/preview", payload: {}, expectedStatus: 401 },
+  { method: "POST", url: "/admin/v1/templates/test-send", payload: {}, expectedStatus: 401 },
   { method: "GET", url: "/admin/v1/me", expectedStatus: 401 },
   { method: "POST", url: "/admin/v1/account/password", payload: {}, expectedStatus: 401 },
   { method: "POST", url: "/admin/v1/account/mfa/init", payload: {}, expectedStatus: 401 },

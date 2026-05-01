@@ -70,10 +70,14 @@ export function DialogClose(
   );
 }
 
+type DialogSize = "default" | "lg" | "xl";
+
 export function DialogContent({
-  children
+  children,
+  size = "default"
 }: {
   children: React.ReactNode;
+  size?: DialogSize;
 }) {
   const { open, onOpenChange } = useDialogContext();
   const [mounted, setMounted] = useState(false);
@@ -95,7 +99,20 @@ export function DialogContent({
     return () => document.removeEventListener("keydown", onEscape);
   }, [open, onEscape]);
 
+  // Lock page scroll while the dialog is open so the page's own scrollbar
+  // doesn't show through behind the dialog.
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
   if (!open || !mounted) return null;
+
+  const sizeClass = size === "default" ? "" : ` dialog-content-${size}`;
 
   return createPortal(
     <div
@@ -104,7 +121,7 @@ export function DialogContent({
       onClick={() => onOpenChange(false)}
     >
       <div
-        className="dialog-content"
+        className={`dialog-content${sizeClass}`}
         role="dialog"
         aria-modal="true"
         onClick={(event) => event.stopPropagation()}

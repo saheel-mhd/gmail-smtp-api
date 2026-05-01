@@ -645,6 +645,25 @@
     box-shadow: var(--shadow-lg);
     animation: dialog-pop 0.22s ease-out;
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .dialog-content-lg {
+    width: min(880px, 100%);
+  }
+
+  .dialog-content-xl {
+    width: min(1200px, 100%);
+    /* Keep content scrollable when tall, but hide the visible scrollbar. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .dialog-content-xl::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
   }
 
   .dialog-content::before {
